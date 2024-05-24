@@ -6,7 +6,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>FX Med</h1>
+        <img src={`${process.env.PUBLIC_URL}/dotmed.jpg`} alt="Dotmed Logo" style={{ width: '100px', height: 'auto' }} />
+        <h1>FX</h1>
         <CurrencyConverter />
       </header>
     </div>
@@ -14,3 +15,4 @@ function App() {
 }
 
 export default App;
+

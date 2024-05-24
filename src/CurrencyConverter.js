@@ -144,7 +144,7 @@ const CurrencyConverter = () => {
           </div>
         </div>
         <div className="form-group row align-items-center">
-          <label className="col-sm-8 col-form-label text-right">Delivery day:</label>
+          <label className="col-sm-8 col-form-label text-right">Delivery date:</label>
           <div className="col-sm-4">
             <DatePicker
               selected={selectedDate}
