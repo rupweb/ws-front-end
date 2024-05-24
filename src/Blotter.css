@@ -1,0 +1,29 @@
+/* Blotter.css */
+.blotter-container {
+  width: 80%; /* Adjusted width */
+  max-height: 400px;
+  overflow-y: auto;
+  font-size: 0.8rem; /* Smaller font size */
+  background-color: #f8f9fa; /* Light background color */
+  border: 1px solid #dee2e6; /* Border */
+  border-radius: 0.25rem; /* Rounded corners */
+  padding: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  margin: 20px auto 10px auto; /* Center the blotter and reduce top and bottom margins */
+}
+
+.blotter-container table {
+  width: 100%;
+}
+
+.blotter-container th, .blotter-container td {
+  padding: 0.25rem;
+}
+
+.blotter-container th {
+  background-color: #e9ecef;
+}
+
+.blotter-container tbody tr:nth-child(odd) {
+  background-color: #f1f1f1;
+}

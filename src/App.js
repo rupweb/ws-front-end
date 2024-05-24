@@ -1,19 +1,49 @@
 // App.js
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
 import CurrencyConverter from './CurrencyConverter';
+import Blotter from './Blotter';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={`${process.env.PUBLIC_URL}/dotmed.jpg`} alt="Dotmed Logo" style={{ width: '100px', height: 'auto', marginRight: '10px' }} />
-          <h1>FX</h1>
-        </div>
-        <CurrencyConverter />
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <header className="App-header">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <img
+                    src={`${process.env.PUBLIC_URL}/dotmed.jpg`}
+                    alt="Dotmed Logo"
+                    style={{ width: '100px', height: 'auto', marginRight: '10px' }}
+                  />
+                  <h1>FX</h1>
+                </div>
+                <CurrencyConverter />
+                <div className="blotter-link">
+                  <Link to="/blotter" className="small-link">View Blotter</Link>
+                </div>
+              </header>
+            }
+          />
+          <Route
+            path="/blotter"
+            element={
+              <header className="App-header">
+                <h1 className="blotter-title">My FX Blotter</h1>
+                <Blotter />
+                <div className="back-link">
+                  <Link to="/" className="small-link">Back to Currency Converter</Link>
+                </div>
+              </header>
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

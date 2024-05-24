@@ -95,9 +95,23 @@ const CurrencyConverter = () => {
   };
 
   const handleExecute = () => {
+    const execution = {
+      date: new Date().toLocaleDateString(),
+      salePrice: amount,
+      saleCurrency: toCurrency,
+      deliveryDate: selectedDate.toLocaleDateString(),
+      currencyIHave: fromCurrency,
+      fxRate: conversionRate,
+      amountToPay: convertedAmount.toFixed(2),
+    };
+
+    const executions = JSON.parse(localStorage.getItem('executions')) || [];
+    executions.push(execution);
+    localStorage.setItem('executions', JSON.stringify(executions));
+
     setExecutionModalMessage(`Execution Report: 
-      Sale price: ${toCurrency}
-      Sale currency: ${amount}
+      Sale price: ${amount}
+      Sale currency: ${toCurrency}
       Delivery date: ${selectedDate.toLocaleDateString()}
       Currency I have: ${fromCurrency}
       FX Rate: ${conversionRate}
@@ -119,7 +133,7 @@ const CurrencyConverter = () => {
   maxDate.setFullYear(maxDate.getFullYear() + 1);
 
   return (
-    <div className="container mt-5">
+    <div className="converter-container">
       <KYCStatusModal show={showKycModal} message={kycModalMessage} onClose={handleKycModalClose} />
       <ExecutionReportModal show={showExecutionModal} message={executionModalMessage} onClose={handleExecutionModalClose} />
       <div className="card rounded p-4">
@@ -167,3 +181,4 @@ const CurrencyConverter = () => {
 };
 
 export default CurrencyConverter;
+
