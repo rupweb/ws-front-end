@@ -1,0 +1,26 @@
+.container {
+    max-width: 600px;
+  }
+  
+  .card {
+    border-radius: 25px; /* Increase the border-radius for rounder edges */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #d7f3ff; /* Light blue background color */
+  }
+  
+  label {
+    font-size: 1rem;
+  }
+  
+  .form-control {
+    font-size: 1rem;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .datepicker-input {
+    padding: .375rem .75rem;
+  }
+  
