@@ -1,9 +1,9 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import './App.css';
-import CurrencyConverter from './CurrencyConverter';
-import Blotter from './Blotter';
+import './css/App.css';
+import CurrencyConverter from './components/CurrencyConverter';
+import Blotter from './components/Blotter';
 
 function App() {
   return (

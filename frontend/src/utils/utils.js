@@ -1,5 +1,5 @@
 // utils.js
-export const currencyRates = {
+export const currencyRates1 = {
     EURUSD: { bid: 1.0820, offer: 1.0840 },
     GBPUSD: { bid: 1.2510, offer: 1.2540 },
     EURGBP: { bid: 0.8570, offer: 0.8590 },
@@ -8,7 +8,7 @@ export const currencyRates = {
     GBPCAD: { bid: 1.7440, offer: 1.7460 }
   };
   
-  export const getConversionRate = (fromCurrency, toCurrency, rates) => {
+  export const getConversionRate1 = (fromCurrency, toCurrency, rates) => {
     if (fromCurrency === 'EUR' && toCurrency === 'USD') return rates.EURUSD.bid;
     if (fromCurrency === 'USD' && toCurrency === 'EUR') return rates.EURUSD.offer;
     if (fromCurrency === 'GBP' && toCurrency === 'USD') return rates.GBPUSD.bid;
@@ -39,5 +39,34 @@ export const currencyRates = {
       }
     }
     return result;
+  };
+  
+  export const currencyRates = {
+    EURUSD: 1.08,
+    USDEUR: 0.93,
+    GBPUSD: 1.27,
+    USDGBP: 0.79,
+    EURGBP: 0.85,
+    GBPEUR: 1.77,
+    USDCAD: 1.36,
+    CADUSD: 0.74,
+    EURCAD: 1.48,
+    CADEUR: 0.67,
+    GBPCAD: 1.74,
+    CADGBP: 0.57,
+    // Add more currency pairs as needed
+  };
+
+  export const getConversionRate = (fromCurrency, toCurrency, rates) => {
+    const pair = `${fromCurrency}${toCurrency}`;
+    return rates[pair] || 1;
+  };
+  
+  export const generateUUID = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0,
+        v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
   };
   

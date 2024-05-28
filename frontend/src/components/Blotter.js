@@ -1,6 +1,6 @@
 // Blotter.js
 import React, { useEffect, useState } from 'react';
-import './Blotter.css';
+import '../css/Blotter.css';
 
 const Blotter = () => {
   const [executions, setExecutions] = useState([]);
