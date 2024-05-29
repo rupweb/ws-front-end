@@ -41,7 +41,7 @@ const CurrencyConverter = () => {
 
   const handleConvert = () => {
     if (kycStatus === 'Not Started' || kycStatus === 'Pending') {
-      setKycModalMessage('Please complete the Dotmed KYC form.');
+      setKycModalMessage('Please complete the DOTmed KYC form.');
       setShowKycModal(true);
       return;
     }
