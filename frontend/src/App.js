@@ -1,9 +1,9 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import './App.css';
-import CurrencyConverter from './CurrencyConverter';
-import Blotter from './Blotter';
+import './css/App.css';
+import CurrencyConverter from './components/CurrencyConverter';
+import Blotter from './components/Blotter';
 
 function App() {
   return (
@@ -16,8 +16,8 @@ function App() {
               <header className="App-header">
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <img
-                    src={`${process.env.PUBLIC_URL}/dotmed.jpg`}
-                    alt="Dotmed Logo"
+                    src={`${process.env.PUBLIC_URL}/fx.jpg`}
+                    alt="FX Logo"
                     style={{ width: '100px', height: 'auto', marginRight: '10px' }}
                   />
                   <h1>FX</h1>

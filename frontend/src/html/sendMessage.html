@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Send Message</title>
+</head>
+<body>
+  <h1>Test Send Message</h1>
+  <form id="sendMessageForm">
+    <button type="submit">Send Message</button>
+  </form>
+
+  <script>
+    document.getElementById('sendMessageForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      fetch('http://localhost:3001/send-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          queueName: "quoteRequest",
+          partitionKey: "partitionKey",
+          message: {
+            salePrice: 100,
+            saleCurrency: "USD",
+            deliveryDate: "2023-12-31",
+            transactTime: "2023-12-31T12:00:00Z",
+            quoteRequestID: "unique-id",
+            side: "BUY",
+            symbol: "EUR/USD",
+            currencyOwned: "EUR",
+            kycStatus: "Verified"
+          }
+        })
+      })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>
