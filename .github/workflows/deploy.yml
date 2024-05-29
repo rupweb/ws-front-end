@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '14.x'
 
       - name: Install frontend dependencies
         working-directory: ./frontend
@@ -26,15 +26,11 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Install backend dependencies
-        working-directory: ./backend
-        run: npm install
-
       - name: Copy frontend files via SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_USER: ec2-user
-          EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
           mkdir -p /tmp/build
           cp -R frontend/build/* /tmp/build/
@@ -45,24 +41,22 @@ jobs:
       - name: Copy backend files via SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_USER: ec2-user
-          EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r backend/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/backend
-
-      - name: Restart Nginx
+        
+      - name: Install dependencies and start servers
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_USER: ec2-user
-          EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem $EC2_USER@$EC2_HOST 'sudo systemctl restart nginx'
-
-      - name: Restart backend server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_USER: ec2-user
-          EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
-        run: |
-          ssh -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem $EC2_USER@$EC2_HOST 'pm2 restart all || pm2 start /home/ec2-user/ws-front-end/backend/server.js'
+          ssh -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem $EC2_USER@$EC2_HOST << 'EOF'
+            cd /home/ec2-user/ws-front-end/frontend
+            npm install
+            cd /home/ec2-user/ws-front-end/backend
+            npm install
+            pm2 restart all || pm2 start server.js --name ws-backend
+          EOF
 
