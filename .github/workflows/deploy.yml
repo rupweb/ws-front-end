@@ -18,21 +18,35 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
+        working-directory: ./frontend
         run: npm install
 
       - name: Build the React app
+        working-directory: ./frontend
         run: npm run build
 
-      - name: Copy files via SSH
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Copy frontend files via SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_USER: ec2-user
           EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
         run: |
           mkdir -p /tmp/build
-          cp -R build/* /tmp/build/
-          scp -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") -r /tmp/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/
+          cp -R frontend/build/* /tmp/build/
+          scp -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") -r /tmp/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
+
+      - name: Copy backend files via SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USER: ec2-user
+          EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
+        run: |
+          scp -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") -r backend/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/backend
 
       - name: Restart Nginx
         env:
@@ -41,3 +55,12 @@ jobs:
           EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
         run: |
           ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") $EC2_USER@$EC2_HOST 'sudo systemctl restart nginx'
+
+      - name: Restart backend server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USER: ec2-user
+          EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
+        run: |
+          ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") $EC2_USER@$EC2_HOST 'pm2 restart all || pm2 start /home/ec2-user/ws-front-end/backend/server.js'
+
