@@ -12,6 +12,8 @@
 
 # production
 /build
+/frontend/build
+/backend/build
 /backend/messages
 
 # misc

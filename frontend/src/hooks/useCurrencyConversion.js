@@ -18,7 +18,7 @@ const useCurrencyConversion = () => {
   const [showExecutionModal, setShowExecutionModal] = useState(false);
 
   const { kycStatus, setKycStatus } = useKycStatus();
-  const { conversionRate, convertedAmount, convert } = useConversion(fromCurrency, toCurrency, amount);
+  const { conversionRate, convertedAmount, convert, setConversionRate, setConvertedAmount } = useConversion(fromCurrency, toCurrency, amount);
   const isFormValid = useFormValidation(fromCurrency, toCurrency, amount);
   const { sendMessage } = useApi();
 
@@ -156,3 +156,4 @@ const useCurrencyConversion = () => {
 };
 
 export default useCurrencyConversion;
+
