@@ -53,10 +53,10 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
           ssh -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem $EC2_USER@$EC2_HOST << 'EOF'
-            cd /home/ec2-user/ws-front-end/frontend
-            npm install
-            cd /home/ec2-user/ws-front-end/backend
-            npm install
-            pm2 restart all || pm2 start server.js --name ws-backend
+          cd /home/ec2-user/ws-front-end/frontend
+          npm install
+          cd /home/ec2-user/ws-front-end/backend
+          npm install
+          pm2 restart all || pm2 start server.js --name ws-backend
           EOF
 
