@@ -1,0 +1,43 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the React app
+        run: npm run build
+
+      - name: Copy files via SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USER: ec2-user
+          EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
+        run: |
+          mkdir -p /tmp/build
+          cp -R build/* /tmp/build/
+          scp -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") -r /tmp/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/
+
+      - name: Restart Nginx
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USER: ec2-user
+          EC2_HOST: ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
+        run: |
+          ssh -o StrictHostKeyChecking=no -i <(echo "$SSH_PRIVATE_KEY") $EC2_USER@$EC2_HOST 'sudo systemctl restart nginx'
