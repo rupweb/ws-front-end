@@ -26,17 +26,17 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Copy frontend files via SSH
+      - name: Copy frontend build files via SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          mkdir -p /tmp/build
-          cp -R frontend/build/* /tmp/build/
           echo "$SSH_PRIVATE_KEY" > /tmp/webster.systems.key.pem
           chmod 600 /tmp/webster.systems.key.pem
-          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r /tmp/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
+          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/build
+          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
+          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package-lock.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
 
       - name: Copy backend files via SSH
         env:
@@ -63,7 +63,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem $EC2_USER@$EC2_HOST << 'EOF'
           # Install dependencies for the frontend
           cd /home/ec2-user/ws-front-end/frontend
-          npm install
+          npm install --only=prod
 
           # Install dependencies for the backend
           cd /home/ec2-user/ws-front-end/backend
@@ -79,5 +79,7 @@ jobs:
           # Start/restart the proxy server with PM2
           pm2 restart proxy-server || pm2 start /home/ec2-user/reverse-proxy/proxy-server.js --name proxy-server
 
-          EOF
+          # Start/restart the frontend server with PM2
+          pm2 restart ws-frontend || pm2 start npm --name "ws-frontend" -- start --prefix /home/ec2-user/ws-front-end/frontend
 
+          EOF

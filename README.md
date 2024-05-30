@@ -19,14 +19,14 @@ To ensure start on reboot run
 
 See logs
 
-`pm2 logs ws-front-end`
+`pm2 logs ws-frontend --lines 100`
 
 ## backend
 
 This contains an express server.
 Run it by navigating to backend directory:
 
-`pm2 start npm --name "ws-backend" -- start`
+`pm2 start server.js --name ws-backend`
 
 PS G:\WS\ws-front-end\backend> npm start
 
