@@ -1,6 +1,9 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const morgan = require('morgan');
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
 
 const app = express();
 
@@ -21,6 +24,7 @@ app.use(
     },
     onError: (err, req, res) => {
       console.error(`Error proxying request: ${err.message}`);
+      res.status(500).send('Proxy error');
     },
   })
 );
@@ -36,11 +40,23 @@ app.use(
     },
     onError: (err, req, res) => {
       console.error(`Error proxying request: ${err.message}`);
+      res.status(500).send('Proxy error');
     },
   })
 );
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Proxy server is running on port ${PORT}`);
+const httpPort = 8080;
+const httpsPort = 8443;
+
+const httpsOptions = {
+  key: fs.readFileSync('/etc/letsencrypt/live/fxapi.webstersystems.co.uk/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/fxapi.webstersystems.co.uk/fullchain.pem')
+};
+
+http.createServer(app).listen(httpPort, '0.0.0.0', () => {
+  console.log(`HTTP Proxy server is running on port ${httpPort}`);
+});
+
+https.createServer(httpsOptions, app).listen(httpsPort, '0.0.0.0', () => {
+  console.log(`HTTPS Proxy server is running on port ${httpsPort}`);
 });
