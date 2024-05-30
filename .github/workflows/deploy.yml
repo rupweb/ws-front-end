@@ -86,6 +86,7 @@ jobs:
           pm2 restart proxy-server || pm2 start /home/ec2-user/reverse-proxy/proxy-server.js --name proxy-server
 
           # Start/restart the frontend server with PM2
-          pm2 restart ws-frontend || pm2 start npm --name "ws-frontend" -- start --prefix /home/ec2-user/ws-front-end/frontend
+          # pm2 restart ws-frontend || pm2 start npm --name ws-frontend -- start --prefix /home/ec2-user/ws-front-end/frontend
+          pm2 restart ws-frontend || pm2 start /home/ec2-user/ws-front-end/frontend/server.js --name ws-frontend
 
           EOF

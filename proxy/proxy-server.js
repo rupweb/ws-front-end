@@ -12,13 +12,10 @@ app.use(morgan('combined'));
 
 // Proxy for the React app on EC2
 app.use(
-  '/fxapi',
+  '/',
   createProxyMiddleware({
     target: 'http://localhost:3000',
     changeOrigin: true,
-    pathRewrite: {
-      '^/fxapi': '', // remove /fxapi from the path
-    },
     onProxyReq: (proxyReq, req, res) => {
       console.log(`Proxying request to: ${proxyReq.path}`);
     },
