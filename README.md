@@ -66,3 +66,16 @@ Due to Linux systems binding to ports below 1024 requiring elevated privileges, 
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
 sudo iptables-save > /etc/sysconfig/iptables
 
+## SWAP file
+
+On EC2 a low RAM box gets "Killed" for example running `npm update`. Run the following to create a swap file:
+
+`sudo fallocate -l 2G /swapfile`
+
+`sudo chmod 600 /swapfile`
+
+`sudo mkswap /swapfile`
+
+`sudo swapon /swapfile`
+
+`sudo swapon --show`

@@ -40,6 +40,7 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/build
+          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/public/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/public
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package-lock.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
 
@@ -66,17 +67,17 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
           ssh -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem $EC2_USER@$EC2_HOST << 'EOF'
-          # Install dependencies for the frontend
-          cd /home/ec2-user/ws-front-end/frontend
-          npm install --only=prod
+          # Install (or not) dependencies for the frontend
+          # cd /home/ec2-user/ws-front-end/frontend
+          # npm install --only=prod
 
           # Install dependencies for the backend
-          cd /home/ec2-user/ws-front-end/backend
-          npm install
+          # cd /home/ec2-user/ws-front-end/backend
+          # npm install
 
           # Install dependencies for the proxy server
-          cd /home/ec2-user/reverse-proxy
-          npm install
+          # cd /home/ec2-user/reverse-proxy
+          # npm install
 
           # Start/restart the backend server with PM2
           pm2 restart ws-backend || pm2 start /home/ec2-user/ws-front-end/backend/server.js --name ws-backend
