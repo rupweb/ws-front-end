@@ -40,7 +40,7 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/build
-          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/public/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/public
+          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/server.js $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package-lock.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
 
