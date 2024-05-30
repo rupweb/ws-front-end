@@ -7,15 +7,26 @@ Webster Systems front end for FIX connection
 This contains the FX panel JS code.
 Run it by navigating to frontend directory:
 
-`npm install`
-`npm start`
+`pm2 start npm --name "ws-frontend" -- start`
+
+`pm2 status`
+
+To ensure start on reboot run
+
+`pm2 save`
+
+`pm2 startup`
+
+See logs
+
+`pm2 logs ws-front-end`
 
 ## backend
 
 This contains an express server.
 Run it by navigating to backend directory:
 
-`npm start`
+`pm2 start npm --name "ws-backend" -- start`
 
 PS G:\WS\ws-front-end\backend> npm start
 
@@ -46,7 +57,7 @@ Check the logs for running processes with
 
 ## Logs
 
-`pm2 status proxy-server`
+`pm2 status`
 
 ## IP tables
 

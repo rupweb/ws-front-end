@@ -48,15 +48,18 @@ app.use(
 const httpPort = 8080;
 const httpsPort = 8443;
 
+http.createServer(app).listen(httpPort, '0.0.0.0', () => {
+  console.log(`HTTP Proxy server is running on port ${httpPort}`);
+});
+
+/*
 const httpsOptions = {
   key: fs.readFileSync('/etc/letsencrypt/live/fxapi.webstersystems.co.uk/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/fxapi.webstersystems.co.uk/fullchain.pem')
 };
 
-http.createServer(app).listen(httpPort, '0.0.0.0', () => {
-  console.log(`HTTP Proxy server is running on port ${httpPort}`);
-});
-
 https.createServer(httpsOptions, app).listen(httpsPort, '0.0.0.0', () => {
   console.log(`HTTPS Proxy server is running on port ${httpsPort}`);
 });
+
+*/
