@@ -39,7 +39,12 @@ Check `ps -ef | grep proxy-server` for running processes.
 Check the logs for running processes with
 
 `pm2 logs ws-backend`
+
 `pm2 logs proxy-server --lines 100`
+
+## Logs
+
+`pm2 status proxy-server`
 
 ## IP tables
 
