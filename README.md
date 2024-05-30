@@ -28,9 +28,9 @@ Server running on <http://localhost:3001>
 
 At Route 53:
 
-- changed webstersystems.co.uk A record from d32psyrastjep.cloudfront.net. to 13.42.7.2
+- Removed webstersystems.co.uk A record from d32psyrastjep.cloudfront.net. to 13.42.7.2
 
-- changed webstersystems.co.uk CNAME record from d32psyrastjep.cloudfront.net. to ec2-13-42-7-2.eu-west-2.compute.amazonaws.com
+- changed webstersystems.co.uk CNAME record from d32psyrastjep.cloudfront.net. to main.d3m7l2s1elxq2z.amplifyapp.com
 
 ## Server
 
