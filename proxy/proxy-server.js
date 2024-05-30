@@ -1,7 +1,11 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const morgan = require('morgan');
 
 const app = express();
+
+// Use morgan for logging
+app.use(morgan('combined'));
 
 // Proxy for the main site
 app.use(
@@ -12,6 +16,12 @@ app.use(
     pathRewrite: {
       '^/fxapi': '', // remove /fxapi from the path
       '^/backend': '', // remove /backend from the path
+    },
+    onProxyReq: (proxyReq, req, res) => {
+      console.log(`Proxying request to: ${proxyReq.path}`);
+    },
+    onError: (err, req, res) => {
+      console.error(`Error proxying request: ${err.message}`);
     },
   })
 );
@@ -25,6 +35,12 @@ app.use(
     pathRewrite: {
       '^/fxapi': '', // remove /fxapi from the path
     },
+    onProxyReq: (proxyReq, req, res) => {
+      console.log(`Proxying request to: ${proxyReq.path}`);
+    },
+    onError: (err, req, res) => {
+      console.error(`Error proxying request: ${err.message}`);
+    },
   })
 );
 
@@ -34,6 +50,12 @@ app.use(
   createProxyMiddleware({
     target: 'http://localhost:3001',
     changeOrigin: true,
+    onProxyReq: (proxyReq, req, res) => {
+      console.log(`Proxying request to: ${proxyReq.path}`);
+    },
+    onError: (err, req, res) => {
+      console.error(`Error proxying request: ${err.message}`);
+    },
   })
 );
 

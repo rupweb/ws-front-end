@@ -39,4 +39,12 @@ Check `ps -ef | grep proxy-server` for running processes.
 Check the logs for running processes with
 
 `pm2 logs ws-backend`
-`pm2 logs proxy-server`
+`pm2 logs proxy-server --lines 100`
+
+## IP tables
+
+Due to Linux systems binding to ports below 1024 requiring elevated privileges, I had to change iptables:
+
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+sudo iptables-save > /etc/sysconfig/iptables
+
