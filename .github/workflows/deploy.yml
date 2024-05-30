@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.x'
+          node-version: '20.x'
 
       - name: Install frontend dependencies
         working-directory: ./frontend
@@ -26,14 +26,19 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
+      - name: Prepare SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > /tmp/webster.systems.key.pem
+          chmod 600 /tmp/webster.systems.key.pem
+
       - name: Copy frontend build files via SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          echo "$SSH_PRIVATE_KEY" > /tmp/webster.systems.key.pem
-          chmod 600 /tmp/webster.systems.key.pem
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/build
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
           scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package-lock.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend
