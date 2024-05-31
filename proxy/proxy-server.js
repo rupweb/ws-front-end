@@ -32,6 +32,7 @@ app.use(
   createProxyMiddleware({
     target: 'http://localhost:3001',
     changeOrigin: true,
+    pathRewrite: { '^/backend': '' }, // Remove /backend prefix when forwarding to backend
     onProxyReq: (proxyReq, req, res) => {
       console.log(`Proxying request to: ${proxyReq.path}`);
     },

@@ -24,7 +24,7 @@ function App() {
                 </div>
                 <CurrencyConverter />
                 <div className="blotter-link">
-                  <Link to="/blotter" className="small-link">View Blotter</Link>
+                  <Link to="/blotter" className="small-link">View FX Blotter</Link>
                 </div>
               </header>
             }
