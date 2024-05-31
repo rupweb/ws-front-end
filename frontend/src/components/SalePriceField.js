@@ -3,7 +3,7 @@ import React from 'react';
 import FormField from './FormField';
 
 const SalePriceField = ({ amount, setAmount }) => (
-  <FormField label="Sale price:">
+  <FormField label="Item sale price:">
     <input
       type="number"
       className="form-control"
