@@ -6,8 +6,15 @@ class FileSystemQueue extends MessageQueue {
   constructor(baseDir) {
     super();
     this.baseDir = baseDir;
+    this.processedDir = path.join(this.baseDir, 'processed');
+
+    // Ensure base and processed directories exist
     if (!fs.existsSync(baseDir)) {
       fs.mkdirSync(baseDir, { recursive: true });
+    }
+
+    if (!fs.existsSync(this.processedDir)) {
+      fs.mkdirSync(this.processedDir, { recursive: true });
     }
   }
 
@@ -22,9 +29,9 @@ class FileSystemQueue extends MessageQueue {
 
     try {
       await fs.promises.writeFile(filePath, JSON.stringify(message));
-      console.log('Message written successfully:', filePath);
+      console.log('Message written:', filePath);
     } catch (error) {
-      console.error('Failed to write message:', error);
+      console.error('Failed writing message:', error);
     }
   }
 
@@ -41,10 +48,14 @@ class FileSystemQueue extends MessageQueue {
         const filePath = path.join(queueDir, file);
         const data = await fs.promises.readFile(filePath, 'utf-8');
         handleMessage(JSON.parse(data));
-        await fs.promises.unlink(filePath); // Delete the file after processing
+
+        // Move the file to the processed directory
+        const processedFilePath = path.join(this.processedDir, file);
+        await fs.promises.rename(filePath, processedFilePath);
+        console.log('Message moved to processed directory:', processedFilePath);
       }
     } catch (error) {
-      console.error('Failed to read messages:', error);
+      console.error('Failed reading messages:', error);
     }
   }
 }
