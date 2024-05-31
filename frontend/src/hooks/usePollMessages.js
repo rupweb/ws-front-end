@@ -3,10 +3,12 @@ import axios from 'axios';
 
 const usePollMessages = (queueName, handleMessage) => {
   useEffect(() => {
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
+
     const pollMessages = async () => {
       while (true) {
         try {
-          const response = await axios.get(`http://localhost:3001/receive-messages/${queueName}`);
+          const response = await axios.get(`${BASE_URL}/receive-messages/${queueName}`);
           response.data.forEach(handleMessage);
         } catch (error) {
           console.error(`Error fetching ${queueName} messages:`, error);
