@@ -10,12 +10,13 @@ const app = express();
 // Use morgan for logging
 app.use(morgan('combined'));
 
-// Proxy for the React app on EC2
+// Proxy for the backend service on EC2
 app.use(
-  '/',
+  '/backend',
   createProxyMiddleware({
-    target: 'http://localhost:3000',
+    target: 'http://localhost:3001',
     changeOrigin: true,
+    pathRewrite: { '^/backend': '' }, // Remove /backend prefix when forwarding to backend
     onProxyReq: (proxyReq, req, res) => {
       console.log(`Proxying request to: ${proxyReq.path}`);
     },
@@ -26,13 +27,12 @@ app.use(
   })
 );
 
-// Proxy for the backend service on EC2
+// Proxy for the React app on EC2
 app.use(
-  '/backend',
+  '/',
   createProxyMiddleware({
-    target: 'http://localhost:3001',
+    target: 'http://localhost:3000',
     changeOrigin: true,
-    pathRewrite: { '^/backend': '' }, // Remove /backend prefix when forwarding to backend
     onProxyReq: (proxyReq, req, res) => {
       console.log(`Proxying request to: ${proxyReq.path}`);
     },
