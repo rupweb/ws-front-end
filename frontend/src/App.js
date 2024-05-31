@@ -20,7 +20,6 @@ function App() {
                     alt="FX Logo"
                     style={{ width: '100px', height: 'auto', marginRight: '10px' }}
                   />
-                  <h1>FX</h1>
                 </div>
                 <CurrencyConverter />
                 <div className="blotter-link">
