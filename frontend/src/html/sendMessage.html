@@ -13,7 +13,7 @@
     document.getElementById('sendMessageForm').addEventListener('submit', function(event) {
       event.preventDefault();
       
-      fetch('http://localhost:3001/send-message', {
+      fetch('https://fxapi.webstersystems.co.uk/send-message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

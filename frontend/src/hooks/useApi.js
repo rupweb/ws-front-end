@@ -1,17 +1,36 @@
-import axios from 'axios';
+import { EventBridgeClient, PutEventsCommand } from '@aws-sdk/client-eventbridge';
+import { useAuthenticator } from '@aws-amplify/ui-react';
 
 const useApi = () => {
-  const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
+  const { user } = useAuthenticator((context) => [context.user]);
 
-  const sendMessage = async (queueName, partitionKey, message) => {
+  const sendMessage = async (detailType, detail) => {
     try {
-      await axios.post(`${BASE_URL}/send-message`, {
-        queueName,
-        partitionKey,
-        message,
+      if (!user) {
+        throw new Error('User is not authenticated');
+      }
+      const credentials = await user.getAWSCredentials(); // Assuming the useAuthenticator hook provides this method
+      const client = new EventBridgeClient({
+        region: 'eu-west-2',
+        credentials,
       });
+
+      const params = {
+        Entries: [
+          {
+            Source: 'fxapi.webstersystems.co.uk',
+            DetailType: detailType,
+            Detail: JSON.stringify(detail),
+            EventBusName: 'default',
+          },
+        ],
+      };
+
+      const command = new PutEventsCommand(params);
+      await client.send(command);
+      console.log(`Event sent: ${detailType}`);
     } catch (error) {
-      console.error(`Error sending message to ${queueName}:`, error);
+      console.error(`Error sending event ${detailType}:`, error);
     }
   };
 
@@ -21,3 +40,4 @@ const useApi = () => {
 };
 
 export default useApi;
+

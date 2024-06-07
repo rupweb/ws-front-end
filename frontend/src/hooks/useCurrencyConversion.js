@@ -76,7 +76,7 @@ const useCurrencyConversion = () => {
       kycStatus,
     };
 
-    await sendMessage('quoteRequest', 'partitionKey', quoteRequest);
+    await sendMessage('quoteRequest', quoteRequest);
   };
 
   const handleExecute = async () => {
@@ -106,7 +106,7 @@ const useCurrencyConversion = () => {
       kycStatus,
     };
 
-    await sendMessage('dealRequest', 'partitionKey', dealRequest);
+    await sendMessage('dealRequest', dealRequest);
 
     setExecutionModalMessage(`Execution Report: 
       Sale price: ${amount}
@@ -156,4 +156,3 @@ const useCurrencyConversion = () => {
 };
 
 export default useCurrencyConversion;
-
