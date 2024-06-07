@@ -96,7 +96,7 @@
   align-items: flex-start; /* Align items at the top */
   min-height: 100vh;
   padding-top: 20px; /* Add some padding at the top */
-  max-width: 600px; /* Ensure the auth container is not too narrow */
+  max-width: 600px; /* Ensure the auth container is not too wide */
   margin: 0 auto; /* Center the auth container */
 }
 
@@ -110,7 +110,11 @@
 }
 
 .amplify-flex {
-  width: 80%; /* Set width to 80% of the other amplify components */
+  margin: 0 auto; /* Center align */
+  padding: 10px;
+}
+
+.amplify-tabs__item {
   margin: 5px;
 }
 
@@ -129,6 +133,11 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ensure box-shadow matches */
 }
 
+[data-amplify-footer] {
+  margin-left: auto; /* Right align */
+  width: 50%;
+}
+
 .error-message {
   color: red;
 }
@@ -141,7 +150,6 @@ input {
 }
 
 button {
-  margin: 2px;
   width: 100%;
   padding: 0.5rem;
   border: none;
