@@ -64,7 +64,7 @@ const BlotterPage = () => (
     <h1 className="blotter-title">My FX Blotter</h1>
     <Blotter />
     <div className="back-link">
-      <Link to="/" className="small-link">Back to Currency Converter</Link>
+      <Link to="/" className="small-link">Back</Link>
     </div>
   </div>
 );

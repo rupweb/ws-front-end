@@ -58,7 +58,7 @@
   flex-grow: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Align items at the start (top) */
   padding: 20px;
   width: 100%;
   max-width: 1200px;
@@ -93,42 +93,44 @@
 .auth-container {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Align items at the top */
   min-height: 100vh;
+  padding-top: 20px; /* Add some padding at the top */
+  max-width: 600px; /* Ensure the auth container is not too narrow */
+  margin: 0 auto; /* Center the auth container */
 }
 
-.auth-container .amplify-authenticator {
-  max-width: 400px;
+.amplify-authenticator {
   width: 100%;
+  max-width: 600px; /* Match the max-width of .content-container */
+  padding: 20px; /* Match the padding of .content-container */
+  background: white; /* Match the background of .content-container */
+  border-radius: 25px; /* Match the border-radius of .content-container */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Match the box-shadow of .content-container */
 }
 
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f0f0f0;
+.amplify-flex {
+  width: 80%; /* Set width to 80% of the other amplify components */
+  margin: 5px;
 }
 
-form {
-  background: white;
-  padding: 2rem;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.amplify-field__show-password {
+  display: none; /* Hide the "Password is hidden" message */
+}
+
+/* Ensuring the tabs and other elements are also wider */
+[data-amplify-container] {
+  max-width: 600px;
+  width: 400px;
+  margin: 0 auto; /* Center these elements */
+  padding: 20px; /* Ensure padding for consistency */
+  background: white; /* Ensure background matches */
+  border-radius: 25px; /* Ensure border-radius matches */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ensure box-shadow matches */
 }
 
 .error-message {
   color: red;
-}
-
-div {
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
 }
 
 input {
@@ -139,11 +141,12 @@ input {
 }
 
 button {
+  margin: 2px;
   width: 100%;
   padding: 0.5rem;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
-  color: white;
+  background-color: #d7f3ff; /* Light blue background color */
+  color: green;
   cursor: pointer;
 }
