@@ -1,31 +1,72 @@
 /* App.css */
+
 .App {
   text-align: center;
-}
-
-.App-header {
-  background-color: #d7f3ff; /* Light blue background color */
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+}
+
+.App-header, .App-container {
+  background-color: #d7f3ff; /* Light blue background color */
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  border-radius: 15px; /* Adjust the value as needed */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+.nav-container, .footer-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: flex-start; /* Align items at the start */
-  font-size: calc(10px + 2vmin);
-  color: rgb(50, 37, 165);
-  padding-top: 20px; /* Add padding at the top */
 }
 
-.converter-container {
-  margin-top: 20px;
+.nav-logo {
+  width: 50px;
+  height: auto;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1px;
+  align-items: center;
+}
+
+.nav-links a, .sign-out-button {
+  color: #00f; /* Light blue color */
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 5px 10px; /* Add padding for better alignment */
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a:hover, .sign-out-button:hover {
+  text-decoration: underline;
+}
+
+.sign-out-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.App-content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.blotter-title {
   margin-bottom: 20px;
-}
-
-.blotter-link {
-  margin-top: 20px;
-}
-
-.back-link {
-  margin-top: 20px;
 }
 
 .small-link {
@@ -36,4 +77,73 @@
 
 .small-link:hover {
   text-decoration: underline;
+}
+
+.content-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Additional styles for the auth container */
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.auth-container .amplify-authenticator {
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+form {
+  background: white;
+  padding: 2rem;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  color: red;
+}
+
+div {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
 }

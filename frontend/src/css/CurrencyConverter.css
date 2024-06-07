@@ -1,3 +1,5 @@
+/* CurrencyConverter.css */
+
 .container {
   max-width: 600px;
 }
@@ -6,6 +8,7 @@
   border-radius: 25px; /* Increase the border-radius for rounder edges */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #d7f3ff; /* Light blue background color */
+  padding: 20px; /* Add padding for better spacing inside the card */
 }
 
 label {
@@ -42,4 +45,12 @@ label {
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+}
+
+.converter-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }

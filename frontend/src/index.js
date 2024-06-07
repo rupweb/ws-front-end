@@ -7,7 +7,6 @@ import reportWebVitals from './reportWebVitals';
 import { Amplify } from 'aws-amplify';
 import awsConfig from './hooks/aws-exports';
 
-console.log(awsConfig);
 Amplify.configure(awsConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -18,3 +17,4 @@ root.render(
 );
 
 reportWebVitals();
+
