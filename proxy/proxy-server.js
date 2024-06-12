@@ -43,8 +43,8 @@ app.use(
   })
 );
 
-const httpPort = 8080;
-const httpsPort = 8443;
+const httpPort = 8081;
+const httpsPort = 8444;
 
 http.createServer(app).listen(httpPort, '0.0.0.0', () => {
   console.log(`HTTP Proxy server is running on port ${httpPort}`);

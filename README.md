@@ -20,6 +20,7 @@ To ensure start on reboot run
 See logs
 
 `pm2 logs ws-frontend --lines 100`
+`pm2 logs proxy-server --lines 100`
 
 ## backend
 
