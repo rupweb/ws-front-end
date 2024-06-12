@@ -14,7 +14,7 @@ app.use(morgan('combined'));
 app.use(
   '/backend',
   createProxyMiddleware({
-    target: 'http://localhost:3001',
+    target: 'http://localhost:8081',  // Changed target to port 8081
     changeOrigin: true,
     ws: true, // Add WebSocket support
     pathRewrite: { '^/backend': '' }, // Remove /backend prefix when forwarding to backend
@@ -44,8 +44,8 @@ app.use(
   })
 );
 
-const httpPort = 8081;
-const httpsPort = 8444;
+const httpPort = 8080;  // Keep the proxy on port 8080
+const httpsPort = 8443; // Optional HTTPS port
 
 http.createServer(app).listen(httpPort, '0.0.0.0', () => {
   console.log(`HTTP Proxy server is running on port ${httpPort}`);
