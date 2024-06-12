@@ -16,7 +16,8 @@ function App() {
       <div className="auth-container">
         <Authenticator signUpAttributes={['email']}>
           {({ signOut, user }) => (
-            <WebSocketProvider url="ws://localhost:8081/ws">
+            // <WebSocketProvider url="ws://localhost:8081/ws">
+            <WebSocketProvider url="ws://ec2-13-42-7-2.eu-west-2.compute.amazonaws.com:8081/ws">
               <Router>
                 <div className="App">
                   <Header user={user} signOut={signOut} />
