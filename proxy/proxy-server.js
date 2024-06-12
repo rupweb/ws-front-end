@@ -10,12 +10,13 @@ const app = express();
 // Use morgan for logging
 app.use(morgan('combined'));
 
-// Proxy for the backend service on EC2
+// Proxy for the backend service on EC2 with WebSocket support
 app.use(
   '/backend',
   createProxyMiddleware({
     target: 'http://localhost:3001',
     changeOrigin: true,
+    ws: true, // Add WebSocket support
     pathRewrite: { '^/backend': '' }, // Remove /backend prefix when forwarding to backend
     onProxyReq: (proxyReq, req, res) => {
       console.log(`Proxying request to: ${proxyReq.path}`);
@@ -59,5 +60,4 @@ const httpsOptions = {
 https.createServer(httpsOptions, app).listen(httpsPort, '0.0.0.0', () => {
   console.log(`HTTPS Proxy server is running on port ${httpsPort}`);
 });
-
 */
