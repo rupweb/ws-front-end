@@ -1,10 +1,9 @@
-// ExecutionReportModal.js
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
 const ExecutionReportModal = ({ show, message, onClose }) => (
   <Modal show={show} onHide={onClose}>
-    <Modal.Header closeButton>
+    <Modal.Header>
       <Modal.Title>Execution Report</Modal.Title>
     </Modal.Header>
     <Modal.Body>

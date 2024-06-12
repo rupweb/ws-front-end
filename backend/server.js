@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { broadcast } = require('./src/webSocketServer');
 
 const app = express();
 const port = 3001;
@@ -10,10 +11,13 @@ app.use(cors());
 
 let events = [];
 
+console.log(`Starting server`);
+
 app.post('/event', (req, res) => {
   const event = req.body;
   events.push(event);
   res.status(200).send('Event received');
+  broadcast(JSON.stringify(event)); // Broadcast the event via WebSocket
 });
 
 app.get('/events/:eventType', (req, res) => {
@@ -25,4 +29,3 @@ app.get('/events/:eventType', (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
-
