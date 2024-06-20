@@ -1,0 +1,26 @@
+2024-06-20 18:53:53,630 INFO b.App [main] In App main
+2024-06-20 18:55:28,550 INFO b.App [main] In App main
+2024-06-20 18:55:28,735 INFO b.AeronClient [main] Starting Aeron client.
+2024-06-20 18:55:28,736 INFO b.WebSocketServer [Thread-5] Starting WebSocket server
+2024-06-20 18:58:02,397 INFO b.App [main] In App main
+2024-06-20 18:58:02,656 INFO b.AeronClient [main] Starting Aeron client.
+2024-06-20 18:58:02,656 INFO b.WebSocketServer [Thread-5] Starting WebSocket server
+2024-06-20 19:00:38,126 INFO b.App [main] In App main
+2024-06-20 19:00:38,314 INFO b.AeronClient [main] Starting Aeron client.
+2024-06-20 19:00:38,314 INFO b.WebSocketServer [Thread-5] Starting WebSocket server
+2024-06-20 19:00:53,029 INFO b.App [main] In App main
+2024-06-20 19:00:53,221 INFO b.AeronClient [main] Starting Aeron client.
+2024-06-20 19:00:53,221 INFO b.WebSocketServer [Thread-5] Starting WebSocket server
+2024-06-20 19:01:17,051 INFO b.App [main] In App main
+2024-06-20 19:01:55,935 INFO b.App [main] In App main
+2024-06-20 19:01:56,118 INFO b.AeronClient [main] Starting Aeron client.
+2024-06-20 19:01:56,121 INFO b.WebSocketServer [Thread-5] Starting WebSocket server on port: $
+2024-06-20 19:04:40,294 INFO b.App [main] In App main
+2024-06-20 19:04:40,503 INFO b.AeronClient [main] Starting Aeron client.
+2024-06-20 19:04:40,506 INFO b.WebSocketServer [Thread-5] Starting WebSocket server on port: 8080
+2024-06-20 19:05:51,989 INFO b.App [main] In App main
+2024-06-20 19:05:52,178 INFO b.AeronClient [main] Starting Aeron client.
+2024-06-20 19:05:52,181 INFO b.WebSocketServer [Thread-5] Starting WebSocket server on port: 8090
+2024-06-20 19:09:27,430 INFO b.App [main] In App main
+2024-06-20 19:09:27,653 INFO b.AeronClient [main] Starting Aeron client.
+2024-06-20 19:09:27,656 ERROR b.WebSocketServer [Thread-5] Port 8090 is already in use. Please choose another port.

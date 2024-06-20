@@ -1,0 +1,13 @@
+{
+    "java.project.sourcePaths": [
+        "backend/app/src/main/java",
+        "backend/app/src/test/java"
+    ],
+    "java.test.config": {
+        "name": "JUnit",
+        "workingDirectory": "${workspaceFolder}"
+    },
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.format.settings.url": ".vscode/java-formatter.xml"
+}
