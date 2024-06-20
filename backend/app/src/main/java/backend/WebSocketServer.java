@@ -12,19 +12,35 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.net.ServerSocket;
 
 public class WebSocketServer {
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
+    private static final Logger logger = LogManager.getLogger(WebSocketServer.class);
     private final int port;
 
     public WebSocketServer(int port) {
         this.port = port;
     }
 
+    private boolean isPortAvailable(int port) {
+        try (ServerSocket ignored = new ServerSocket(port)) {
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     public void start() throws InterruptedException {
-        logger.info("Starting WebSocket server");
+        logger.info("Starting WebSocket server on port: {}", port);
+
+        if (!isPortAvailable(port)) {
+            logger.error("Port {} is already in use. Please choose another port.", port);
+            return;
+        }
 
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();

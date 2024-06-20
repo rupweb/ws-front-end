@@ -5,23 +5,23 @@ import io.aeron.Publication;
 import io.aeron.Subscription;
 import io.aeron.driver.MediaDriver;
 import io.aeron.logbuffer.FragmentHandler;
-import org.agrona.CloseHelper;
 import org.agrona.concurrent.BackoffIdleStrategy;
 import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SigInt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.agrona.concurrent.UnsafeBuffer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class AeronServer {
-    private static final Logger logger = LoggerFactory.getLogger(AeronServer.class);
-    private static final String CHANNEL = "aeron:udp?endpoint=localhost:40123";
+public class AeronClient {
+    private static final Logger logger = LogManager.getLogger(AeronClient.class);
+    private static final String CHANNEL = "aeron:udp?endpoint=localhost:40124";
     private static final int STREAM_ID = 1001;
 
     private final Aeron aeron;
     private final Publication publication;
     private final Subscription subscription;
 
-    public AeronServer() {
+    public AeronClient() {
         MediaDriver.Context mediaDriverCtx = new MediaDriver.Context()
             .aeronDirectoryName("/tmp/aeron-backend");
             
@@ -34,7 +34,7 @@ public class AeronServer {
     }
 
     public void start() {
-        logger.info("Starting Aeron.");
+        logger.info("Starting Aeron client.");
 
         SigInt.register(() -> {
             logger.info("Shutdown signal received.");
@@ -62,9 +62,16 @@ public class AeronServer {
         }
     }
 
+    public void sendMessage(byte[] encodedData) {
+        UnsafeBuffer buffer = new UnsafeBuffer(encodedData);
+        while (publication.offer(buffer) < 0L) {
+            // Implement back-off or error handling here
+        }
+    }
+
     public void close() {
-        CloseHelper.quietClose(publication);
-        CloseHelper.quietClose(subscription);
-        CloseHelper.quietClose(aeron);
+        publication.close();
+        subscription.close();
+        aeron.close();
     }
 }

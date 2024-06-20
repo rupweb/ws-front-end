@@ -1,18 +1,26 @@
 package backend;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 public class App {
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
+    private static final Logger log = LogManager.getLogger(App.class);
+
+    static {
+        System.out.println("Log4j2 initialized: " + LogManager.getContext(false).hasLogger(App.class.getName()));
+        System.out.println("Working Directory: " + System.getProperty("user.dir"));
+        System.out.println("Log4j2 Configuration File: " + System.getProperty("log4j.configurationFile"));
+        Configurator.initialize(null, System.getProperty("log4j.configurationFile"));
+    }
 
     public static void main(String[] args) throws InterruptedException {
-        logger.info("In App main");
+        log.info("In App main");
 
-        int webSocketPort = 8081; // Default WebSocket port
+        int webSocketPort = 8090; // Default WebSocket port
 
         WebSocketServer webSocketServer = new WebSocketServer(webSocketPort);
-        AeronServer aeronServer = new AeronServer();
+        AeronClient aeronClient = new AeronClient();
 
         // Start WebSocket server in a new thread
         new Thread(() -> {
@@ -23,9 +31,9 @@ public class App {
             }
         }).start();
 
-        // Start Aeron server
-        aeronServer.start();
+        // Start Aeron client
+        aeronClient.start();
 
-        logger.info("Out App main");
+        log.info("Out App main");
     }
 }

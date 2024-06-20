@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "backend.App",
+            "projectName": "ws-backend",
+            "cwd": "${workspaceFolder}/backend",
+            "vmArgs": "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-exports=java.base/sun.nio.ch=ALL-UNNAMED -Dlog4j.configurationFile=${workspaceFolder}/app/src/main/resources/log4j2.xml"
+        }
+    ]
+  }
+  
