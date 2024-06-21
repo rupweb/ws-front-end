@@ -4,13 +4,13 @@
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="2" value="FX Widget" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="2" value="FX Widget" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
                     <mxGeometry x="100" y="70" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="35" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="3" target="20" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="Node&lt;br&gt;server" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="3" value="Node&lt;br&gt;server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
                     <mxGeometry x="330" y="70" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="6" value="" style="endArrow=classic;startArrow=classic;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="2" target="3" edge="1">
@@ -40,7 +40,7 @@
                     <mxGeometry y="120" width="110" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="16" value="KYC &lt;br&gt;Onboarding UI&lt;br&gt;AWS Cognito" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="30" y="540" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="20" y="520" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="" style="endArrow=classic;startArrow=classic;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=1;exitY=1;exitDx=0;exitDy=0;" parent="1" source="2" target="20" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -56,8 +56,8 @@
                 <mxCell id="28" style="edgeStyle=none;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="20" target="13" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="20" value="Aeron" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="310" y="230" width="130" height="80" as="geometry"/>
+                <mxCell id="20" value="Aeron" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2D7600;fillColor=#60a917;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="220" width="110" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="21" value="KYC DB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
                     <mxGeometry x="40" y="350" width="60" height="80" as="geometry"/>
@@ -74,7 +74,7 @@
                         <mxPoint x="97.01999999999998" y="319.03999999999996" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="27" value="Monitor" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="27" value="&lt;font color=&quot;#f0f0f0&quot;&gt;Monitor&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
                     <mxGeometry x="670" y="342.5" width="120" height="95" as="geometry"/>
                 </mxCell>
                 <mxCell id="29" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="13" target="27" edge="1">
@@ -109,10 +109,10 @@
                 <mxCell id="38" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="14" target="36" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="39" value="FIX initiator" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="39" value="FIX initiator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
                     <mxGeometry x="490" y="210" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="40" value="FIX acceptor" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="40" value="FIX acceptor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
                     <mxGeometry x="660" y="210" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="43" value="" style="endArrow=classic;startArrow=classic;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="40" target="39" edge="1">
@@ -121,7 +121,7 @@
                         <mxPoint x="110" y="412.5" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="44" value="" style="endArrow=classic;startArrow=classic;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="39" edge="1">
+                <mxCell id="44" value="" style="endArrow=classic;startArrow=classic;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="39" edge="1" target="20">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="100" y="550" as="sourcePoint"/>
                         <mxPoint x="440" y="250" as="targetPoint"/>
@@ -167,7 +167,7 @@
                     <mxGeometry x="210" y="610" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="60" value="SWIFT&lt;br&gt;or&amp;nbsp;&lt;br&gt;BANK" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="30" y="830" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="30" y="785" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="70" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="62" target="69" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -181,10 +181,10 @@
                 <mxCell id="67" style="edgeStyle=none;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="64" target="66" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="64" value="Aeron" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="230" y="840" width="130" height="80" as="geometry"/>
+                <mxCell id="64" value="Aeron" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
+                    <mxGeometry x="240" y="800" width="100" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="66" value="Monitor" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="66" value="Monitor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
                     <mxGeometry x="460" y="690" width="120" height="95" as="geometry"/>
                 </mxCell>
                 <mxCell id="68" value="" style="endArrow=classic;startArrow=classic;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="64" target="60" edge="1">

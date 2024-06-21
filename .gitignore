@@ -15,6 +15,7 @@
 /frontend/build
 /backend/build
 /backend/messages
+/logs
 
 # misc
 .DS_Store
