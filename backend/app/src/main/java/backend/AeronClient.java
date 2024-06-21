@@ -14,29 +14,31 @@ import org.apache.logging.log4j.Logger;
 
 public class AeronClient {
     private static final Logger log = LogManager.getLogger(AeronClient.class);
-    private static final String SERVER_TO_CLIENT_CHANNEL = "aeron:udp?endpoint=localhost:40123";
-    private static final String CLIENT_TO_SERVER_CHANNEL = "aeron:udp?endpoint=localhost:40124";
-    private static final int STREAM_ID = 1001;
+    private static final String BACKEND_TO_FIX_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40135";
+    private static final String FIX_TO_BACKEND_CHANNEL = "aeron:udp?endpoint=224.0.1.3:40136";
+    private static final int STREAM_ID_BACKEND_FIX = 1002;
+    private static final int STREAM_ID_FIX_BACKEND = 1003;
 
     private final Aeron aeron;
-    private final Publication clientToServerPublication;
-    private final Subscription serverToClientSubscription;
+    private final Publication backendToFixPublication;
+    private final Subscription fixToBackendSubscription;
 
     public AeronClient() {
         log.info("In AeronClient");
 
         MediaDriver.Context mediaDriverCtx = new MediaDriver.Context()
-            .aeronDirectoryName("/tmp/aeron-initiator");
+            .aeronDirectoryName("/tmp/aeron-backend")
+            .dirDeleteOnStart(true);
 
         MediaDriver mediaDriver = MediaDriver.launch(mediaDriverCtx);
         Aeron.Context ctx = new Aeron.Context().aeronDirectoryName(mediaDriver.aeronDirectoryName());
         aeron = Aeron.connect(ctx);
 
-        clientToServerPublication = aeron.addPublication(CLIENT_TO_SERVER_CHANNEL, STREAM_ID);
-        serverToClientSubscription = aeron.addSubscription(SERVER_TO_CLIENT_CHANNEL, STREAM_ID);
+        backendToFixPublication = aeron.addPublication(BACKEND_TO_FIX_CHANNEL, STREAM_ID_BACKEND_FIX);
+        fixToBackendSubscription = aeron.addSubscription(FIX_TO_BACKEND_CHANNEL, STREAM_ID_FIX_BACKEND);
 
-        log.info("Client to Server Publication setup: channel={}, port={}, streamId={}", CLIENT_TO_SERVER_CHANNEL, getPort(CLIENT_TO_SERVER_CHANNEL), STREAM_ID);
-        log.info("Server to Client Subscription setup: channel={}, port={}, streamId={}", SERVER_TO_CLIENT_CHANNEL, getPort(SERVER_TO_CLIENT_CHANNEL), STREAM_ID);
+        log.info("Backend to Fix Publication setup: channel={}, port={}, streamId={}", BACKEND_TO_FIX_CHANNEL, getPort(BACKEND_TO_FIX_CHANNEL), STREAM_ID_BACKEND_FIX);
+        log.info("Fix to Backend Subscription setup: channel={}, port={}, streamId={}", FIX_TO_BACKEND_CHANNEL, getPort(FIX_TO_BACKEND_CHANNEL), STREAM_ID_FIX_BACKEND);
     }
 
     private String getPort(String channel) {
@@ -60,7 +62,7 @@ public class AeronClient {
         };
 
         // Send a test message
-        sendTestMessage("Hello from AeronClient!");    
+        sendTestMessage("Hello from backend!");
 
         listen(fragmentHandler);
 
@@ -73,15 +75,15 @@ public class AeronClient {
         log.info("In listen");
         final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 1, 1);
         while (true) {
-            final int fragments = serverToClientSubscription.poll(fragmentHandler, 10);
+            final int fragments = fixToBackendSubscription.poll(fragmentHandler, 10);
             idleStrategy.idle(fragments);
         }
     }
 
-    public void sendMessage(byte[] encodedData) {
-        log.info("In sendMessage");
+    public void sendMessageToFix(byte[] encodedData) {
+        log.info("In sendMessageToFix");
         UnsafeBuffer buffer = new UnsafeBuffer(encodedData);
-        while (clientToServerPublication.offer(buffer) < 0L) {
+        while (backendToFixPublication.offer(buffer) < 0L) {
             // Implement back-off or error handling here
         }
     }
@@ -89,13 +91,13 @@ public class AeronClient {
     public void sendTestMessage(String message) {
         byte[] encodedData = message.getBytes();
         log.info("Sending test message: {}", message);
-        sendMessage(encodedData);
+        sendMessageToFix(encodedData);
     }
 
     public void close() {
         log.info("In close");
-        clientToServerPublication.close();
-        serverToClientSubscription.close();
+        backendToFixPublication.close();
+        fixToBackendSubscription.close();
         aeron.close();
         log.info("Out close");
     }
