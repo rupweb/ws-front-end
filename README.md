@@ -36,6 +36,11 @@ PS G:\WS\ws-front-end\backend> npm start
 
 Server running on <http://localhost:3001>
 
+## tests
+
+The jest is configured using jest.config.js to look for tests in the tests directory.
+Run the tests using `npm run jest-test` or `npm run jest-test tests/App.test.js`
+
 ## DNS changes
 
 At Route 53:
