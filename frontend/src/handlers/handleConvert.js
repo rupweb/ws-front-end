@@ -1,7 +1,8 @@
-// Import necessary Java classes using GraalVM's Polyglot API
-const Java = Polyglot.import('java');
-const encodeQuoteRequest = Polyglot.import('encodeQuoteRequest');
 import { generateUUID } from '../utils/utils';
+
+/* eslint-disable no-undef */
+const encodeQuoteRequest = Polyglot.import('encodeQuoteRequest');
+/* eslint-enable no-undef */
 
 const handleConvert = async ({
   kycStatus,

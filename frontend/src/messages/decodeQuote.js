@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // Import necessary Java classes using GraalVM's Polyglot API
 const Java = Polyglot.import('java');
 
@@ -5,6 +6,7 @@ const Java = Polyglot.import('java');
 const QuoteDecoder = Java.type('agrona.QuoteDecoder');
 const MessageHeaderDecoder = Java.type('agrona.MessageHeaderDecoder');
 const UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
+/* eslint-enable no-undef */
 
 // Function to decode a Quote message
 function decodeQuote(encodedMessage) {
@@ -36,4 +38,6 @@ function decodeQuote(encodedMessage) {
 }
 
 // Expose the function to JavaScript
+/* eslint-disable no-undef */
 Polyglot.export('decodeQuote', decodeQuote);
+/* eslint-enable no-undef */

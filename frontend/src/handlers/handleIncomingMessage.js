@@ -1,12 +1,13 @@
 import { MessageHeaderDecoder } from '../messages/MessageHeaderDecoder';
-import { UnsafeBuffer } from 'org.agrona.concurrent.UnsafeBuffer';
 import { decodeQuote } from '../messages/decodeQuote';
 import { decodeExecutionReport } from '../messages/decodeExecutionReport';
 
 const handleIncomingMessage = (data) => {
+    // Create a buffer from the incoming data
+    const buffer = Buffer.from(data);
+
     // Decode the header to determine the message type
     const headerDecoder = new MessageHeaderDecoder();
-    const buffer = new UnsafeBuffer(data);
     headerDecoder.wrap(buffer, 0);
 
     const templateId = headerDecoder.templateId();
@@ -14,11 +15,11 @@ const handleIncomingMessage = (data) => {
     let decodedMessage;
     switch (templateId) {
         case 2: // ExecutionReport
-        decodedMessage = decodeExecutionReport(data);
-        console.log('Decoded ExecutionReport message:', decodedMessage);
-        break;
+            decodedMessage = decodeExecutionReport(buffer);
+            console.log('Decoded ExecutionReport message:', decodedMessage);
+            break;
         case 4: // Quote
-            decodedMessage = decodeQuote(data);
+            decodedMessage = decodeQuote(buffer);
             console.log('Decoded Quote message:', decodedMessage);
             break;
         // Add cases for other message types

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // Import necessary Java classes using GraalVM's Polyglot API
 const Java = Polyglot.import('java');
 
@@ -5,6 +6,7 @@ const Java = Polyglot.import('java');
 const ExecutionReportDecoder = Java.type('agrona.ExecutionReportDecoder');
 const MessageHeaderDecoder = Java.type('agrona.MessageHeaderDecoder');
 const UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
+/* eslint-enable no-undef */
 
 // Function to decode an ExecutionReport message
 function decodeExecutionReport(encodedMessage) {
@@ -44,4 +46,6 @@ function decodeExecutionReport(encodedMessage) {
 }
 
 // Expose the function to JavaScript
+/* eslint-disable no-undef */
 Polyglot.export('decodeExecutionReport', decodeExecutionReport);
+/* eslint-enable no-undef */

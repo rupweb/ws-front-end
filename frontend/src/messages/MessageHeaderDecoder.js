@@ -1,6 +1,7 @@
+/* eslint-disable no-undef */
 const Java = Polyglot.import('java');
-const DirectBuffer = Java.type('org.agrona.DirectBuffer');
 const ByteOrder = Java.type('java.nio.ByteOrder').LITTLE_ENDIAN;
+/* eslint-enable no-undef */
 
 class MessageHeaderDecoder {
     static ENCODED_LENGTH = 8;
@@ -34,4 +35,6 @@ class MessageHeaderDecoder {
 }
 
 // Expose the class to JavaScript
+/* eslint-disable no-undef */
 Polyglot.export('MessageHeaderDecoder', MessageHeaderDecoder);
+/* eslint-enable no-undef */
