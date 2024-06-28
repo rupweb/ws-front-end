@@ -19,8 +19,8 @@
 /backend/build
 /backend/logs
 /backend/messages
+/tests/logs
 /logs
-logs
 
 # tests
 /tests/build
