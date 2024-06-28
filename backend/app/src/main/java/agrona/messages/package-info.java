@@ -2,4 +2,4 @@
 /**
  * null
  */
-package agrona;
+package agrona.messages;

@@ -95,3 +95,8 @@ test {
 allprojects {
     task printAllDependencies(type: DependencyReportTask) {}
 }
+
+task createJar(type: Jar) {
+    archiveBaseName = 'backend-classes'
+    from sourceSets.main.output
+}

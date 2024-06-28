@@ -1,9 +1,9 @@
 package backend;
 
-import agrona.DealRequestEncoder;
-import agrona.QuoteRequestEncoder;
-import agrona.DealRequestDecoder;
-import agrona.QuoteRequestDecoder;
+import agrona.messages.DealRequestEncoder;
+import agrona.messages.QuoteRequestEncoder;
+import agrona.messages.DealRequestDecoder;
+import agrona.messages.QuoteRequestDecoder;
 import io.aeron.Publication;
 import io.aeron.Subscription;
 import io.aeron.logbuffer.FragmentHandler;

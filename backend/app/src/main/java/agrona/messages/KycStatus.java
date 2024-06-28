@@ -1,5 +1,5 @@
 /* Generated SBE (Simple Binary Encoding) message codec. */
-package agrona;
+package agrona.messages;
 
 @SuppressWarnings("all")
 public enum KycStatus

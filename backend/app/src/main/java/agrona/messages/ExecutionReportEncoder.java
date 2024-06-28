@@ -1,23 +1,23 @@
 /* Generated SBE (Simple Binary Encoding) message codec. */
-package agrona;
+package agrona.messages;
 
 import org.agrona.MutableDirectBuffer;
 
 
 /**
- * Deal Request message
+ * Execution Report message
  */
 @SuppressWarnings("all")
-public final class DealRequestEncoder
+public final class ExecutionReportEncoder
 {
-    public static final int BLOCK_LENGTH = 212;
-    public static final int TEMPLATE_ID = 1;
+    public static final int BLOCK_LENGTH = 290;
+    public static final int TEMPLATE_ID = 2;
     public static final int SCHEMA_ID = 1;
     public static final int SCHEMA_VERSION = 1;
     public static final String SEMANTIC_VERSION = "";
     public static final java.nio.ByteOrder BYTE_ORDER = java.nio.ByteOrder.LITTLE_ENDIAN;
 
-    private final DealRequestEncoder parentMessage = this;
+    private final ExecutionReportEncoder parentMessage = this;
     private MutableDirectBuffer buffer;
     private int offset;
     private int limit;
@@ -57,7 +57,7 @@ public final class DealRequestEncoder
         return offset;
     }
 
-    public DealRequestEncoder wrap(final MutableDirectBuffer buffer, final int offset)
+    public ExecutionReportEncoder wrap(final MutableDirectBuffer buffer, final int offset)
     {
         if (buffer != this.buffer)
         {
@@ -69,7 +69,7 @@ public final class DealRequestEncoder
         return this;
     }
 
-    public DealRequestEncoder wrapAndApplyHeader(
+    public ExecutionReportEncoder wrapAndApplyHeader(
         final MutableDirectBuffer buffer, final int offset, final MessageHeaderEncoder headerEncoder)
     {
         headerEncoder
@@ -173,9 +173,9 @@ public final class DealRequestEncoder
     private final DecimalEncoder amount = new DecimalEncoder();
 
     /**
-     * The deal amount
+     * The amount
      *
-     * @return DecimalEncoder : The deal amount
+     * @return DecimalEncoder : The amount
      */
     public DecimalEncoder amount()
     {
@@ -234,7 +234,7 @@ public final class DealRequestEncoder
     }
 
 
-    public DealRequestEncoder currency(final int index, final byte value)
+    public ExecutionReportEncoder currency(final int index, final byte value)
     {
         if (index < 0 || index >= 3)
         {
@@ -246,7 +246,7 @@ public final class DealRequestEncoder
 
         return this;
     }
-    public DealRequestEncoder putCurrency(final byte value0, final byte value1, final byte value2)
+    public ExecutionReportEncoder putCurrency(final byte value0, final byte value1, final byte value2)
     {
         buffer.putByte(offset + 17, value0);
         buffer.putByte(offset + 18, value1);
@@ -260,7 +260,7 @@ public final class DealRequestEncoder
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putCurrency(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putCurrency(final byte[] src, final int srcOffset)
     {
         final int length = 3;
         if (srcOffset < 0 || srcOffset > (src.length - length))
@@ -273,7 +273,7 @@ public final class DealRequestEncoder
         return this;
     }
 
-    public DealRequestEncoder currency(final String src)
+    public ExecutionReportEncoder currency(final String src)
     {
         final int length = 3;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -292,9 +292,161 @@ public final class DealRequestEncoder
         return this;
     }
 
-    public static int sideId()
+    public static int secondaryAmountId()
     {
         return 3;
+    }
+
+    public static int secondaryAmountSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int secondaryAmountEncodingOffset()
+    {
+        return 20;
+    }
+
+    public static int secondaryAmountEncodingLength()
+    {
+        return 9;
+    }
+
+    public static String secondaryAmountMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    private final DecimalEncoder secondaryAmount = new DecimalEncoder();
+
+    /**
+     * The secondary amount
+     *
+     * @return DecimalEncoder : The secondary amount
+     */
+    public DecimalEncoder secondaryAmount()
+    {
+        secondaryAmount.wrap(buffer, offset + 20);
+        return secondaryAmount;
+    }
+
+    public static int secondaryCurrencyId()
+    {
+        return 4;
+    }
+
+    public static int secondaryCurrencySinceVersion()
+    {
+        return 0;
+    }
+
+    public static int secondaryCurrencyEncodingOffset()
+    {
+        return 29;
+    }
+
+    public static int secondaryCurrencyEncodingLength()
+    {
+        return 3;
+    }
+
+    public static String secondaryCurrencyMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    public static byte secondaryCurrencyNullValue()
+    {
+        return (byte)0;
+    }
+
+    public static byte secondaryCurrencyMinValue()
+    {
+        return (byte)32;
+    }
+
+    public static byte secondaryCurrencyMaxValue()
+    {
+        return (byte)126;
+    }
+
+    public static int secondaryCurrencyLength()
+    {
+        return 3;
+    }
+
+
+    public ExecutionReportEncoder secondaryCurrency(final int index, final byte value)
+    {
+        if (index < 0 || index >= 3)
+        {
+            throw new IndexOutOfBoundsException("index out of range: index=" + index);
+        }
+
+        final int pos = offset + 29 + (index * 1);
+        buffer.putByte(pos, value);
+
+        return this;
+    }
+    public ExecutionReportEncoder putSecondaryCurrency(final byte value0, final byte value1, final byte value2)
+    {
+        buffer.putByte(offset + 29, value0);
+        buffer.putByte(offset + 30, value1);
+        buffer.putByte(offset + 31, value2);
+
+        return this;
+    }
+
+    public static String secondaryCurrencyCharacterEncoding()
+    {
+        return java.nio.charset.StandardCharsets.UTF_8.name();
+    }
+
+    public ExecutionReportEncoder putSecondaryCurrency(final byte[] src, final int srcOffset)
+    {
+        final int length = 3;
+        if (srcOffset < 0 || srcOffset > (src.length - length))
+        {
+            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
+        }
+
+        buffer.putBytes(offset + 29, src, srcOffset, length);
+
+        return this;
+    }
+
+    public ExecutionReportEncoder secondaryCurrency(final String src)
+    {
+        final int length = 3;
+        final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        if (bytes.length > length)
+        {
+            throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
+        }
+
+        buffer.putBytes(offset + 29, bytes, 0, bytes.length);
+
+        for (int start = bytes.length; start < length; ++start)
+        {
+            buffer.putByte(offset + 29 + start, (byte)0);
+        }
+
+        return this;
+    }
+
+    public static int sideId()
+    {
+        return 5;
     }
 
     public static int sideSinceVersion()
@@ -304,7 +456,7 @@ public final class DealRequestEncoder
 
     public static int sideEncodingOffset()
     {
-        return 20;
+        return 32;
     }
 
     public static int sideEncodingLength()
@@ -343,24 +495,24 @@ public final class DealRequestEncoder
     }
 
 
-    public DealRequestEncoder side(final int index, final byte value)
+    public ExecutionReportEncoder side(final int index, final byte value)
     {
         if (index < 0 || index >= 4)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 20 + (index * 1);
+        final int pos = offset + 32 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
     }
-    public DealRequestEncoder putSide(final byte value0, final byte value1, final byte value2, final byte value3)
+    public ExecutionReportEncoder putSide(final byte value0, final byte value1, final byte value2, final byte value3)
     {
-        buffer.putByte(offset + 20, value0);
-        buffer.putByte(offset + 21, value1);
-        buffer.putByte(offset + 22, value2);
-        buffer.putByte(offset + 23, value3);
+        buffer.putByte(offset + 32, value0);
+        buffer.putByte(offset + 33, value1);
+        buffer.putByte(offset + 34, value2);
+        buffer.putByte(offset + 35, value3);
 
         return this;
     }
@@ -370,7 +522,7 @@ public final class DealRequestEncoder
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putSide(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putSide(final byte[] src, final int srcOffset)
     {
         final int length = 4;
         if (srcOffset < 0 || srcOffset > (src.length - length))
@@ -378,12 +530,12 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 20, src, srcOffset, length);
+        buffer.putBytes(offset + 32, src, srcOffset, length);
 
         return this;
     }
 
-    public DealRequestEncoder side(final String src)
+    public ExecutionReportEncoder side(final String src)
     {
         final int length = 4;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -392,11 +544,11 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 20, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 32, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 20 + start, (byte)0);
+            buffer.putByte(offset + 32 + start, (byte)0);
         }
 
         return this;
@@ -404,7 +556,7 @@ public final class DealRequestEncoder
 
     public static int symbolId()
     {
-        return 4;
+        return 6;
     }
 
     public static int symbolSinceVersion()
@@ -414,7 +566,7 @@ public final class DealRequestEncoder
 
     public static int symbolEncodingOffset()
     {
-        return 24;
+        return 36;
     }
 
     public static int symbolEncodingLength()
@@ -453,14 +605,14 @@ public final class DealRequestEncoder
     }
 
 
-    public DealRequestEncoder symbol(final int index, final byte value)
+    public ExecutionReportEncoder symbol(final int index, final byte value)
     {
         if (index < 0 || index >= 6)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 24 + (index * 1);
+        final int pos = offset + 36 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -471,7 +623,7 @@ public final class DealRequestEncoder
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putSymbol(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putSymbol(final byte[] src, final int srcOffset)
     {
         final int length = 6;
         if (srcOffset < 0 || srcOffset > (src.length - length))
@@ -479,12 +631,12 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 24, src, srcOffset, length);
+        buffer.putBytes(offset + 36, src, srcOffset, length);
 
         return this;
     }
 
-    public DealRequestEncoder symbol(final String src)
+    public ExecutionReportEncoder symbol(final String src)
     {
         final int length = 6;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -493,11 +645,11 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 24, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 36, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 24 + start, (byte)0);
+            buffer.putByte(offset + 36 + start, (byte)0);
         }
 
         return this;
@@ -505,7 +657,7 @@ public final class DealRequestEncoder
 
     public static int deliveryDateId()
     {
-        return 5;
+        return 7;
     }
 
     public static int deliveryDateSinceVersion()
@@ -515,7 +667,7 @@ public final class DealRequestEncoder
 
     public static int deliveryDateEncodingOffset()
     {
-        return 30;
+        return 42;
     }
 
     public static int deliveryDateEncodingLength()
@@ -554,14 +706,14 @@ public final class DealRequestEncoder
     }
 
 
-    public DealRequestEncoder deliveryDate(final int index, final byte value)
+    public ExecutionReportEncoder deliveryDate(final int index, final byte value)
     {
         if (index < 0 || index >= 10)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 30 + (index * 1);
+        final int pos = offset + 42 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -572,7 +724,7 @@ public final class DealRequestEncoder
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putDeliveryDate(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putDeliveryDate(final byte[] src, final int srcOffset)
     {
         final int length = 10;
         if (srcOffset < 0 || srcOffset > (src.length - length))
@@ -580,12 +732,12 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 30, src, srcOffset, length);
+        buffer.putBytes(offset + 42, src, srcOffset, length);
 
         return this;
     }
 
-    public DealRequestEncoder deliveryDate(final String src)
+    public ExecutionReportEncoder deliveryDate(final String src)
     {
         final int length = 10;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -594,11 +746,11 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 30, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 42, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 30 + start, (byte)0);
+            buffer.putByte(offset + 42 + start, (byte)0);
         }
 
         return this;
@@ -606,7 +758,7 @@ public final class DealRequestEncoder
 
     public static int transactTimeId()
     {
-        return 6;
+        return 8;
     }
 
     public static int transactTimeSinceVersion()
@@ -616,12 +768,12 @@ public final class DealRequestEncoder
 
     public static int transactTimeEncodingOffset()
     {
-        return 40;
+        return 52;
     }
 
     public static int transactTimeEncodingLength()
     {
-        return 19;
+        return 21;
     }
 
     public static String transactTimeMetaAttribute(final MetaAttribute metaAttribute)
@@ -651,18 +803,18 @@ public final class DealRequestEncoder
 
     public static int transactTimeLength()
     {
-        return 19;
+        return 21;
     }
 
 
-    public DealRequestEncoder transactTime(final int index, final byte value)
+    public ExecutionReportEncoder transactTime(final int index, final byte value)
     {
-        if (index < 0 || index >= 19)
+        if (index < 0 || index >= 21)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 40 + (index * 1);
+        final int pos = offset + 52 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -673,33 +825,33 @@ public final class DealRequestEncoder
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putTransactTime(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putTransactTime(final byte[] src, final int srcOffset)
     {
-        final int length = 19;
+        final int length = 21;
         if (srcOffset < 0 || srcOffset > (src.length - length))
         {
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 40, src, srcOffset, length);
+        buffer.putBytes(offset + 52, src, srcOffset, length);
 
         return this;
     }
 
-    public DealRequestEncoder transactTime(final String src)
+    public ExecutionReportEncoder transactTime(final String src)
     {
-        final int length = 19;
+        final int length = 21;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         if (bytes.length > length)
         {
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 40, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 52, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 40 + start, (byte)0);
+            buffer.putByte(offset + 52 + start, (byte)0);
         }
 
         return this;
@@ -707,7 +859,7 @@ public final class DealRequestEncoder
 
     public static int quoteRequestIDId()
     {
-        return 7;
+        return 9;
     }
 
     public static int quoteRequestIDSinceVersion()
@@ -717,7 +869,7 @@ public final class DealRequestEncoder
 
     public static int quoteRequestIDEncodingOffset()
     {
-        return 59;
+        return 73;
     }
 
     public static int quoteRequestIDEncodingLength()
@@ -756,14 +908,14 @@ public final class DealRequestEncoder
     }
 
 
-    public DealRequestEncoder quoteRequestID(final int index, final byte value)
+    public ExecutionReportEncoder quoteRequestID(final int index, final byte value)
     {
         if (index < 0 || index >= 36)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 59 + (index * 1);
+        final int pos = offset + 73 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -774,7 +926,7 @@ public final class DealRequestEncoder
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putQuoteRequestID(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putQuoteRequestID(final byte[] src, final int srcOffset)
     {
         final int length = 36;
         if (srcOffset < 0 || srcOffset > (src.length - length))
@@ -782,12 +934,12 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 59, src, srcOffset, length);
+        buffer.putBytes(offset + 73, src, srcOffset, length);
 
         return this;
     }
 
-    public DealRequestEncoder quoteRequestID(final String src)
+    public ExecutionReportEncoder quoteRequestID(final String src)
     {
         final int length = 36;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -796,11 +948,11 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 59, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 73, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 59 + start, (byte)0);
+            buffer.putByte(offset + 73 + start, (byte)0);
         }
 
         return this;
@@ -808,7 +960,7 @@ public final class DealRequestEncoder
 
     public static int quoteIDId()
     {
-        return 8;
+        return 10;
     }
 
     public static int quoteIDSinceVersion()
@@ -818,7 +970,7 @@ public final class DealRequestEncoder
 
     public static int quoteIDEncodingOffset()
     {
-        return 95;
+        return 109;
     }
 
     public static int quoteIDEncodingLength()
@@ -857,14 +1009,14 @@ public final class DealRequestEncoder
     }
 
 
-    public DealRequestEncoder quoteID(final int index, final byte value)
+    public ExecutionReportEncoder quoteID(final int index, final byte value)
     {
         if (index < 0 || index >= 36)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 95 + (index * 1);
+        final int pos = offset + 109 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -875,7 +1027,7 @@ public final class DealRequestEncoder
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putQuoteID(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putQuoteID(final byte[] src, final int srcOffset)
     {
         final int length = 36;
         if (srcOffset < 0 || srcOffset > (src.length - length))
@@ -883,12 +1035,12 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 95, src, srcOffset, length);
+        buffer.putBytes(offset + 109, src, srcOffset, length);
 
         return this;
     }
 
-    public DealRequestEncoder quoteID(final String src)
+    public ExecutionReportEncoder quoteID(final String src)
     {
         final int length = 36;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -897,11 +1049,11 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 95, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 109, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 95 + start, (byte)0);
+            buffer.putByte(offset + 109 + start, (byte)0);
         }
 
         return this;
@@ -909,7 +1061,7 @@ public final class DealRequestEncoder
 
     public static int dealRequestIDId()
     {
-        return 9;
+        return 11;
     }
 
     public static int dealRequestIDSinceVersion()
@@ -919,7 +1071,7 @@ public final class DealRequestEncoder
 
     public static int dealRequestIDEncodingOffset()
     {
-        return 131;
+        return 145;
     }
 
     public static int dealRequestIDEncodingLength()
@@ -958,14 +1110,14 @@ public final class DealRequestEncoder
     }
 
 
-    public DealRequestEncoder dealRequestID(final int index, final byte value)
+    public ExecutionReportEncoder dealRequestID(final int index, final byte value)
     {
         if (index < 0 || index >= 36)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 131 + (index * 1);
+        final int pos = offset + 145 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -976,7 +1128,7 @@ public final class DealRequestEncoder
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putDealRequestID(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putDealRequestID(final byte[] src, final int srcOffset)
     {
         final int length = 36;
         if (srcOffset < 0 || srcOffset > (src.length - length))
@@ -984,12 +1136,12 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 131, src, srcOffset, length);
+        buffer.putBytes(offset + 145, src, srcOffset, length);
 
         return this;
     }
 
-    public DealRequestEncoder dealRequestID(final String src)
+    public ExecutionReportEncoder dealRequestID(final String src)
     {
         final int length = 36;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -998,37 +1150,37 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 131, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 145, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 131 + start, (byte)0);
+            buffer.putByte(offset + 145 + start, (byte)0);
         }
 
         return this;
     }
 
-    public static int ticketRefId()
+    public static int dealIDId()
     {
-        return 10;
+        return 12;
     }
 
-    public static int ticketRefSinceVersion()
+    public static int dealIDSinceVersion()
     {
         return 0;
     }
 
-    public static int ticketRefEncodingOffset()
+    public static int dealIDEncodingOffset()
     {
-        return 167;
+        return 181;
     }
 
-    public static int ticketRefEncodingLength()
+    public static int dealIDEncodingLength()
     {
         return 36;
     }
 
-    public static String ticketRefMetaAttribute(final MetaAttribute metaAttribute)
+    public static String dealIDMetaAttribute(final MetaAttribute metaAttribute)
     {
         if (MetaAttribute.PRESENCE == metaAttribute)
         {
@@ -1038,46 +1190,46 @@ public final class DealRequestEncoder
         return "";
     }
 
-    public static byte ticketRefNullValue()
+    public static byte dealIDNullValue()
     {
         return (byte)0;
     }
 
-    public static byte ticketRefMinValue()
+    public static byte dealIDMinValue()
     {
         return (byte)32;
     }
 
-    public static byte ticketRefMaxValue()
+    public static byte dealIDMaxValue()
     {
         return (byte)126;
     }
 
-    public static int ticketRefLength()
+    public static int dealIDLength()
     {
         return 36;
     }
 
 
-    public DealRequestEncoder ticketRef(final int index, final byte value)
+    public ExecutionReportEncoder dealID(final int index, final byte value)
     {
         if (index < 0 || index >= 36)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 167 + (index * 1);
+        final int pos = offset + 181 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
     }
 
-    public static String ticketRefCharacterEncoding()
+    public static String dealIDCharacterEncoding()
     {
         return java.nio.charset.StandardCharsets.UTF_8.name();
     }
 
-    public DealRequestEncoder putTicketRef(final byte[] src, final int srcOffset)
+    public ExecutionReportEncoder putDealID(final byte[] src, final int srcOffset)
     {
         final int length = 36;
         if (srcOffset < 0 || srcOffset > (src.length - length))
@@ -1085,12 +1237,12 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 167, src, srcOffset, length);
+        buffer.putBytes(offset + 181, src, srcOffset, length);
 
         return this;
     }
 
-    public DealRequestEncoder ticketRef(final String src)
+    public ExecutionReportEncoder dealID(final String src)
     {
         final int length = 36;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -1099,11 +1251,11 @@ public final class DealRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 167, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 181, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 167 + start, (byte)0);
+            buffer.putByte(offset + 181 + start, (byte)0);
         }
 
         return this;
@@ -1111,7 +1263,7 @@ public final class DealRequestEncoder
 
     public static int fxRateId()
     {
-        return 11;
+        return 13;
     }
 
     public static int fxRateSinceVersion()
@@ -1121,7 +1273,7 @@ public final class DealRequestEncoder
 
     public static int fxRateEncodingOffset()
     {
-        return 203;
+        return 217;
     }
 
     public static int fxRateEncodingLength()
@@ -1148,7 +1300,7 @@ public final class DealRequestEncoder
      */
     public DecimalEncoder fxRate()
     {
-        fxRate.wrap(buffer, offset + 203);
+        fxRate.wrap(buffer, offset + 217);
         return fxRate;
     }
 
@@ -1169,7 +1321,7 @@ public final class DealRequestEncoder
             return builder;
         }
 
-        final DealRequestDecoder decoder = new DealRequestDecoder();
+        final ExecutionReportDecoder decoder = new ExecutionReportDecoder();
         decoder.wrap(buffer, offset, BLOCK_LENGTH, SCHEMA_VERSION);
 
         return decoder.appendTo(builder);

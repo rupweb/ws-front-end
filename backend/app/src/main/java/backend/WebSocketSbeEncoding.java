@@ -1,9 +1,9 @@
 package backend;
 
-import agrona.DealRequestEncoder;
-import agrona.ExecutionReportEncoder;
-import agrona.QuoteEncoder;
-import agrona.QuoteRequestEncoder;
+import agrona.messages.DealRequestEncoder;
+import agrona.messages.ExecutionReportEncoder;
+import agrona.messages.QuoteEncoder;
+import agrona.messages.QuoteRequestEncoder;
 import org.agrona.concurrent.UnsafeBuffer;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;

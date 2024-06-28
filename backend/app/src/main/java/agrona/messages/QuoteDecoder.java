@@ -1,5 +1,5 @@
 /* Generated SBE (Simple Binary Encoding) message codec. */
-package agrona;
+package agrona.messages;
 
 import org.agrona.DirectBuffer;
 
@@ -10,7 +10,7 @@ import org.agrona.DirectBuffer;
 @SuppressWarnings("all")
 public final class QuoteDecoder
 {
-    public static final int BLOCK_LENGTH = 192;
+    public static final int BLOCK_LENGTH = 194;
     public static final int TEMPLATE_ID = 4;
     public static final int SCHEMA_ID = 1;
     public static final int SCHEMA_VERSION = 1;
@@ -372,7 +372,7 @@ public final class QuoteDecoder
 
     public static int transactTimeEncodingLength()
     {
-        return 19;
+        return 21;
     }
 
     public static String transactTimeMetaAttribute(final MetaAttribute metaAttribute)
@@ -402,13 +402,13 @@ public final class QuoteDecoder
 
     public static int transactTimeLength()
     {
-        return 19;
+        return 21;
     }
 
 
     public byte transactTime(final int index)
     {
-        if (index < 0 || index >= 19)
+        if (index < 0 || index >= 21)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
@@ -426,7 +426,7 @@ public final class QuoteDecoder
 
     public int getTransactTime(final byte[] dst, final int dstOffset)
     {
-        final int length = 19;
+        final int length = 21;
         if (dstOffset < 0 || dstOffset > (dst.length - length))
         {
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
@@ -439,11 +439,11 @@ public final class QuoteDecoder
 
     public String transactTime()
     {
-        final byte[] dst = new byte[19];
-        buffer.getBytes(offset + 29, dst, 0, 19);
+        final byte[] dst = new byte[21];
+        buffer.getBytes(offset + 29, dst, 0, 21);
 
         int end = 0;
-        for (; end < 19 && dst[end] != 0; ++end);
+        for (; end < 21 && dst[end] != 0; ++end);
 
         return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
     }
@@ -461,7 +461,7 @@ public final class QuoteDecoder
 
     public static int sideEncodingOffset()
     {
-        return 48;
+        return 50;
     }
 
     public static int sideEncodingLength()
@@ -507,7 +507,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 48 + (index * 1);
+        final int pos = offset + 50 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -526,7 +526,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 48, dst, dstOffset, length);
+        buffer.getBytes(offset + 50, dst, dstOffset, length);
 
         return length;
     }
@@ -534,7 +534,7 @@ public final class QuoteDecoder
     public String side()
     {
         final byte[] dst = new byte[4];
-        buffer.getBytes(offset + 48, dst, 0, 4);
+        buffer.getBytes(offset + 50, dst, 0, 4);
 
         int end = 0;
         for (; end < 4 && dst[end] != 0; ++end);
@@ -555,7 +555,7 @@ public final class QuoteDecoder
 
     public static int symbolEncodingOffset()
     {
-        return 52;
+        return 54;
     }
 
     public static int symbolEncodingLength()
@@ -601,7 +601,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 52 + (index * 1);
+        final int pos = offset + 54 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -620,7 +620,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 52, dst, dstOffset, length);
+        buffer.getBytes(offset + 54, dst, dstOffset, length);
 
         return length;
     }
@@ -628,7 +628,7 @@ public final class QuoteDecoder
     public String symbol()
     {
         final byte[] dst = new byte[6];
-        buffer.getBytes(offset + 52, dst, 0, 6);
+        buffer.getBytes(offset + 54, dst, 0, 6);
 
         int end = 0;
         for (; end < 6 && dst[end] != 0; ++end);
@@ -649,7 +649,7 @@ public final class QuoteDecoder
 
     public static int quoteIDEncodingOffset()
     {
-        return 58;
+        return 60;
     }
 
     public static int quoteIDEncodingLength()
@@ -695,7 +695,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 58 + (index * 1);
+        final int pos = offset + 60 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -714,7 +714,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 58, dst, dstOffset, length);
+        buffer.getBytes(offset + 60, dst, dstOffset, length);
 
         return length;
     }
@@ -722,7 +722,7 @@ public final class QuoteDecoder
     public String quoteID()
     {
         final byte[] dst = new byte[36];
-        buffer.getBytes(offset + 58, dst, 0, 36);
+        buffer.getBytes(offset + 60, dst, 0, 36);
 
         int end = 0;
         for (; end < 36 && dst[end] != 0; ++end);
@@ -743,7 +743,7 @@ public final class QuoteDecoder
 
     public static int quoteRequestIDEncodingOffset()
     {
-        return 94;
+        return 96;
     }
 
     public static int quoteRequestIDEncodingLength()
@@ -789,7 +789,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 94 + (index * 1);
+        final int pos = offset + 96 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -808,7 +808,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 94, dst, dstOffset, length);
+        buffer.getBytes(offset + 96, dst, dstOffset, length);
 
         return length;
     }
@@ -816,7 +816,7 @@ public final class QuoteDecoder
     public String quoteRequestID()
     {
         final byte[] dst = new byte[36];
-        buffer.getBytes(offset + 94, dst, 0, 36);
+        buffer.getBytes(offset + 96, dst, 0, 36);
 
         int end = 0;
         for (; end < 36 && dst[end] != 0; ++end);
