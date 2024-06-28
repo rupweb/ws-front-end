@@ -22,6 +22,10 @@
 /logs
 logs
 
+# tests
+/tests/build
+/tests/.gradle
+
 # misc
 .DS_Store
 /frontend/.env.development
