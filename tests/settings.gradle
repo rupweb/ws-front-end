@@ -1,0 +1,5 @@
+rootProject.name = 'tests'
+
+// Ensure can use agrona SBE auto generated classes
+include ':backend'
+project(':backend').projectDir = new File(settingsDir, '../backend')

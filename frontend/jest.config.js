@@ -13,7 +13,8 @@ module.exports = {
       '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
       '\\.(gif|ttf|eot|svg|png|jpg)$': '<rootDir>/mocks/fileMock.js',
       '^Polyglot$': '<rootDir>/../mocks/polyglot.js',
-      '^WebSocketContext$': '<rootDir>/../mocks/WebSocketContext.js'
+      '^WebSocketContext$': '<rootDir>/../mocks/WebSocketContext.js',
+       '^MessageHeaderDecoder$': '<rootDir>/../mocks/MessageHeaderDecoder.js'
     },
   
     // The test environment that will be used for testing

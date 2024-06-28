@@ -1,33 +1,36 @@
-// Import necessary Java classes using GraalVM's Polyglot API
-const Java = Polyglot.import('java');
+if (typeof UnsafeBuffer === 'undefined') {
+    var UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
+}
 
-// Import the SBE encoder classes
-const DealRequestEncoder = Java.type('agrona.DealRequestEncoder');
-const DecimalEncoder = Java.type('agrona.DecimalEncoder');
-const MessageHeaderEncoder = Java.type('agrona.MessageHeaderEncoder');
-const UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
+const DealRequestEncoder = Java.type('agrona.messages.DealRequestEncoder');
+const DecimalEncoder = Java.type('agrona.messages.DecimalEncoder');
+const MessageHeaderEncoder = Java.type('agrona.messages.MessageHeaderEncoder');
 
 // Function to encode a DealRequest message
 function encodeDealRequest(data) {
-    const buffer = new UnsafeBuffer(new byte[DealRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH]);
+    console.log("Data received for encoding:", JSON.stringify(data));
+    const byteArray = Java.type('byte[]');
+    const buffer = new UnsafeBuffer(new byteArray(DealRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH));
+    
     const encoder = new DealRequestEncoder();
     const headerEncoder = new MessageHeaderEncoder();
     encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
 
+    // Encode the data
+    console.log("Encoding...");
     encoder.amount().mantissa(data.amount.mantissa).exponent(data.amount.exponent);
-    encoder.currency(data.currency.getBytes('UTF-8'));
-    encoder.side(data.side.getBytes('UTF-8'));
-    encoder.symbol(data.symbol.getBytes('UTF-8'));
-    encoder.deliveryDate(data.deliveryDate.getBytes('UTF-8'));
-    encoder.transactTime(data.transactTime.getBytes('UTF-8'));
-    encoder.quoteRequestID(data.quoteRequestID.getBytes('UTF-8'));
-    encoder.quoteID(data.quoteID.getBytes('UTF-8'));
-    encoder.dealRequestID(data.dealRequestID.getBytes('UTF-8'));
-    encoder.ticketRef(data.ticketRef.getBytes('UTF-8'));
+    encoder.currency(data.currency);
+    encoder.side(data.side);
+    encoder.symbol(data.symbol);
+    encoder.deliveryDate(data.deliveryDate);
+    encoder.transactTime(data.transactTime);
+    encoder.quoteRequestID(data.quoteRequestID);
+    encoder.quoteID(data.quoteID);
+    encoder.dealRequestID(data.dealRequestID);
+    encoder.ticketRef(data.ticketRef);
     encoder.fxRate().mantissa(data.fxRate.mantissa).exponent(data.fxRate.exponent);
 
     return buffer.byteArray();
 }
 
-// Expose the function to JavaScript
 Polyglot.export('encodeDealRequest', encodeDealRequest);

@@ -1,31 +1,35 @@
-// Import necessary Java classes using GraalVM's Polyglot API
-const Java = Polyglot.import('java');
+if (typeof UnsafeBuffer === 'undefined') {
+    var UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
+}
 
 // Import the SBE encoder classes
-const ExecutionReportEncoder = Java.type('agrona.ExecutionReportEncoder');
-const DecimalEncoder = Java.type('agrona.DecimalEncoder');
-const MessageHeaderEncoder = Java.type('agrona.MessageHeaderEncoder');
-const UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
+const ExecutionReportEncoder = Java.type('agrona.messages.ExecutionReportEncoder');
+const DecimalEncoder = Java.type('agrona.messages.DecimalEncoder');
+const MessageHeaderEncoder = Java.type('agrona.messages.MessageHeaderEncoder');
 
 // Function to encode an ExecutionReport message
 function encodeExecutionReport(data) {
-    const buffer = new UnsafeBuffer(new byte[ExecutionReportEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH]);
+    const byteArray = Java.type('byte[]');
+    const buffer = new UnsafeBuffer(new byteArray(ExecutionReportEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH));
+    
     const encoder = new ExecutionReportEncoder();
     const headerEncoder = new MessageHeaderEncoder();
     encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
 
+    // Encode the data
+    console.log("Encoding...");   
     encoder.amount().mantissa(data.amount.mantissa).exponent(data.amount.exponent);
-    encoder.currency(data.currency.getBytes('UTF-8'));
+    encoder.currency(data.currency);
     encoder.secondaryAmount().mantissa(data.secondaryAmount.mantissa).exponent(data.secondaryAmount.exponent);
-    encoder.secondaryCurrency(data.secondaryCurrency.getBytes('UTF-8'));
-    encoder.side(data.side.getBytes('UTF-8'));
-    encoder.symbol(data.symbol.getBytes('UTF-8'));
-    encoder.deliveryDate(data.deliveryDate.getBytes('UTF-8'));
-    encoder.transactTime(data.transactTime.getBytes('UTF-8'));
-    encoder.quoteRequestID(data.quoteRequestID.getBytes('UTF-8'));
-    encoder.quoteID(data.quoteID.getBytes('UTF-8'));
-    encoder.dealRequestID(data.dealRequestID.getBytes('UTF-8'));
-    encoder.dealID(data.dealID.getBytes('UTF-8'));
+    encoder.secondaryCurrency(data.secondaryCurrency);
+    encoder.side(data.side);
+    encoder.symbol(data.symbol);
+    encoder.deliveryDate(data.deliveryDate);
+    encoder.transactTime(data.transactTime);
+    encoder.quoteRequestID(data.quoteRequestID);
+    encoder.quoteID(data.quoteID);
+    encoder.dealRequestID(data.dealRequestID);
+    encoder.dealID(data.dealID);
     encoder.fxRate().mantissa(data.fxRate.mantissa).exponent(data.fxRate.exponent);
 
     return buffer.byteArray();

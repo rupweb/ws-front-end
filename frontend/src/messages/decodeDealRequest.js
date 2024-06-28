@@ -1,13 +1,14 @@
-// Import necessary Java classes using GraalVM's Polyglot API
-const Java = Polyglot.import('java');
+if (typeof UnsafeBuffer === 'undefined') {
+    var UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
+}
 
 // Import the SBE decoder classes
-const DealRequestDecoder = Java.type('agrona.DealRequestDecoder');
-const MessageHeaderDecoder = Java.type('agrona.MessageHeaderDecoder');
-const UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
+const DealRequestDecoder = Java.type('agrona.messages.DealRequestDecoder');
+const MessageHeaderDecoder = Java.type('agrona.messages.MessageHeaderDecoder');
 
 // Function to decode a DealRequest message
 function decodeDealRequest(encodedMessage) {
+    console.log("Data received for decoding:", encodedMessage);
     const buffer = new UnsafeBuffer(encodedMessage);
     const headerDecoder = new MessageHeaderDecoder();
     const decoder = new DealRequestDecoder();
@@ -20,15 +21,15 @@ function decodeDealRequest(encodedMessage) {
             mantissa: decoder.amount().mantissa(),
             exponent: decoder.amount().exponent()
         },
-        currency: Java.toJSArray(decoder.currency()).map(byte => String.fromCharCode(byte)).join(''),
-        side: Java.toJSArray(decoder.side()).map(byte => String.fromCharCode(byte)).join(''),
-        symbol: Java.toJSArray(decoder.symbol()).map(byte => String.fromCharCode(byte)).join(''),
-        deliveryDate: Java.toJSArray(decoder.deliveryDate()).map(byte => String.fromCharCode(byte)).join(''),
-        transactTime: Java.toJSArray(decoder.transactTime()).map(byte => String.fromCharCode(byte)).join(''),
-        quoteRequestID: Java.toJSArray(decoder.quoteRequestID()).map(byte => String.fromCharCode(byte)).join(''),
-        quoteID: Java.toJSArray(decoder.quoteID()).map(byte => String.fromCharCode(byte)).join(''),
-        dealRequestID: Java.toJSArray(decoder.dealRequestID()).map(byte => String.fromCharCode(byte)).join(''),
-        ticketRef: Java.toJSArray(decoder.ticketRef()).map(byte => String.fromCharCode(byte)).join(''),
+        currency: decoder.currency(),
+        side: decoder.side(),
+        symbol: decoder.symbol(),
+        deliveryDate: decoder.deliveryDate(),
+        transactTime: decoder.transactTime(),
+        quoteRequestID: decoder.quoteRequestID(),
+        quoteID: decoder.quoteID(),
+        dealRequestID: decoder.dealRequestID(),
+        ticketRef: decoder.ticketRef(),
         fxRate: {
             mantissa: decoder.fxRate().mantissa(),
             exponent: decoder.fxRate().exponent()

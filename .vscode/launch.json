@@ -9,7 +9,16 @@
             "projectName": "ws-backend",
             "cwd": "${workspaceFolder}/backend",
             "vmArgs": "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-exports=java.base/sun.nio.ch=ALL-UNNAMED -Dlog4j.configurationFile=${workspaceFolder}/app/src/main/resources/log4j2.xml"
-        }
+        },
+        {
+            "type": "node",
+            "name": "Debug Jest Tests",
+            "request": "launch",
+            "program": "${workspaceFolder}/frontend/run-tests.js",
+            "cwd": "${workspaceFolder}/frontend",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+          }
     ]
   }
   

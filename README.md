@@ -22,6 +22,10 @@ See logs
 `pm2 logs ws-frontend --lines 100`
 `pm2 logs proxy-server --lines 100`
 
+## frontend jar
+
+Per below add the backend jar to the frontend jar
+
 ## backend
 
 This contains an express server.
@@ -36,10 +40,20 @@ PS G:\WS\ws-front-end\backend> npm start
 
 Server running on <http://localhost:3001>
 
+## backend jar
+
+SBE files are found in a backend jar by running `gradle createJar` in directory `build/libs`
+
 ## tests
 
 The jest is configured using jest.config.js to look for tests in the tests directory.
 Run the tests using `npm run jest-test` or `npm run jest-test tests/App.test.js`
+
+There's a separate project `tests` to run GraalVM polyglot tests for SBE encoding & decoding using Gradle.
+Ensure the `backend` project has already been `gradle build` before running the `tests`.
+
+To run a specific test in the `tests` project
+`gradle :test --tests UseSbeTest`
 
 ## DNS changes
 
