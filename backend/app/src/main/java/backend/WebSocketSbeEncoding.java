@@ -5,6 +5,7 @@ import agrona.messages.ExecutionReportEncoder;
 import agrona.messages.QuoteEncoder;
 import agrona.messages.QuoteRequestEncoder;
 import agrona.messages.DecimalEncoder;
+import agrona.messages.MessageHeaderEncoder;
 import org.agrona.concurrent.UnsafeBuffer;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
