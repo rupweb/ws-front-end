@@ -14,9 +14,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-public class WebSocketFrameHandler extends SimpleChannelInboundHandler<Object> {
+public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     private static final Logger logger = LogManager.getLogger(WebSocketFrameHandler.class);
     private static final CopyOnWriteArraySet<Channel> channels = new CopyOnWriteArraySet<>();
+    private final WebSocketSbeDecoding sbeDecoder = new WebSocketSbeDecoding();
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
@@ -29,27 +30,17 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof BinaryWebSocketFrame) {
-            BinaryWebSocketFrame frame = (BinaryWebSocketFrame) msg;
-            ByteBuf buffer = frame.content();
-            byte[] data = new byte[buffer.readableBytes()];
-            buffer.readBytes(data);
-            // Handle incoming binary data (SBE encoded)
+    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+        if (frame instanceof BinaryWebSocketFrame) {
             logger.info("Received binary message");
-            // Decode the message
-            // Your decoding logic here
-
-            // Example: Sending back an encoded response
-            // ByteBuf encodedResponse = encodeResponse(data);
-            // ctx.channel().writeAndFlush(new BinaryWebSocketFrame(encodedResponse));
-        } else if (msg instanceof TextWebSocketFrame) {
-            TextWebSocketFrame frame = (TextWebSocketFrame) msg;
-            String request = frame.text();
+            sbeDecoder.channelRead(ctx, frame);  // Delegate to the SBE decoder
+        } else if (frame instanceof TextWebSocketFrame) {
+            TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
+            String request = textFrame.text();
             logger.info("Received message: {}", request);
-            ctx.channel().writeAndFlush(new TextWebSocketFrame("Hello, " + request));
+            ctx.channel().writeAndFlush(new TextWebSocketFrame("Echo: " + request));
         } else {
-            String message = "unsupported frame type: " + msg.getClass().getName();
+            String message = "unsupported frame type: " + frame.getClass().getName();
             throw new UnsupportedOperationException(message);
         }
     }
@@ -72,3 +63,4 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<Object> {
         }
     }
 }
+

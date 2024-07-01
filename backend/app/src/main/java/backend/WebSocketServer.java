@@ -56,7 +56,8 @@ public class WebSocketServer {
                                     new HttpObjectAggregator(65536),
                                     new ChunkedWriteHandler(),
                                     new WebSocketServerProtocolHandler("/ws"),
-                                    new WebSocketFrameHandler());
+                                    new WebSocketFrameHandler(),
+                                    new WebSocketSbeDecoding());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)

@@ -85,9 +85,8 @@ public class AeronSbe {
     };
 
     private int getMessageType(DirectBuffer buffer, int offset) {
-        // Implement this method to extract and return the message type from the buffer
-        // This is typically done by reading the message header
-        return buffer.getInt(offset); // Placeholder implementation, assuming the message type is stored at the beginning
+        // Read the template ID (message type) from the buffer
+        return buffer.getShort(offset, java.nio.ByteOrder.LITTLE_ENDIAN);
     }
 
     private void decodeDealRequest(DirectBuffer buffer, int offset) {

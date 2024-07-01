@@ -4,76 +4,77 @@ import agrona.messages.DealRequestDecoder;
 import agrona.messages.ExecutionReportDecoder;
 import agrona.messages.QuoteDecoder;
 import agrona.messages.QuoteRequestDecoder;
+import agrona.messages.DecimalDecoder;
+import agrona.messages.MessageHeaderDecoder;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class WebSocketSbeDecoding extends SimpleChannelInboundHandler<WebSocketFrame> {
+public class WebSocketSbeDecoding extends SimpleChannelInboundHandler<BinaryWebSocketFrame> {
     private static final Logger logger = LogManager.getLogger(WebSocketSbeDecoding.class);
-    
+
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
-        if (frame instanceof BinaryWebSocketFrame) {
-            BinaryWebSocketFrame binaryFrame = (BinaryWebSocketFrame) frame;
-            byte[] data = new byte[binaryFrame.content().readableBytes()];
-            binaryFrame.content().readBytes(data);
-            
-            DirectBuffer buffer = new UnsafeBuffer(data);
-            
-            // Decode based on message type
-            int messageType = getMessageType(buffer); // Implement getMessageType method to identify message type
-            
-            switch (messageType) {
-                case DealRequestDecoder.TEMPLATE_ID:
-                    decodeDealRequest(buffer);
-                    break;
-                case QuoteRequestDecoder.TEMPLATE_ID:
-                    decodeQuoteRequest(buffer);
-                    break;
-                case QuoteDecoder.TEMPLATE_ID:
-                    decodeQuote(buffer);
-                    break;
-                case ExecutionReportDecoder.TEMPLATE_ID:
-                    decodeExecutionReport(buffer);
-                    break;
-                default:
-                    logger.error("Unknown message type: {}", messageType);
-            }
+    protected void channelRead0(ChannelHandlerContext ctx, BinaryWebSocketFrame frame) throws Exception {
+        byte[] data = new byte[frame.content().readableBytes()];
+        frame.content().readBytes(data);
+
+        DirectBuffer buffer = new UnsafeBuffer(data);
+
+        // Decode based on message type
+        int messageType = getMessageType(buffer);
+
+        switch (messageType) {
+            case DealRequestDecoder.TEMPLATE_ID:
+                decodeDealRequest(buffer);
+                break;
+            case QuoteRequestDecoder.TEMPLATE_ID:
+                decodeQuoteRequest(buffer);
+                break;
+            case QuoteDecoder.TEMPLATE_ID:
+                decodeQuote(buffer);
+                break;
+            case ExecutionReportDecoder.TEMPLATE_ID:
+                decodeExecutionReport(buffer);
+                break;
+            default:
+                logger.error("Unknown message type: {}", messageType);
         }
     }
 
     private int getMessageType(DirectBuffer buffer) {
-        // Implement this method to extract and return the message type from the buffer
-        // This is typically done by reading the message header
-        // For example:
-        return buffer.getInt(0); // Placeholder implementation, assuming the message type is stored at the beginning
+        // The offset for the template ID in the SBE message header
+        final int templateIdOffset = 2;
+        // Read the template ID (message type) from the buffer
+        return buffer.getShort(templateIdOffset, java.nio.ByteOrder.LITTLE_ENDIAN);
     }
 
     private void decodeDealRequest(DirectBuffer buffer) {
-        DealRequestDecoder decoder = new DealRequestDecoder();
-        decoder.wrap(buffer, 0, DealRequestDecoder.BLOCK_LENGTH, DealRequestDecoder.SCHEMA_VERSION);
+        DealRequestDecoder dealRequestDecoder = new DealRequestDecoder();
+        dealRequestDecoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, DealRequestDecoder.BLOCK_LENGTH, DealRequestDecoder.SCHEMA_VERSION);
 
-        long mantissa = decoder.amount().mantissa();
-        byte exponent = decoder.amount().exponent();
+        DecimalDecoder decimalDecoder = new DecimalDecoder();
+        decimalDecoder.wrap(buffer, dealRequestDecoder.amount().offset());
+        long mantissa = decimalDecoder.mantissa();
+        byte exponent = decimalDecoder.exponent();
         double amount = mantissa * Math.pow(10, exponent);
 
-        String currency = decoder.currency();
-        String side = decoder.side();
-        String symbol = decoder.symbol();
-        String deliveryDate = decoder.deliveryDate();
-        String transactTime = decoder.transactTime();
-        String quoteRequestID = decoder.quoteRequestID();
-        String quoteID = decoder.quoteID();
-        String dealRequestID = decoder.dealRequestID();
-        String ticketRef = decoder.ticketRef();
+        String currency = dealRequestDecoder.currency();
+        String side = dealRequestDecoder.side();
+        String symbol = dealRequestDecoder.symbol();
+        String deliveryDate = dealRequestDecoder.deliveryDate();
+        String transactTime = dealRequestDecoder.transactTime();
+        String quoteRequestID = dealRequestDecoder.quoteRequestID();
+        String quoteID = dealRequestDecoder.quoteID();
+        String dealRequestID = dealRequestDecoder.dealRequestID();
+        String ticketRef = dealRequestDecoder.ticketRef();
 
-        mantissa = decoder.fxRate().mantissa();
-        exponent = decoder.fxRate().exponent();
+        decimalDecoder.wrap(buffer, dealRequestDecoder.fxRate().offset());
+        mantissa = decimalDecoder.mantissa();
+        exponent = decimalDecoder.exponent();
         double fxRate = mantissa * Math.pow(10, exponent);
 
         logger.info("Decoded DealRequest - Amount: {}, Currency: {}, Side: {}, Symbol: {}, DeliveryDate: {}, TransactTime: {}, QuoteRequestID: {}, QuoteID: {}, DealRequestID: {}, TicketRef: {}, FxRate: {}",
@@ -81,70 +82,79 @@ public class WebSocketSbeDecoding extends SimpleChannelInboundHandler<WebSocketF
     }
 
     private void decodeQuoteRequest(DirectBuffer buffer) {
-        QuoteRequestDecoder decoder = new QuoteRequestDecoder();
-        decoder.wrap(buffer, 0, QuoteRequestDecoder.BLOCK_LENGTH, QuoteRequestDecoder.SCHEMA_VERSION);
+        QuoteRequestDecoder quoteRequestDecoder = new QuoteRequestDecoder();
+        quoteRequestDecoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, QuoteRequestDecoder.BLOCK_LENGTH, QuoteRequestDecoder.SCHEMA_VERSION);
 
-        long mantissa = decoder.amount().mantissa();
-        byte exponent = decoder.amount().exponent();
+        DecimalDecoder decimalDecoder = new DecimalDecoder();
+        decimalDecoder.wrap(buffer, quoteRequestDecoder.amount().offset());
+        long mantissa = decimalDecoder.mantissa();
+        byte exponent = decimalDecoder.exponent();
         double salePrice = mantissa * Math.pow(10, exponent);
 
-        String saleCurrency = decoder.saleCurrency();
-        String deliveryDate = decoder.deliveryDate();
-        String transactTime = decoder.transactTime();
-        String quoteRequestID = decoder.quoteRequestID();
-        String side = decoder.side();
-        String symbol = decoder.symbol();
-        String currencyOwned = decoder.currencyOwned();
+        String saleCurrency = quoteRequestDecoder.saleCurrency();
+        String deliveryDate = quoteRequestDecoder.deliveryDate();
+        String transactTime = quoteRequestDecoder.transactTime();
+        String quoteRequestID = quoteRequestDecoder.quoteRequestID();
+        String side = quoteRequestDecoder.side();
+        String symbol = quoteRequestDecoder.symbol();
+        String currencyOwned = quoteRequestDecoder.currencyOwned();
 
         logger.info("Decoded QuoteRequest - SalePrice: {}, SaleCurrency: {}, DeliveryDate: {}, TransactTime: {}, QuoteRequestID: {}, Side: {}, Symbol: {}, CurrencyOwned: {}",
                 salePrice, saleCurrency, deliveryDate, transactTime, quoteRequestID, side, symbol, currencyOwned);
     }
 
     private void decodeQuote(DirectBuffer buffer) {
-        QuoteDecoder decoder = new QuoteDecoder();
-        decoder.wrap(buffer, 0, QuoteDecoder.BLOCK_LENGTH, QuoteDecoder.SCHEMA_VERSION);
+        QuoteDecoder quoteDecoder = new QuoteDecoder();
+        quoteDecoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, QuoteDecoder.BLOCK_LENGTH, QuoteDecoder.SCHEMA_VERSION);
 
-        long mantissa = decoder.amount().mantissa();
-        byte exponent = decoder.amount().exponent();
+        DecimalDecoder decimalDecoder = new DecimalDecoder();
+        decimalDecoder.wrap(buffer, quoteDecoder.amount().offset());
+        long mantissa = decimalDecoder.mantissa();
+        byte exponent = decimalDecoder.exponent();
         double amount = mantissa * Math.pow(10, exponent);
 
-        String currency = decoder.currency();
-        mantissa = decoder.fxRate().mantissa();
-        exponent = decoder.fxRate().exponent();
+        String currency = quoteDecoder.currency();
+        decimalDecoder.wrap(buffer, quoteDecoder.fxRate().offset());
+        mantissa = decimalDecoder.mantissa();
+        exponent = decimalDecoder.exponent();
         double fxRate = mantissa * Math.pow(10, exponent);
-        String transactTime = decoder.transactTime();
-        String side = decoder.side();
-        String symbol = decoder.symbol();
-        String quoteID = decoder.quoteID();
-        String quoteRequestID = decoder.quoteRequestID();
+        String transactTime = quoteDecoder.transactTime();
+        String side = quoteDecoder.side();
+        String symbol = quoteDecoder.symbol();
+        String quoteID = quoteDecoder.quoteID();
+        String quoteRequestID = quoteDecoder.quoteRequestID();
 
         logger.info("Decoded Quote - Amount: {}, Currency: {}, FxRate: {}, TransactTime: {}, Side: {}, Symbol: {}, QuoteID: {}, QuoteRequestID: {}",
                 amount, currency, fxRate, transactTime, side, symbol, quoteID, quoteRequestID);
     }
 
     private void decodeExecutionReport(DirectBuffer buffer) {
-        ExecutionReportDecoder decoder = new ExecutionReportDecoder();
-        decoder.wrap(buffer, 0, ExecutionReportDecoder.BLOCK_LENGTH, ExecutionReportDecoder.SCHEMA_VERSION);
+        ExecutionReportDecoder executionReportDecoder = new ExecutionReportDecoder();
+        executionReportDecoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, ExecutionReportDecoder.BLOCK_LENGTH, ExecutionReportDecoder.SCHEMA_VERSION);
 
-        long mantissa = decoder.amount().mantissa();
-        byte exponent = decoder.amount().exponent();
+        DecimalDecoder decimalDecoder = new DecimalDecoder();
+        decimalDecoder.wrap(buffer, executionReportDecoder.amount().offset());
+        long mantissa = decimalDecoder.mantissa();
+        byte exponent = decimalDecoder.exponent();
         double amount = mantissa * Math.pow(10, exponent);
 
-        String currency = decoder.currency();
-        mantissa = decoder.secondaryAmount().mantissa();
-        exponent = decoder.secondaryAmount().exponent();
+        String currency = executionReportDecoder.currency();
+        decimalDecoder.wrap(buffer, executionReportDecoder.secondaryAmount().offset());
+        mantissa = decimalDecoder.mantissa();
+        exponent = decimalDecoder.exponent();
         double secondaryAmount = mantissa * Math.pow(10, exponent);
-        String secondaryCurrency = decoder.secondaryCurrency();
-        String side = decoder.side();
-        String symbol = decoder.symbol();
-        String deliveryDate = decoder.deliveryDate();
-        String transactTime = decoder.transactTime();
-        String quoteRequestID = decoder.quoteRequestID();
-        String quoteID = decoder.quoteID();
-        String dealRequestID = decoder.dealRequestID();
-        String dealID = decoder.dealID();
-        mantissa = decoder.fxRate().mantissa();
-        exponent = decoder.fxRate().exponent();
+        String secondaryCurrency = executionReportDecoder.secondaryCurrency();
+        String side = executionReportDecoder.side();
+        String symbol = executionReportDecoder.symbol();
+        String deliveryDate = executionReportDecoder.deliveryDate();
+        String transactTime = executionReportDecoder.transactTime();
+        String quoteRequestID = executionReportDecoder.quoteRequestID();
+        String quoteID = executionReportDecoder.quoteID();
+        String dealRequestID = executionReportDecoder.dealRequestID();
+        String dealID = executionReportDecoder.dealID();
+        decimalDecoder.wrap(buffer, executionReportDecoder.fxRate().offset());
+        mantissa = decimalDecoder.mantissa();
+        exponent = decimalDecoder.exponent();
         double fxRate = mantissa * Math.pow(10, exponent);
 
         logger.info("Decoded ExecutionReport - Amount: {}, Currency: {}, SecondaryAmount: {}, SecondaryCurrency: {}, Side: {}, Symbol: {}, DeliveryDate: {}, TransactTime: {}, QuoteRequestID: {}, QuoteID: {}, DealRequestID: {}, DealID: {}, FxRate: {}",
