@@ -1,3 +1,5 @@
+package messages;
+
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
@@ -42,7 +44,7 @@ public class DealRequestTest {
                     "currency: 'USD', " +
                     "side: 'BUY', " +
                     "symbol: 'AAPL', " +
-                    "deliveryDate: '20240101', " +
+                    "deliveryDate: '20240201', " +
                     "transactTime: '20240101-00:00:00.000', " +
                     "quoteRequestID: 'QR123456', " +
                     "quoteID: 'Q123456', " +
@@ -66,7 +68,7 @@ public class DealRequestTest {
             assertEquals("USD", decodedMessage.getMember("currency").asString());
             assertEquals("BUY", decodedMessage.getMember("side").asString());
             assertEquals("AAPL", decodedMessage.getMember("symbol").asString());
-            assertEquals("20240101", decodedMessage.getMember("deliveryDate").asString());
+            assertEquals("20240201", decodedMessage.getMember("deliveryDate").asString());
             assertEquals("20240101-00:00:00.000", decodedMessage.getMember("transactTime").asString());
             assertEquals("QR123456", decodedMessage.getMember("quoteRequestID").asString());
             assertEquals("Q123456", decodedMessage.getMember("quoteID").asString());

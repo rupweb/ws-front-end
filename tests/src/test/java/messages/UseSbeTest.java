@@ -1,3 +1,5 @@
+package messages;
+
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.junit.jupiter.api.BeforeAll;

@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
 }
 
 repositories {
@@ -8,7 +9,6 @@ repositories {
 
 dependencies {
     implementation 'org.agrona:agrona:1.21.2'
-
     implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
 
@@ -18,6 +18,25 @@ dependencies {
 
     // Dependency on the backend project
     implementation project(':backend')
+
+    // Websocket tests
+    testImplementation 'org.java-websocket:Java-WebSocket:1.5.2'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.32'
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
 }
 
 test {
@@ -30,4 +49,18 @@ test {
     }    
 
     systemProperty "TEST", System.getProperty("TEST")
+
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    reports {
+        html.required = true
+    }
+
+    classDirectories.setFrom(fileTree(dir: "$buildDir/classes/java/main", includes: ["**/*.class"]))
+    sourceDirectories.setFrom(files(['src/main/java']))
+    executionData.setFrom(fileTree(dir: "$buildDir", includes: ["jacoco/test.exec"]))
+
+    additionalClassDirs = files("$buildDir/classes/java/test")
 }
