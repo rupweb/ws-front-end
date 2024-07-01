@@ -1,0 +1,3 @@
+rootProject.name = 'ws-front-end'
+
+include 'backend', 'frontend', 'tests'
