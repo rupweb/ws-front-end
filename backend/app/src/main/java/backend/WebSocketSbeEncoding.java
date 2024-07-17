@@ -9,8 +9,6 @@ import agrona.messages.MessageHeaderEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 
-import com.oracle.graal.enterprise.hotspot.phases.strings.s;
-
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
@@ -26,9 +24,7 @@ public class WebSocketSbeEncoding {
 
         DirectBuffer buffer = sbeEncoder.encodeDealRequest(amount, currency, side, symbol, deliveryDate,
                 transactTime, quoteRequestID, quoteID, dealRequestID, fxRate);
-        byte[] encodedData = new byte[encoder.encodedLength()];
-        buffer.getBytes(0, encodedData);
-        return encodedData;
+        return buffer.byteArray();
     }
 
     public byte[] encodeQuoteRequest(double amount, String saleCurrency, String side, String symbol, 
@@ -36,10 +32,7 @@ public class WebSocketSbeEncoding {
 
         DirectBuffer buffer = sbeEncoder.encodeQuoteRequest(amount, saleCurrency, side, symbol, deliveryDate,
                 transactTime, quoteRequestID, currencyOwned);
-        
-        byte[] encodedData = new byte[encoder.encodedLength()];
-        buffer.getBytes(0, encodedData);
-        return encodedData;
+        return buffer.byteArray();
     }
 
     public byte[] encodeQuote(double amount, String currency, String side, String symbol, 
@@ -47,23 +40,16 @@ public class WebSocketSbeEncoding {
 
         DirectBuffer buffer = sbeEncoder.encodeQuote(amount, currency, side, symbol, transactTime,
                 quoteRequestID, quoteID, fxRate);
-
-        byte[] encodedData = new byte[encoder.encodedLength()];
-        buffer.getBytes(0, encodedData);
-        return encodedData;
+        return buffer.byteArray();
     }
 
-    public byte[] sendExecutionReport(double amount, String currency, String side, String symbol, 
-                                    double secondaryAmount, String secondaryCurrency, 
-                                    String deliveryDate, String transactTime, String quoteRequestID, 
-                                    String quoteID, String dealRequestID, String dealID, double fxRate) {
+    public byte[] sendExecutionReport(double amount, String currency, String side, String symbol, double secondaryAmount, 
+                                    String secondaryCurrency, String deliveryDate, String transactTime, String quoteRequestID, String quoteID, 
+                                    String dealRequestID, String dealID, double fxRate) {
 
-        DirectBuffer buffer = sbeEncoder.sendExecutionReport(amount, currency, side, symbol, secondaryAmount,
+        DirectBuffer buffer = sbeEncoder.encodeExecutionReport(amount, currency, side, symbol, secondaryAmount,
                 secondaryCurrency, deliveryDate, transactTime, quoteRequestID, quoteID, dealRequestID, dealID, fxRate);
-
-        byte[] encodedData = new byte[encoder.encodedLength()];
-        buffer.getBytes(0, encodedData);
-        return encodedData;
+        return buffer.byteArray();
     }
 
     public void sendBytes(Channel channel, byte[] encodedData) {

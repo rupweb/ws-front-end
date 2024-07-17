@@ -49,7 +49,6 @@ public class DealRequestTest {
                     "quoteRequestID: 'QR123456', " +
                     "quoteID: 'Q123456', " +
                     "dealRequestID: 'DR123456', " +
-                    "ticketRef: 'T123456', " +
                     "fxRate: { mantissa: 100, exponent: -2 } })");
 
             // Call encodeDealRequest function
@@ -73,7 +72,6 @@ public class DealRequestTest {
             assertEquals("QR123456", decodedMessage.getMember("quoteRequestID").asString());
             assertEquals("Q123456", decodedMessage.getMember("quoteID").asString());
             assertEquals("DR123456", decodedMessage.getMember("dealRequestID").asString());
-            assertEquals("T123456", decodedMessage.getMember("ticketRef").asString());
             assertEquals(100, decodedMessage.getMember("fxRate").getMember("mantissa").asInt());
             assertEquals(-2, decodedMessage.getMember("fxRate").getMember("exponent").asInt());
         }

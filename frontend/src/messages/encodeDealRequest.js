@@ -27,7 +27,6 @@ function encodeDealRequest(data) {
     encoder.quoteRequestID(data.quoteRequestID);
     encoder.quoteID(data.quoteID);
     encoder.dealRequestID(data.dealRequestID);
-    encoder.ticketRef(data.ticketRef);
     encoder.fxRate().wrap(buffer, encoder.fxRate().offset()).mantissa(data.fxRate.mantissa).exponent(data.fxRate.exponent);
 
     return buffer.byteArray();

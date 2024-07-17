@@ -29,7 +29,6 @@ function decodeDealRequest(encodedMessage) {
         quoteRequestID: decoder.quoteRequestID(),
         quoteID: decoder.quoteID(),
         dealRequestID: decoder.dealRequestID(),
-        ticketRef: decoder.ticketRef(),
         fxRate: {
             mantissa: decoder.fxRate().mantissa(),
             exponent: decoder.fxRate().exponent()
