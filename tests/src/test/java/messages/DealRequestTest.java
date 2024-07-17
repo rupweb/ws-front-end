@@ -43,7 +43,7 @@ public class DealRequestTest {
                     "amount: { mantissa: 1000, exponent: 2 }, " +
                     "currency: 'USD', " +
                     "side: 'BUY', " +
-                    "symbol: 'AAPL', " +
+                    "symbol: 'EURUSD', " +
                     "deliveryDate: '20240201', " +
                     "transactTime: '20240101-00:00:00.000', " +
                     "quoteRequestID: 'QR123456', " +
@@ -67,7 +67,7 @@ public class DealRequestTest {
             assertEquals(2, decodedMessage.getMember("amount").getMember("exponent").asInt());
             assertEquals("USD", decodedMessage.getMember("currency").asString());
             assertEquals("BUY", decodedMessage.getMember("side").asString());
-            assertEquals("AAPL", decodedMessage.getMember("symbol").asString());
+            assertEquals("EURUSD", decodedMessage.getMember("symbol").asString());
             assertEquals("20240201", decodedMessage.getMember("deliveryDate").asString());
             assertEquals("20240101-00:00:00.000", decodedMessage.getMember("transactTime").asString());
             assertEquals("QR123456", decodedMessage.getMember("quoteRequestID").asString());

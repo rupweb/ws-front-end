@@ -39,6 +39,8 @@ public class AeronClient {
 
         log.info("Backend to Fix Publication setup: channel={}, port={}, streamId={}", BACKEND_TO_FIX_CHANNEL, getPort(BACKEND_TO_FIX_CHANNEL), STREAM_ID_BACKEND_FIX);
         log.info("Fix to Backend Subscription setup: channel={}, port={}, streamId={}", FIX_TO_BACKEND_CHANNEL, getPort(FIX_TO_BACKEND_CHANNEL), STREAM_ID_FIX_BACKEND);
+
+        listenForMessages();
     }
 
     private String getPort(String channel) {
@@ -53,31 +55,29 @@ public class AeronClient {
             close();
         });
 
-        FragmentHandler fragmentHandler = (buffer, offset, length, header) -> {
-            byte[] data = new byte[length];
-            buffer.getBytes(offset, data);
-            String message = new String(data);
-            log.info("Received message: {}", message);
-            WebSocketFrameHandler.broadcast(message);
-        };
-
         // Send a test message
         sendTestMessage("Hello from backend!");
-
-        listen(fragmentHandler);
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 
         log.info("Out start");
     }
 
-    public void listen(FragmentHandler fragmentHandler) {
-        log.info("In listen");
-        final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 1, 1);
-        while (true) {
-            final int fragments = fixToBackendSubscription.poll(fragmentHandler, 10);
-            idleStrategy.idle(fragments);
-        }
+    private void listenForMessages() {
+        log.info("In listenForMessages");
+        FragmentHandler fragmentHandler = (buffer, offset, length, header) -> {
+            byte[] data = new byte[length];
+            buffer.getBytes(offset, data);
+            WebSocketFrameHandler.broadcast(data);  // Broadcast binary data to WebSocket clients
+        };
+
+        new Thread(() -> {
+            final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 1, 1);
+            while (true) {
+                final int fragments = fixToBackendSubscription.poll(fragmentHandler, 10);
+                idleStrategy.idle(fragments);
+            }
+        }).start();
     }
 
     public void sendMessageToFix(byte[] encodedData) {

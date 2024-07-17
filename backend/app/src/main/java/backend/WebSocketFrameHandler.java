@@ -17,7 +17,7 @@ import io.netty.buffer.Unpooled;
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     private static final Logger logger = LogManager.getLogger(WebSocketFrameHandler.class);
     private static final CopyOnWriteArraySet<Channel> channels = new CopyOnWriteArraySet<>();
-    private final WebSocketSbeDecoding sbeDecoder = new WebSocketSbeDecoding();
+    private final AeronClient aeronClient = new AeronClient();
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
@@ -33,7 +33,10 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         if (frame instanceof BinaryWebSocketFrame) {
             logger.info("Received binary message");
-            sbeDecoder.channelRead(ctx, frame);  // Delegate to the SBE decoder
+            ByteBuf byteBuf = frame.content();
+            byte[] data = new byte[byteBuf.readableBytes()];
+            byteBuf.readBytes(data);
+            aeronClient.sendMessageToFix(data);  // Publish binary data to Aeron multicast
         } else if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
             String request = textFrame.text();
@@ -63,4 +66,3 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         }
     }
 }
-

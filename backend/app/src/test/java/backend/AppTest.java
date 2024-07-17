@@ -14,7 +14,6 @@ class AppTest {
     static void setup() {
         System.setProperty("log4j.configurationFile", "src/test/resources/log4j2.xml");
         Configurator.initialize(null, "src/test/resources/log4j2.xml");
-        StatusLogger.getLogger().setLevel(org.apache.logging.log4j.Level.INFO);
         System.out.println("Log4j2 test initialized: " + LogManager.getContext(false).hasLogger(AppTest.class.getName()));
         System.out.println("Test Working Directory: " + System.getProperty("user.dir"));
         System.out.println("Log4j2 Configuration File: " + System.getProperty("log4j.configurationFile"));

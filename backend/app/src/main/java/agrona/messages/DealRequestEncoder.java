@@ -1008,110 +1008,9 @@ public final class DealRequestEncoder
         return this;
     }
 
-    public static int ticketRefId()
-    {
-        return 10;
-    }
-
-    public static int ticketRefSinceVersion()
-    {
-        return 0;
-    }
-
-    public static int ticketRefEncodingOffset()
-    {
-        return 169;
-    }
-
-    public static int ticketRefEncodingLength()
-    {
-        return 36;
-    }
-
-    public static String ticketRefMetaAttribute(final MetaAttribute metaAttribute)
-    {
-        if (MetaAttribute.PRESENCE == metaAttribute)
-        {
-            return "required";
-        }
-
-        return "";
-    }
-
-    public static byte ticketRefNullValue()
-    {
-        return (byte)0;
-    }
-
-    public static byte ticketRefMinValue()
-    {
-        return (byte)32;
-    }
-
-    public static byte ticketRefMaxValue()
-    {
-        return (byte)126;
-    }
-
-    public static int ticketRefLength()
-    {
-        return 36;
-    }
-
-
-    public DealRequestEncoder ticketRef(final int index, final byte value)
-    {
-        if (index < 0 || index >= 36)
-        {
-            throw new IndexOutOfBoundsException("index out of range: index=" + index);
-        }
-
-        final int pos = offset + 169 + (index * 1);
-        buffer.putByte(pos, value);
-
-        return this;
-    }
-
-    public static String ticketRefCharacterEncoding()
-    {
-        return java.nio.charset.StandardCharsets.UTF_8.name();
-    }
-
-    public DealRequestEncoder putTicketRef(final byte[] src, final int srcOffset)
-    {
-        final int length = 36;
-        if (srcOffset < 0 || srcOffset > (src.length - length))
-        {
-            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
-        }
-
-        buffer.putBytes(offset + 169, src, srcOffset, length);
-
-        return this;
-    }
-
-    public DealRequestEncoder ticketRef(final String src)
-    {
-        final int length = 36;
-        final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        if (bytes.length > length)
-        {
-            throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
-        }
-
-        buffer.putBytes(offset + 169, bytes, 0, bytes.length);
-
-        for (int start = bytes.length; start < length; ++start)
-        {
-            buffer.putByte(offset + 169 + start, (byte)0);
-        }
-
-        return this;
-    }
-
     public static int fxRateId()
     {
-        return 11;
+        return 10;
     }
 
     public static int fxRateSinceVersion()
@@ -1121,7 +1020,7 @@ public final class DealRequestEncoder
 
     public static int fxRateEncodingOffset()
     {
-        return 205;
+        return 169;
     }
 
     public static int fxRateEncodingLength()
@@ -1148,7 +1047,7 @@ public final class DealRequestEncoder
      */
     public DecimalEncoder fxRate()
     {
-        fxRate.wrap(buffer, offset + 205);
+        fxRate.wrap(buffer, offset + 169);
         return fxRate;
     }
 

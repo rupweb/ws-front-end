@@ -45,7 +45,7 @@ public class ExecutionReportTest {
                     "secondaryAmount: { mantissa: 500, exponent: 2 }, " +
                     "secondaryCurrency: 'EUR', " +
                     "side: 'BUY', " +
-                    "symbol: 'AAPL', " +
+                    "symbol: 'EURUSD', " +
                     "deliveryDate: '20240101', " +
                     "transactTime: '20240101-00:00:00.000', " +
                     "quoteRequestID: 'QR123456', " +
@@ -72,7 +72,7 @@ public class ExecutionReportTest {
             assertEquals(2, decodedMessage.getMember("secondaryAmount").getMember("exponent").asInt());
             assertEquals("EUR", decodedMessage.getMember("secondaryCurrency").asString());
             assertEquals("BUY", decodedMessage.getMember("side").asString());
-            assertEquals("AAPL", decodedMessage.getMember("symbol").asString());
+            assertEquals("EURUSD", decodedMessage.getMember("symbol").asString());
             assertEquals("20240101", decodedMessage.getMember("deliveryDate").asString());
             assertEquals("20240101-00:00:00.000", decodedMessage.getMember("transactTime").asString());
             assertEquals("QR123456", decodedMessage.getMember("quoteRequestID").asString());

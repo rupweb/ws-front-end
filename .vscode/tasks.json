@@ -4,7 +4,7 @@
         {
             "label": "Test",
             "type": "shell",
-            "command": "gradle test",
+            "command": "./gradlew test",
             "group": {
                 "kind": "test",
                 "isDefault": true

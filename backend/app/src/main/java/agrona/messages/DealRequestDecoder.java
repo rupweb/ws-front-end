@@ -970,103 +970,9 @@ public final class DealRequestDecoder
     }
 
 
-    public static int ticketRefId()
-    {
-        return 10;
-    }
-
-    public static int ticketRefSinceVersion()
-    {
-        return 0;
-    }
-
-    public static int ticketRefEncodingOffset()
-    {
-        return 169;
-    }
-
-    public static int ticketRefEncodingLength()
-    {
-        return 36;
-    }
-
-    public static String ticketRefMetaAttribute(final MetaAttribute metaAttribute)
-    {
-        if (MetaAttribute.PRESENCE == metaAttribute)
-        {
-            return "required";
-        }
-
-        return "";
-    }
-
-    public static byte ticketRefNullValue()
-    {
-        return (byte)0;
-    }
-
-    public static byte ticketRefMinValue()
-    {
-        return (byte)32;
-    }
-
-    public static byte ticketRefMaxValue()
-    {
-        return (byte)126;
-    }
-
-    public static int ticketRefLength()
-    {
-        return 36;
-    }
-
-
-    public byte ticketRef(final int index)
-    {
-        if (index < 0 || index >= 36)
-        {
-            throw new IndexOutOfBoundsException("index out of range: index=" + index);
-        }
-
-        final int pos = offset + 169 + (index * 1);
-
-        return buffer.getByte(pos);
-    }
-
-
-    public static String ticketRefCharacterEncoding()
-    {
-        return java.nio.charset.StandardCharsets.UTF_8.name();
-    }
-
-    public int getTicketRef(final byte[] dst, final int dstOffset)
-    {
-        final int length = 36;
-        if (dstOffset < 0 || dstOffset > (dst.length - length))
-        {
-            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
-        }
-
-        buffer.getBytes(offset + 169, dst, dstOffset, length);
-
-        return length;
-    }
-
-    public String ticketRef()
-    {
-        final byte[] dst = new byte[36];
-        buffer.getBytes(offset + 169, dst, 0, 36);
-
-        int end = 0;
-        for (; end < 36 && dst[end] != 0; ++end);
-
-        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
-    }
-
-
     public static int fxRateId()
     {
-        return 11;
+        return 10;
     }
 
     public static int fxRateSinceVersion()
@@ -1076,7 +982,7 @@ public final class DealRequestDecoder
 
     public static int fxRateEncodingOffset()
     {
-        return 205;
+        return 169;
     }
 
     public static int fxRateEncodingLength()
@@ -1103,7 +1009,7 @@ public final class DealRequestDecoder
      */
     public DecimalDecoder fxRate()
     {
-        fxRate.wrap(buffer, offset + 205);
+        fxRate.wrap(buffer, offset + 169);
         return fxRate;
     }
 
@@ -1216,12 +1122,6 @@ public final class DealRequestDecoder
         for (int i = 0; i < dealRequestIDLength() && this.dealRequestID(i) > 0; i++)
         {
             builder.append((char)this.dealRequestID(i));
-        }
-        builder.append('|');
-        builder.append("ticketRef=");
-        for (int i = 0; i < ticketRefLength() && this.ticketRef(i) > 0; i++)
-        {
-            builder.append((char)this.ticketRef(i));
         }
         builder.append('|');
         builder.append("fxRate=");

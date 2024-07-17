@@ -45,7 +45,7 @@ public class QuoteTest {
                     "fxRate: { mantissa: 100, exponent: -2 }, " +
                     "transactTime: '20240101-00:00:00.000', " +
                     "side: 'BUY', " +
-                    "symbol: 'AAPL', " +
+                    "symbol: 'EURUSD', " +
                     "quoteID: 'Q123456', " +
                     "quoteRequestID: 'QR123456' })");
 
@@ -67,7 +67,7 @@ public class QuoteTest {
             assertEquals(-2, decodedMessage.getMember("fxRate").getMember("exponent").asInt());
             assertEquals("20240101-00:00:00.000", decodedMessage.getMember("transactTime").asString());
             assertEquals("BUY", decodedMessage.getMember("side").asString());
-            assertEquals("AAPL", decodedMessage.getMember("symbol").asString());
+            assertEquals("EURUSD", decodedMessage.getMember("symbol").asString());
             assertEquals("Q123456", decodedMessage.getMember("quoteID").asString());
             assertEquals("QR123456", decodedMessage.getMember("quoteRequestID").asString());
         }

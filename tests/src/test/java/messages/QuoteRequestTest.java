@@ -46,8 +46,8 @@ public class QuoteRequestTest {
                     "transactTime: '20240101-00:00:00.000', " +
                     "quoteRequestID: 'QR123456', " +
                     "side: 'BUY', " +
-                    "symbol: 'AAPL', " +
-                    "currencyOwned: 'USD', " +
+                    "symbol: 'EURUSD', " +
+                    "currencyOwned: 'EUR', " +
                     "kycStatus: 2 })");
 
             // Call encodeQuoteRequest function
@@ -68,8 +68,8 @@ public class QuoteRequestTest {
             assertEquals("20240101-00:00:00.000", decodedMessage.getMember("transactTime").asString());
             assertEquals("QR123456", decodedMessage.getMember("quoteRequestID").asString());
             assertEquals("BUY", decodedMessage.getMember("side").asString());
-            assertEquals("AAPL", decodedMessage.getMember("symbol").asString());
-            assertEquals("USD", decodedMessage.getMember("currencyOwned").asString());
+            assertEquals("EURUSD", decodedMessage.getMember("symbol").asString());
+            assertEquals("EUR", decodedMessage.getMember("currencyOwned").asString());
             assertEquals("VERIFIED", decodedMessage.getMember("kycStatus").asString());
         }
 
