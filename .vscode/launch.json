@@ -3,7 +3,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch App",
+            "name": "Launch Backend",
             "request": "launch",
             "mainClass": "backend.App",
             "projectName": "backend",

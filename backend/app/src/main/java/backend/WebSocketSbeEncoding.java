@@ -23,32 +23,33 @@ public class WebSocketSbeEncoding {
                                            String quoteID, String dealRequestID, double fxRate) {
 
         DirectBuffer buffer = sbeEncoder.encodeDealRequest(amount, currency, side, symbol, deliveryDate,
-                transactTime, quoteRequestID, quoteID, dealRequestID, fxRate);
+                                                            transactTime, quoteRequestID, quoteID, dealRequestID, fxRate);
         return buffer.byteArray();
     }
 
-    public byte[] encodeQuoteRequest(double amount, String saleCurrency, String side, String symbol, 
-                                   String deliveryDate, String transactTime, String quoteRequestID, String currencyOwned) {
+    public byte[] encodeQuoteRequest(double amount, String saleCurrency, String deliveryDate, String transactTime, 
+                                    String quoteRequestID, String side, String symbol, String currencyOwned) {
 
-        DirectBuffer buffer = sbeEncoder.encodeQuoteRequest(amount, saleCurrency, side, symbol, deliveryDate,
-                transactTime, quoteRequestID, currencyOwned);
+        DirectBuffer buffer = sbeEncoder.encodeQuoteRequest(amount, saleCurrency, deliveryDate, transactTime, 
+                                                            quoteRequestID, side, symbol, currencyOwned);
         return buffer.byteArray();
     }
 
-    public byte[] encodeQuote(double amount, String currency, String side, String symbol, 
-                            String transactTime, String quoteRequestID, String quoteID, double fxRate) {
+    public byte[] encodeQuote(double amount, String currency, double fxRate, String transactTime, 
+                                String side, String symbol, String quoteID, String quoteRequestID) {
 
-        DirectBuffer buffer = sbeEncoder.encodeQuote(amount, currency, side, symbol, transactTime,
-                quoteRequestID, quoteID, fxRate);
+        DirectBuffer buffer = sbeEncoder.encodeQuote(amount, currency, fxRate, transactTime,
+                                                    side, symbol, quoteID, quoteRequestID);
         return buffer.byteArray();
     }
 
-    public byte[] sendExecutionReport(double amount, String currency, String side, String symbol, double secondaryAmount, 
-                                    String secondaryCurrency, String deliveryDate, String transactTime, String quoteRequestID, String quoteID, 
-                                    String dealRequestID, String dealID, double fxRate) {
+    public byte[] sendExecutionReport(double amount, String currency, double secondaryAmount, String secondaryCurrency, 
+                                    String side, String symbol, String deliveryDate, String transactTime, 
+                                    String quoteRequestID, String quoteID, String dealRequestID, String dealID, double fxRate) {
 
-        DirectBuffer buffer = sbeEncoder.encodeExecutionReport(amount, currency, side, symbol, secondaryAmount,
-                secondaryCurrency, deliveryDate, transactTime, quoteRequestID, quoteID, dealRequestID, dealID, fxRate);
+        DirectBuffer buffer = sbeEncoder.encodeExecutionReport(amount, currency, secondaryAmount, secondaryCurrency, 
+                                                                side, symbol, deliveryDate, transactTime, 
+                                                                quoteRequestID, quoteID, dealRequestID, dealID, fxRate);
         return buffer.byteArray();
     }
 
