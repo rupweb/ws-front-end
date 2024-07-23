@@ -85,15 +85,15 @@ public class SbeDecoder {
         double salePrice = mantissa * Math.pow(10, exponent);
 
         String saleCurrency = quoteRequestDecoder.saleCurrency();
+        String side = quoteRequestDecoder.side();
+        String symbol = quoteRequestDecoder.symbol();
         String deliveryDate = quoteRequestDecoder.deliveryDate();
         String transactTime = quoteRequestDecoder.transactTime();
         String quoteRequestID = quoteRequestDecoder.quoteRequestID();
-        String side = quoteRequestDecoder.side();
-        String symbol = quoteRequestDecoder.symbol();
         String currencyOwned = quoteRequestDecoder.currencyOwned();
 
-        logger.info("SalePrice: {}, SaleCurrency: {}, DeliveryDate: {}, TransactTime: {}, QuoteRequestID: {}, Side: {}, Symbol: {}, CurrencyOwned: {}",
-                salePrice, saleCurrency, deliveryDate, transactTime, quoteRequestID, side, symbol, currencyOwned);
+        logger.info("SalePrice: {}, SaleCurrency: {}, Side: {}, Symbol: {}, DeliveryDate: {}, TransactTime: {}, QuoteRequestID: {}, CurrencyOwned: {}",
+                salePrice, saleCurrency, side, symbol, deliveryDate, transactTime, quoteRequestID, currencyOwned);
     }
 
     private void decodeQuote(DirectBuffer buffer) {
@@ -131,8 +131,8 @@ public class SbeDecoder {
         String quoteID = quoteDecoder.quoteID();
         String quoteRequestID = quoteDecoder.quoteRequestID();
     
-        logger.info("Amount: {}, Currency: {}, FxRate: {}, TransactTime: {}, Side: {}, Symbol: {}, QuoteID: {}, QuoteRequestID: {}",
-                amount, currency, fxRate, transactTime, side, symbol, quoteID, quoteRequestID);
+        logger.info("Amount: {}, Currency: {}, Side: {}, Symbol: {},  TransactTime: {}, QuoteID: {}, QuoteRequestID: {}, FxRate: {}",
+                amount, currency, side, symbol, transactTime, quoteID, quoteRequestID, fxRate);
     }
     
 

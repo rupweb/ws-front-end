@@ -11,7 +11,6 @@ public class DealRequest {
     private String quoteRequestID;
     private String quoteID;
     private String dealRequestID;
-    private String ticketRef;
     private double fxRate;
 
     public double getAmount() {
@@ -67,12 +66,6 @@ public class DealRequest {
     }
     public void setDealRequestID(String dealRequestID) {
         this.dealRequestID = dealRequestID;
-    }
-    public String getTicketRef() {
-        return ticketRef;
-    }
-    public void setTicketRef(String ticketRef) {
-        this.ticketRef = ticketRef;
     }
     public double getFxRate() {
         return fxRate;

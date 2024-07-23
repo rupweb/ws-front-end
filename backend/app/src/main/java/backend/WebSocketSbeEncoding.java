@@ -27,19 +27,19 @@ public class WebSocketSbeEncoding {
         return buffer.byteArray();
     }
 
-    public byte[] encodeQuoteRequest(double amount, String saleCurrency, String deliveryDate, String transactTime, 
-                                    String quoteRequestID, String side, String symbol, String currencyOwned) {
+    public byte[] encodeQuoteRequest(double amount, String saleCurrency, String side, String symbol, String deliveryDate, 
+                                        String transactTime, String quoteRequestID, String currencyOwned, KycStatus kycStatus) {
 
-        DirectBuffer buffer = sbeEncoder.encodeQuoteRequest(amount, saleCurrency, deliveryDate, transactTime, 
-                                                            quoteRequestID, side, symbol, currencyOwned);
+        DirectBuffer buffer = sbeEncoder.encodeQuoteRequest(amount, saleCurrency, side, symbol, deliveryDate, transactTime, 
+                                                            quoteRequestID, currencyOwned, kycStatus);
         return buffer.byteArray();
     }
 
-    public byte[] encodeQuote(double amount, String currency, double fxRate, String transactTime, 
-                                String side, String symbol, String quoteID, String quoteRequestID) {
+    public byte[] encodeQuote(double amount, String currency, String side, String symbol, String transactTime, 
+                                String quoteID, String quoteRequestID, double fxRate) {
 
-        DirectBuffer buffer = sbeEncoder.encodeQuote(amount, currency, fxRate, transactTime,
-                                                    side, symbol, quoteID, quoteRequestID);
+        DirectBuffer buffer = sbeEncoder.encodeQuote(amount, currency, side, symbol, transactTime,
+                                                    quoteID, quoteRequestID, fxRate);
         return buffer.byteArray();
     }
 

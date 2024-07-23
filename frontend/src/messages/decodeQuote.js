@@ -22,15 +22,15 @@ function decodeQuote(encodedMessage) {
             exponent: decoder.amount().exponent()
         },
         currency: decoder.currency(),
+        side: decoder.side(),
+        symbol: decoder.symbol(),
+        transactTime: decoder.transactTime(),
+        quoteID: decoder.quoteID(),
+        quoteRequestID: decoder.quoteRequestID(),
         fxRate: {
             mantissa: decoder.fxRate().mantissa(),
             exponent: decoder.fxRate().exponent()
-        },
-        transactTime: decoder.transactTime(),
-        side: decoder.side(),
-        symbol: decoder.symbol(),
-        quoteID: decoder.quoteID(),
-        quoteRequestID: decoder.quoteRequestID()
+        }
     };
 
     return result;

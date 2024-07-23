@@ -312,146 +312,9 @@ public final class QuoteDecoder
     }
 
 
-    public static int fxRateId()
-    {
-        return 3;
-    }
-
-    public static int fxRateSinceVersion()
-    {
-        return 0;
-    }
-
-    public static int fxRateEncodingOffset()
-    {
-        return 20;
-    }
-
-    public static int fxRateEncodingLength()
-    {
-        return 9;
-    }
-
-    public static String fxRateMetaAttribute(final MetaAttribute metaAttribute)
-    {
-        if (MetaAttribute.PRESENCE == metaAttribute)
-        {
-            return "required";
-        }
-
-        return "";
-    }
-
-    private final DecimalDecoder fxRate = new DecimalDecoder();
-
-    /**
-     * The FX rate
-     *
-     * @return DecimalDecoder : The FX rate
-     */
-    public DecimalDecoder fxRate()
-    {
-        fxRate.wrap(buffer, offset + 20);
-        return fxRate;
-    }
-
-    public static int transactTimeId()
-    {
-        return 4;
-    }
-
-    public static int transactTimeSinceVersion()
-    {
-        return 0;
-    }
-
-    public static int transactTimeEncodingOffset()
-    {
-        return 29;
-    }
-
-    public static int transactTimeEncodingLength()
-    {
-        return 21;
-    }
-
-    public static String transactTimeMetaAttribute(final MetaAttribute metaAttribute)
-    {
-        if (MetaAttribute.PRESENCE == metaAttribute)
-        {
-            return "required";
-        }
-
-        return "";
-    }
-
-    public static byte transactTimeNullValue()
-    {
-        return (byte)0;
-    }
-
-    public static byte transactTimeMinValue()
-    {
-        return (byte)32;
-    }
-
-    public static byte transactTimeMaxValue()
-    {
-        return (byte)126;
-    }
-
-    public static int transactTimeLength()
-    {
-        return 21;
-    }
-
-
-    public byte transactTime(final int index)
-    {
-        if (index < 0 || index >= 21)
-        {
-            throw new IndexOutOfBoundsException("index out of range: index=" + index);
-        }
-
-        final int pos = offset + 29 + (index * 1);
-
-        return buffer.getByte(pos);
-    }
-
-
-    public static String transactTimeCharacterEncoding()
-    {
-        return java.nio.charset.StandardCharsets.UTF_8.name();
-    }
-
-    public int getTransactTime(final byte[] dst, final int dstOffset)
-    {
-        final int length = 21;
-        if (dstOffset < 0 || dstOffset > (dst.length - length))
-        {
-            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
-        }
-
-        buffer.getBytes(offset + 29, dst, dstOffset, length);
-
-        return length;
-    }
-
-    public String transactTime()
-    {
-        final byte[] dst = new byte[21];
-        buffer.getBytes(offset + 29, dst, 0, 21);
-
-        int end = 0;
-        for (; end < 21 && dst[end] != 0; ++end);
-
-        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
-    }
-
-
     public static int sideId()
     {
-        return 5;
+        return 3;
     }
 
     public static int sideSinceVersion()
@@ -461,7 +324,7 @@ public final class QuoteDecoder
 
     public static int sideEncodingOffset()
     {
-        return 50;
+        return 20;
     }
 
     public static int sideEncodingLength()
@@ -507,7 +370,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 50 + (index * 1);
+        final int pos = offset + 20 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -526,7 +389,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 50, dst, dstOffset, length);
+        buffer.getBytes(offset + 20, dst, dstOffset, length);
 
         return length;
     }
@@ -534,7 +397,7 @@ public final class QuoteDecoder
     public String side()
     {
         final byte[] dst = new byte[4];
-        buffer.getBytes(offset + 50, dst, 0, 4);
+        buffer.getBytes(offset + 20, dst, 0, 4);
 
         int end = 0;
         for (; end < 4 && dst[end] != 0; ++end);
@@ -545,7 +408,7 @@ public final class QuoteDecoder
 
     public static int symbolId()
     {
-        return 6;
+        return 4;
     }
 
     public static int symbolSinceVersion()
@@ -555,7 +418,7 @@ public final class QuoteDecoder
 
     public static int symbolEncodingOffset()
     {
-        return 54;
+        return 24;
     }
 
     public static int symbolEncodingLength()
@@ -601,7 +464,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 54 + (index * 1);
+        final int pos = offset + 24 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -620,7 +483,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 54, dst, dstOffset, length);
+        buffer.getBytes(offset + 24, dst, dstOffset, length);
 
         return length;
     }
@@ -628,7 +491,7 @@ public final class QuoteDecoder
     public String symbol()
     {
         final byte[] dst = new byte[6];
-        buffer.getBytes(offset + 54, dst, 0, 6);
+        buffer.getBytes(offset + 24, dst, 0, 6);
 
         int end = 0;
         for (; end < 6 && dst[end] != 0; ++end);
@@ -637,9 +500,103 @@ public final class QuoteDecoder
     }
 
 
+    public static int transactTimeId()
+    {
+        return 5;
+    }
+
+    public static int transactTimeSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int transactTimeEncodingOffset()
+    {
+        return 30;
+    }
+
+    public static int transactTimeEncodingLength()
+    {
+        return 21;
+    }
+
+    public static String transactTimeMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    public static byte transactTimeNullValue()
+    {
+        return (byte)0;
+    }
+
+    public static byte transactTimeMinValue()
+    {
+        return (byte)32;
+    }
+
+    public static byte transactTimeMaxValue()
+    {
+        return (byte)126;
+    }
+
+    public static int transactTimeLength()
+    {
+        return 21;
+    }
+
+
+    public byte transactTime(final int index)
+    {
+        if (index < 0 || index >= 21)
+        {
+            throw new IndexOutOfBoundsException("index out of range: index=" + index);
+        }
+
+        final int pos = offset + 30 + (index * 1);
+
+        return buffer.getByte(pos);
+    }
+
+
+    public static String transactTimeCharacterEncoding()
+    {
+        return java.nio.charset.StandardCharsets.UTF_8.name();
+    }
+
+    public int getTransactTime(final byte[] dst, final int dstOffset)
+    {
+        final int length = 21;
+        if (dstOffset < 0 || dstOffset > (dst.length - length))
+        {
+            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
+        }
+
+        buffer.getBytes(offset + 30, dst, dstOffset, length);
+
+        return length;
+    }
+
+    public String transactTime()
+    {
+        final byte[] dst = new byte[21];
+        buffer.getBytes(offset + 30, dst, 0, 21);
+
+        int end = 0;
+        for (; end < 21 && dst[end] != 0; ++end);
+
+        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+
     public static int quoteIDId()
     {
-        return 7;
+        return 6;
     }
 
     public static int quoteIDSinceVersion()
@@ -649,7 +606,7 @@ public final class QuoteDecoder
 
     public static int quoteIDEncodingOffset()
     {
-        return 60;
+        return 51;
     }
 
     public static int quoteIDEncodingLength()
@@ -695,7 +652,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 60 + (index * 1);
+        final int pos = offset + 51 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -714,7 +671,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 60, dst, dstOffset, length);
+        buffer.getBytes(offset + 51, dst, dstOffset, length);
 
         return length;
     }
@@ -722,7 +679,7 @@ public final class QuoteDecoder
     public String quoteID()
     {
         final byte[] dst = new byte[36];
-        buffer.getBytes(offset + 60, dst, 0, 36);
+        buffer.getBytes(offset + 51, dst, 0, 36);
 
         int end = 0;
         for (; end < 36 && dst[end] != 0; ++end);
@@ -733,7 +690,7 @@ public final class QuoteDecoder
 
     public static int quoteRequestIDId()
     {
-        return 8;
+        return 7;
     }
 
     public static int quoteRequestIDSinceVersion()
@@ -743,7 +700,7 @@ public final class QuoteDecoder
 
     public static int quoteRequestIDEncodingOffset()
     {
-        return 96;
+        return 87;
     }
 
     public static int quoteRequestIDEncodingLength()
@@ -789,7 +746,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 96 + (index * 1);
+        final int pos = offset + 87 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -808,7 +765,7 @@ public final class QuoteDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 96, dst, dstOffset, length);
+        buffer.getBytes(offset + 87, dst, dstOffset, length);
 
         return length;
     }
@@ -816,7 +773,7 @@ public final class QuoteDecoder
     public String quoteRequestID()
     {
         final byte[] dst = new byte[36];
-        buffer.getBytes(offset + 96, dst, 0, 36);
+        buffer.getBytes(offset + 87, dst, 0, 36);
 
         int end = 0;
         for (; end < 36 && dst[end] != 0; ++end);
@@ -824,6 +781,49 @@ public final class QuoteDecoder
         return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
     }
 
+
+    public static int fxRateId()
+    {
+        return 8;
+    }
+
+    public static int fxRateSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int fxRateEncodingOffset()
+    {
+        return 123;
+    }
+
+    public static int fxRateEncodingLength()
+    {
+        return 9;
+    }
+
+    public static String fxRateMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    private final DecimalDecoder fxRate = new DecimalDecoder();
+
+    /**
+     * The FX rate
+     *
+     * @return DecimalDecoder : The FX rate
+     */
+    public DecimalDecoder fxRate()
+    {
+        fxRate.wrap(buffer, offset + 123);
+        return fxRate;
+    }
 
     public String toString()
     {
@@ -894,23 +894,6 @@ public final class QuoteDecoder
             builder.append((char)this.currency(i));
         }
         builder.append('|');
-        builder.append("fxRate=");
-        final DecimalDecoder fxRate = this.fxRate();
-        if (null != fxRate)
-        {
-            fxRate.appendTo(builder);
-        }
-        else
-        {
-            builder.append("null");
-        }
-        builder.append('|');
-        builder.append("transactTime=");
-        for (int i = 0; i < transactTimeLength() && this.transactTime(i) > 0; i++)
-        {
-            builder.append((char)this.transactTime(i));
-        }
-        builder.append('|');
         builder.append("side=");
         for (int i = 0; i < sideLength() && this.side(i) > 0; i++)
         {
@@ -923,6 +906,12 @@ public final class QuoteDecoder
             builder.append((char)this.symbol(i));
         }
         builder.append('|');
+        builder.append("transactTime=");
+        for (int i = 0; i < transactTimeLength() && this.transactTime(i) > 0; i++)
+        {
+            builder.append((char)this.transactTime(i));
+        }
+        builder.append('|');
         builder.append("quoteID=");
         for (int i = 0; i < quoteIDLength() && this.quoteID(i) > 0; i++)
         {
@@ -933,6 +922,17 @@ public final class QuoteDecoder
         for (int i = 0; i < quoteRequestIDLength() && this.quoteRequestID(i) > 0; i++)
         {
             builder.append((char)this.quoteRequestID(i));
+        }
+        builder.append('|');
+        builder.append("fxRate=");
+        final DecimalDecoder fxRate = this.fxRate();
+        if (null != fxRate)
+        {
+            fxRate.appendTo(builder);
+        }
+        else
+        {
+            builder.append("null");
         }
 
         limit(originalLimit);

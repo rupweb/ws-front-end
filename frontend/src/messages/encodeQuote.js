@@ -21,12 +21,12 @@ function encodeQuote(data) {
     console.log("Encoding...");
     encoder.amount().mantissa(data.amount.mantissa).exponent(data.amount.exponent);
     encoder.currency(data.currency);
-    encoder.fxRate().mantissa(data.fxRate.mantissa).exponent(data.fxRate.exponent);
-    encoder.transactTime(data.transactTime);
     encoder.side(data.side);
     encoder.symbol(data.symbol);
+    encoder.transactTime(data.transactTime);
     encoder.quoteID(data.quoteID);
     encoder.quoteRequestID(data.quoteRequestID);
+    encoder.fxRate().mantissa(data.fxRate.mantissa).exponent(data.fxRate.exponent);
 
     return buffer.byteArray();
 }

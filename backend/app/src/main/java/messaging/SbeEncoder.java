@@ -9,13 +9,8 @@ import agrona.messages.DecimalEncoder;
 import agrona.messages.MessageHeaderEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import java.util.Arrays;
 
 public class SbeEncoder {
-    private static final Logger log = LogManager.getLogger(SbeEncoder.class);
-
     public DirectBuffer encodeDealRequest(double amount, String currency, String side, String symbol,
                                           String deliveryDate, String transactTime, String quoteRequestID,
                                           String quoteID, String dealRequestID, double fxRate) {
@@ -47,8 +42,8 @@ public class SbeEncoder {
         return buffer;
     }
 
-    public DirectBuffer encodeQuoteRequest(double amount, String saleCurrency, String deliveryDate, String transactTime,
-                                           String quoteRequestID, String side, String symbol, String currencyOwned) {
+    public DirectBuffer encodeQuoteRequest(double amount, String saleCurrency, String side, String symbol, String deliveryDate, 
+                                            String transactTime, String quoteRequestID, String currencyOwned, KycStatus kycStatus) {
 
         QuoteRequestEncoder encoder = new QuoteRequestEncoder();
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[QuoteRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH]);
@@ -61,18 +56,19 @@ public class SbeEncoder {
         amountEncoder.wrap(buffer, encoder.amount().offset()).mantissa(mantissa).exponent(exponent);
 
         encoder.saleCurrency(saleCurrency);
+        encoder.side(side);
+        encoder.symbol(symbol);
         encoder.deliveryDate(deliveryDate);
         encoder.transactTime(transactTime);
         encoder.quoteRequestID(quoteRequestID);
-        encoder.side(side);
-        encoder.symbol(symbol);
         encoder.currencyOwned(currencyOwned);
+        encoder.kycStatus(kycStatus);
 
         return buffer;
     }
 
-    public DirectBuffer encodeQuote(double amount, String currency, double fxRate, String transactTime,
-                                    String side, String symbol, String quoteID, String quoteRequestID) {
+    public DirectBuffer encodeQuote(double amount, String currency, String side, String symbol, 
+                            String transactTime, String quoteID, String quoteRequestID, double fxRate) {
 
         QuoteEncoder encoder = new QuoteEncoder();
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[QuoteEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH]);
@@ -85,17 +81,16 @@ public class SbeEncoder {
         amountEncoder.wrap(buffer, encoder.amount().offset()).mantissa(mantissa).exponent(exponent);
 
         encoder.currency(currency);
+        encoder.side(side);
+        encoder.symbol(symbol);
+        encoder.transactTime(transactTime);
+        encoder.quoteID(quoteID);
+        encoder.quoteRequestID(quoteRequestID);
 
         long mantissa2 = (long) (fxRate * 100000); // Rates to 5 dp
         byte exponent2 = -5;
         DecimalEncoder fxRateEncoder = new DecimalEncoder();
         fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa2).exponent(exponent2);
-
-        encoder.transactTime(transactTime);
-        encoder.side(side);
-        encoder.symbol(symbol);
-        encoder.quoteID(quoteID);
-        encoder.quoteRequestID(quoteRequestID);
 
         return buffer;
     }
@@ -140,9 +135,9 @@ public class SbeEncoder {
         return buffer;
     }
 
-    public DirectBuffer encodeError(double amount, String currency, double fxRate, String transactTime,
-                                    String side, String symbol, String deliveryDate, String quoteRequestID,
-                                    String quoteID, String dealRequestID, String dealID, String message) {
+    public DirectBuffer encodeError(double amount, String currency, String side, String symbol, 
+                                    String deliveryDate, String transactTime, String quoteRequestID,
+                                    String quoteID, String dealRequestID, String dealID, double fxRate, String message) {
 
         ErrorEncoder encoder = new ErrorEncoder();
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[ErrorEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH]);
@@ -155,20 +150,20 @@ public class SbeEncoder {
         amountEncoder.wrap(buffer, encoder.amount().offset()).mantissa(mantissa).exponent(exponent);
 
         encoder.currency(currency);
+        encoder.side(side);
+        encoder.symbol(symbol);
+        encoder.deliveryDate(deliveryDate);
+        encoder.transactTime(transactTime);
+        encoder.quoteRequestID(quoteRequestID);
+        encoder.quoteID(quoteID);
+        encoder.dealRequestID(dealRequestID);
+        encoder.dealID(dealID);
 
         long mantissa2 = (long) (fxRate * 100000); // Rates to 5 dp
         byte exponent2 = -5;
         DecimalEncoder fxRateEncoder = new DecimalEncoder();
         fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa2).exponent(exponent2);
 
-        encoder.transactTime(transactTime);
-        encoder.side(side);
-        encoder.symbol(symbol);
-        encoder.deliveryDate(deliveryDate);
-        encoder.quoteRequestID(quoteRequestID);
-        encoder.quoteID(quoteID);
-        encoder.dealRequestID(dealRequestID);
-        encoder.dealID(dealID);
         encoder.message(message);
 
         return buffer;

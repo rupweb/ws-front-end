@@ -29,11 +29,11 @@ const handleExecute = async ({
   const dealRequest = {
     salePrice: amount,
     saleCurrency: toCurrency,
+    side: 'BUY',
+    symbol: `${fromCurrency}/${toCurrency}`,
     deliveryDate: selectedDate.toISOString().split('T')[0],
     transactTime: new Date().toISOString(),
     quoteRequestID: generateUUID(),
-    side: 'BUY',
-    symbol: `${fromCurrency}/${toCurrency}`,
     currencyOwned: fromCurrency,
     kycStatus,
   };

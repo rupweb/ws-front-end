@@ -21,11 +21,11 @@ function decodeQuoteRequest(encodedMessage) {
             exponent: decoder.amount().exponent()
         },
         saleCurrency: decoder.saleCurrency(),
+        side: decoder.side(),
+        symbol: decoder.symbol(),
         deliveryDate: decoder.deliveryDate(),
         transactTime: decoder.transactTime(),
         quoteRequestID: decoder.quoteRequestID(),
-        side: decoder.side(),
-        symbol: decoder.symbol(),
         currencyOwned: decoder.currencyOwned(),
         kycStatus: decoder.kycStatus().toString()
     };

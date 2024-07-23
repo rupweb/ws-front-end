@@ -22,11 +22,11 @@ function encodeQuoteRequest(data) {
     console.log("Encoding...");
     encoder.amount().mantissa(data.amount.mantissa).exponent(data.amount.exponent);
     encoder.saleCurrency(data.saleCurrency);
+    encoder.side(data.side);
+    encoder.symbol(data.symbol);
     encoder.deliveryDate(data.deliveryDate);
     encoder.transactTime(data.transactTime);
     encoder.quoteRequestID(data.quoteRequestID);
-    encoder.side(data.side);
-    encoder.symbol(data.symbol);
     encoder.currencyOwned(data.currencyOwned);
 
     // kycStatus enum

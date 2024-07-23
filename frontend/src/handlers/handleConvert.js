@@ -25,11 +25,11 @@ const handleConvert = async ({
       exponent: -2
     },
     saleCurrency: fromCurrency,
+    side: 'BUY',
+    symbol: `${fromCurrency}${toCurrency}`,
     deliveryDate: selectedDate.toISOString().slice(0, 10),
     transactTime: new Date().toISOString(),
     quoteRequestID: generateUUID(),
-    side: 'BUY',
-    symbol: `${fromCurrency}${toCurrency}`,
     currencyOwned: 'USD',
     kycStatus: 2 // Assuming 'VERIFIED' status corresponds to 2
   };

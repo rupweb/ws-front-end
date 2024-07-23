@@ -312,291 +312,9 @@ public final class QuoteRequestDecoder
     }
 
 
-    public static int deliveryDateId()
-    {
-        return 3;
-    }
-
-    public static int deliveryDateSinceVersion()
-    {
-        return 0;
-    }
-
-    public static int deliveryDateEncodingOffset()
-    {
-        return 20;
-    }
-
-    public static int deliveryDateEncodingLength()
-    {
-        return 10;
-    }
-
-    public static String deliveryDateMetaAttribute(final MetaAttribute metaAttribute)
-    {
-        if (MetaAttribute.PRESENCE == metaAttribute)
-        {
-            return "required";
-        }
-
-        return "";
-    }
-
-    public static byte deliveryDateNullValue()
-    {
-        return (byte)0;
-    }
-
-    public static byte deliveryDateMinValue()
-    {
-        return (byte)32;
-    }
-
-    public static byte deliveryDateMaxValue()
-    {
-        return (byte)126;
-    }
-
-    public static int deliveryDateLength()
-    {
-        return 10;
-    }
-
-
-    public byte deliveryDate(final int index)
-    {
-        if (index < 0 || index >= 10)
-        {
-            throw new IndexOutOfBoundsException("index out of range: index=" + index);
-        }
-
-        final int pos = offset + 20 + (index * 1);
-
-        return buffer.getByte(pos);
-    }
-
-
-    public static String deliveryDateCharacterEncoding()
-    {
-        return java.nio.charset.StandardCharsets.UTF_8.name();
-    }
-
-    public int getDeliveryDate(final byte[] dst, final int dstOffset)
-    {
-        final int length = 10;
-        if (dstOffset < 0 || dstOffset > (dst.length - length))
-        {
-            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
-        }
-
-        buffer.getBytes(offset + 20, dst, dstOffset, length);
-
-        return length;
-    }
-
-    public String deliveryDate()
-    {
-        final byte[] dst = new byte[10];
-        buffer.getBytes(offset + 20, dst, 0, 10);
-
-        int end = 0;
-        for (; end < 10 && dst[end] != 0; ++end);
-
-        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
-    }
-
-
-    public static int transactTimeId()
-    {
-        return 4;
-    }
-
-    public static int transactTimeSinceVersion()
-    {
-        return 0;
-    }
-
-    public static int transactTimeEncodingOffset()
-    {
-        return 30;
-    }
-
-    public static int transactTimeEncodingLength()
-    {
-        return 21;
-    }
-
-    public static String transactTimeMetaAttribute(final MetaAttribute metaAttribute)
-    {
-        if (MetaAttribute.PRESENCE == metaAttribute)
-        {
-            return "required";
-        }
-
-        return "";
-    }
-
-    public static byte transactTimeNullValue()
-    {
-        return (byte)0;
-    }
-
-    public static byte transactTimeMinValue()
-    {
-        return (byte)32;
-    }
-
-    public static byte transactTimeMaxValue()
-    {
-        return (byte)126;
-    }
-
-    public static int transactTimeLength()
-    {
-        return 21;
-    }
-
-
-    public byte transactTime(final int index)
-    {
-        if (index < 0 || index >= 21)
-        {
-            throw new IndexOutOfBoundsException("index out of range: index=" + index);
-        }
-
-        final int pos = offset + 30 + (index * 1);
-
-        return buffer.getByte(pos);
-    }
-
-
-    public static String transactTimeCharacterEncoding()
-    {
-        return java.nio.charset.StandardCharsets.UTF_8.name();
-    }
-
-    public int getTransactTime(final byte[] dst, final int dstOffset)
-    {
-        final int length = 21;
-        if (dstOffset < 0 || dstOffset > (dst.length - length))
-        {
-            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
-        }
-
-        buffer.getBytes(offset + 30, dst, dstOffset, length);
-
-        return length;
-    }
-
-    public String transactTime()
-    {
-        final byte[] dst = new byte[21];
-        buffer.getBytes(offset + 30, dst, 0, 21);
-
-        int end = 0;
-        for (; end < 21 && dst[end] != 0; ++end);
-
-        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
-    }
-
-
-    public static int quoteRequestIDId()
-    {
-        return 5;
-    }
-
-    public static int quoteRequestIDSinceVersion()
-    {
-        return 0;
-    }
-
-    public static int quoteRequestIDEncodingOffset()
-    {
-        return 51;
-    }
-
-    public static int quoteRequestIDEncodingLength()
-    {
-        return 36;
-    }
-
-    public static String quoteRequestIDMetaAttribute(final MetaAttribute metaAttribute)
-    {
-        if (MetaAttribute.PRESENCE == metaAttribute)
-        {
-            return "required";
-        }
-
-        return "";
-    }
-
-    public static byte quoteRequestIDNullValue()
-    {
-        return (byte)0;
-    }
-
-    public static byte quoteRequestIDMinValue()
-    {
-        return (byte)32;
-    }
-
-    public static byte quoteRequestIDMaxValue()
-    {
-        return (byte)126;
-    }
-
-    public static int quoteRequestIDLength()
-    {
-        return 36;
-    }
-
-
-    public byte quoteRequestID(final int index)
-    {
-        if (index < 0 || index >= 36)
-        {
-            throw new IndexOutOfBoundsException("index out of range: index=" + index);
-        }
-
-        final int pos = offset + 51 + (index * 1);
-
-        return buffer.getByte(pos);
-    }
-
-
-    public static String quoteRequestIDCharacterEncoding()
-    {
-        return java.nio.charset.StandardCharsets.UTF_8.name();
-    }
-
-    public int getQuoteRequestID(final byte[] dst, final int dstOffset)
-    {
-        final int length = 36;
-        if (dstOffset < 0 || dstOffset > (dst.length - length))
-        {
-            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
-        }
-
-        buffer.getBytes(offset + 51, dst, dstOffset, length);
-
-        return length;
-    }
-
-    public String quoteRequestID()
-    {
-        final byte[] dst = new byte[36];
-        buffer.getBytes(offset + 51, dst, 0, 36);
-
-        int end = 0;
-        for (; end < 36 && dst[end] != 0; ++end);
-
-        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
-    }
-
-
     public static int sideId()
     {
-        return 6;
+        return 3;
     }
 
     public static int sideSinceVersion()
@@ -606,7 +324,7 @@ public final class QuoteRequestDecoder
 
     public static int sideEncodingOffset()
     {
-        return 87;
+        return 20;
     }
 
     public static int sideEncodingLength()
@@ -652,7 +370,7 @@ public final class QuoteRequestDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 87 + (index * 1);
+        final int pos = offset + 20 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -671,7 +389,7 @@ public final class QuoteRequestDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 87, dst, dstOffset, length);
+        buffer.getBytes(offset + 20, dst, dstOffset, length);
 
         return length;
     }
@@ -679,7 +397,7 @@ public final class QuoteRequestDecoder
     public String side()
     {
         final byte[] dst = new byte[4];
-        buffer.getBytes(offset + 87, dst, 0, 4);
+        buffer.getBytes(offset + 20, dst, 0, 4);
 
         int end = 0;
         for (; end < 4 && dst[end] != 0; ++end);
@@ -690,7 +408,7 @@ public final class QuoteRequestDecoder
 
     public static int symbolId()
     {
-        return 7;
+        return 4;
     }
 
     public static int symbolSinceVersion()
@@ -700,7 +418,7 @@ public final class QuoteRequestDecoder
 
     public static int symbolEncodingOffset()
     {
-        return 91;
+        return 24;
     }
 
     public static int symbolEncodingLength()
@@ -746,7 +464,7 @@ public final class QuoteRequestDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 91 + (index * 1);
+        final int pos = offset + 24 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -765,7 +483,7 @@ public final class QuoteRequestDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 91, dst, dstOffset, length);
+        buffer.getBytes(offset + 24, dst, dstOffset, length);
 
         return length;
     }
@@ -773,10 +491,292 @@ public final class QuoteRequestDecoder
     public String symbol()
     {
         final byte[] dst = new byte[6];
-        buffer.getBytes(offset + 91, dst, 0, 6);
+        buffer.getBytes(offset + 24, dst, 0, 6);
 
         int end = 0;
         for (; end < 6 && dst[end] != 0; ++end);
+
+        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+
+    public static int deliveryDateId()
+    {
+        return 5;
+    }
+
+    public static int deliveryDateSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int deliveryDateEncodingOffset()
+    {
+        return 30;
+    }
+
+    public static int deliveryDateEncodingLength()
+    {
+        return 10;
+    }
+
+    public static String deliveryDateMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    public static byte deliveryDateNullValue()
+    {
+        return (byte)0;
+    }
+
+    public static byte deliveryDateMinValue()
+    {
+        return (byte)32;
+    }
+
+    public static byte deliveryDateMaxValue()
+    {
+        return (byte)126;
+    }
+
+    public static int deliveryDateLength()
+    {
+        return 10;
+    }
+
+
+    public byte deliveryDate(final int index)
+    {
+        if (index < 0 || index >= 10)
+        {
+            throw new IndexOutOfBoundsException("index out of range: index=" + index);
+        }
+
+        final int pos = offset + 30 + (index * 1);
+
+        return buffer.getByte(pos);
+    }
+
+
+    public static String deliveryDateCharacterEncoding()
+    {
+        return java.nio.charset.StandardCharsets.UTF_8.name();
+    }
+
+    public int getDeliveryDate(final byte[] dst, final int dstOffset)
+    {
+        final int length = 10;
+        if (dstOffset < 0 || dstOffset > (dst.length - length))
+        {
+            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
+        }
+
+        buffer.getBytes(offset + 30, dst, dstOffset, length);
+
+        return length;
+    }
+
+    public String deliveryDate()
+    {
+        final byte[] dst = new byte[10];
+        buffer.getBytes(offset + 30, dst, 0, 10);
+
+        int end = 0;
+        for (; end < 10 && dst[end] != 0; ++end);
+
+        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+
+    public static int transactTimeId()
+    {
+        return 6;
+    }
+
+    public static int transactTimeSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int transactTimeEncodingOffset()
+    {
+        return 40;
+    }
+
+    public static int transactTimeEncodingLength()
+    {
+        return 21;
+    }
+
+    public static String transactTimeMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    public static byte transactTimeNullValue()
+    {
+        return (byte)0;
+    }
+
+    public static byte transactTimeMinValue()
+    {
+        return (byte)32;
+    }
+
+    public static byte transactTimeMaxValue()
+    {
+        return (byte)126;
+    }
+
+    public static int transactTimeLength()
+    {
+        return 21;
+    }
+
+
+    public byte transactTime(final int index)
+    {
+        if (index < 0 || index >= 21)
+        {
+            throw new IndexOutOfBoundsException("index out of range: index=" + index);
+        }
+
+        final int pos = offset + 40 + (index * 1);
+
+        return buffer.getByte(pos);
+    }
+
+
+    public static String transactTimeCharacterEncoding()
+    {
+        return java.nio.charset.StandardCharsets.UTF_8.name();
+    }
+
+    public int getTransactTime(final byte[] dst, final int dstOffset)
+    {
+        final int length = 21;
+        if (dstOffset < 0 || dstOffset > (dst.length - length))
+        {
+            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
+        }
+
+        buffer.getBytes(offset + 40, dst, dstOffset, length);
+
+        return length;
+    }
+
+    public String transactTime()
+    {
+        final byte[] dst = new byte[21];
+        buffer.getBytes(offset + 40, dst, 0, 21);
+
+        int end = 0;
+        for (; end < 21 && dst[end] != 0; ++end);
+
+        return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+
+    public static int quoteRequestIDId()
+    {
+        return 7;
+    }
+
+    public static int quoteRequestIDSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int quoteRequestIDEncodingOffset()
+    {
+        return 61;
+    }
+
+    public static int quoteRequestIDEncodingLength()
+    {
+        return 36;
+    }
+
+    public static String quoteRequestIDMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    public static byte quoteRequestIDNullValue()
+    {
+        return (byte)0;
+    }
+
+    public static byte quoteRequestIDMinValue()
+    {
+        return (byte)32;
+    }
+
+    public static byte quoteRequestIDMaxValue()
+    {
+        return (byte)126;
+    }
+
+    public static int quoteRequestIDLength()
+    {
+        return 36;
+    }
+
+
+    public byte quoteRequestID(final int index)
+    {
+        if (index < 0 || index >= 36)
+        {
+            throw new IndexOutOfBoundsException("index out of range: index=" + index);
+        }
+
+        final int pos = offset + 61 + (index * 1);
+
+        return buffer.getByte(pos);
+    }
+
+
+    public static String quoteRequestIDCharacterEncoding()
+    {
+        return java.nio.charset.StandardCharsets.UTF_8.name();
+    }
+
+    public int getQuoteRequestID(final byte[] dst, final int dstOffset)
+    {
+        final int length = 36;
+        if (dstOffset < 0 || dstOffset > (dst.length - length))
+        {
+            throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
+        }
+
+        buffer.getBytes(offset + 61, dst, dstOffset, length);
+
+        return length;
+    }
+
+    public String quoteRequestID()
+    {
+        final byte[] dst = new byte[36];
+        buffer.getBytes(offset + 61, dst, 0, 36);
+
+        int end = 0;
+        for (; end < 36 && dst[end] != 0; ++end);
 
         return new String(dst, 0, end, java.nio.charset.StandardCharsets.UTF_8);
     }
@@ -986,6 +986,18 @@ public final class QuoteRequestDecoder
             builder.append((char)this.saleCurrency(i));
         }
         builder.append('|');
+        builder.append("side=");
+        for (int i = 0; i < sideLength() && this.side(i) > 0; i++)
+        {
+            builder.append((char)this.side(i));
+        }
+        builder.append('|');
+        builder.append("symbol=");
+        for (int i = 0; i < symbolLength() && this.symbol(i) > 0; i++)
+        {
+            builder.append((char)this.symbol(i));
+        }
+        builder.append('|');
         builder.append("deliveryDate=");
         for (int i = 0; i < deliveryDateLength() && this.deliveryDate(i) > 0; i++)
         {
@@ -1002,18 +1014,6 @@ public final class QuoteRequestDecoder
         for (int i = 0; i < quoteRequestIDLength() && this.quoteRequestID(i) > 0; i++)
         {
             builder.append((char)this.quoteRequestID(i));
-        }
-        builder.append('|');
-        builder.append("side=");
-        for (int i = 0; i < sideLength() && this.side(i) > 0; i++)
-        {
-            builder.append((char)this.side(i));
-        }
-        builder.append('|');
-        builder.append("symbol=");
-        for (int i = 0; i < symbolLength() && this.symbol(i) > 0; i++)
-        {
-            builder.append((char)this.symbol(i));
         }
         builder.append('|');
         builder.append("currencyOwned=");
