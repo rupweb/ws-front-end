@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getConversionRate, currencyRates } from '../utils/utils';
+import { getConversionRate, currencyRates } from '../utils/utils.js';
 
 const useConversion = (fromCurrency, toCurrency, amount) => {
   const [conversionRate, setConversionRate] = useState(null);

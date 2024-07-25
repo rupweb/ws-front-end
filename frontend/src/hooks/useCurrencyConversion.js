@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { addBusinessDays } from '../utils/utils';
-import useFormValidation from './useFormValidation';
-import useKycStatus from './useKycStatus';
-import useConversion from './useConversion';
-import useKycHandling from './useKycHandling';
-import useMessageHandling from './useMessageHandling';
-import { useWebSocket } from '../handlers/WebSocketContext'; 
-import handleConvert from '../handlers/handleConvert';
-import handleExecute from '../handlers/handleExecute';
-import handleReset from '../handlers/handleReset';
+import { addBusinessDays } from '../utils/utils.js';
+import useFormValidation from './useFormValidation.js';
+import useKycStatus from './useKycStatus.js';
+import useConversion from './useConversion.js';
+import useKycHandling from './useKycHandling.js';
+import useMessageHandling from './useMessageHandling.js';
+import { useWebSocket } from '../handlers/WebSocketContext.js'; 
+import handleQuoteRequest from '../handlers/handleQuoteRequest.js';
+import handleDealRequest from '../handlers/handleDealRequest.js';
+import handleReset from '../handlers/handleReset.js';
 
 const useCurrencyConversion = () => {
   const [fromCurrency, setFromCurrency] = useState('EUR');
@@ -42,7 +42,7 @@ const useCurrencyConversion = () => {
 
   const { sendMessage } = useWebSocket();
 
-  const handleConvertFunction = () => handleConvert({
+  const handleConvertFunction = () => handleQuoteRequest({
     kycStatus,
     amount,
     convert,
@@ -54,7 +54,7 @@ const useCurrencyConversion = () => {
     handleKycCheck
   });
 
-  const handleExecuteFunction = () => handleExecute({
+  const handleExecuteFunction = () => handleDealRequest({
     amount,
     toCurrency,
     selectedDate,

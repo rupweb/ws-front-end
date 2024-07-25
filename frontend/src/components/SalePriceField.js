@@ -1,6 +1,6 @@
 // SalePriceField.js
 import React from 'react';
-import FormField from './FormField';
+import FormField from './FormField.js';
 
 const SalePriceField = ({ amount, setAmount }) => (
   <FormField label="Item sale price:">

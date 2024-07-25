@@ -1,4 +1,4 @@
-package messages;
+package helpers;
 
 public enum KycStatus {
     NOT_STARTED,

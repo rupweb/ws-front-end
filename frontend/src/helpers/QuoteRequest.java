@@ -1,5 +1,4 @@
-
-package messages;
+package helpers;
 
 public class QuoteRequest {
     private double salePrice;

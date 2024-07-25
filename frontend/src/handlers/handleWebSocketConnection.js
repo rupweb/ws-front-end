@@ -20,7 +20,12 @@ const useWebSocketConnection = (url, handleIncomingMessage) => {
             };
 
             socket.onmessage = (event) => {
-                handleIncomingMessage(event.data);
+                // Check if the received data is an ArrayBuffer
+                if (event.data instanceof ArrayBuffer) {
+                    handleIncomingMessage(event.data);
+                } else {
+                    console.log('Received:', event.data);
+                }
             };
 
             socket.onclose = (event) => {

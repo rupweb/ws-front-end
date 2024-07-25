@@ -6,6 +6,7 @@ import agrona.messages.QuoteEncoder;
 import agrona.messages.QuoteRequestEncoder;
 import agrona.messages.DecimalEncoder;
 import agrona.messages.MessageHeaderEncoder;
+import agrona.messages.KycStatus;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 

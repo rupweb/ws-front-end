@@ -1,4 +1,4 @@
-import { addBusinessDays } from '../utils/utils';
+import { addBusinessDays } from '../utils/utils.js';
 
 const handleReset = ({
   setFromCurrency,

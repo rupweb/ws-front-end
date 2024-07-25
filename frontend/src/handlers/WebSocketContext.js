@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react';
-import webSocketConnection from './handleWebSocketConnection';
-import incomingMessage from './handleIncomingMessage';
-import outgoingMessage from './handleOutgoingMessage';
+import webSocketConnection from './handleWebSocketConnection.js';
+import incomingMessage from './handleIncomingMessage.js';
+import outgoingMessage from './handleOutgoingMessage.js';
 
 const WebSocketContext = createContext(null);
 

@@ -1,4 +1,5 @@
-import { generateUUID } from '../utils/utils';
+import { generateUUID } from '../utils/utils.js';
+import encodeDealRequest from '../messages/encodeDealRequest.js';
 
 const handleExecute = async ({
   amount,
@@ -9,8 +10,7 @@ const handleExecute = async ({
   convertedAmount,
   sendMessage,
   handleExecutionMessage,
-  handleReset,
-  kycStatus
+  handleReset
 }) => {
   const execution = {
     date: new Date().toLocaleDateString(),
@@ -27,18 +27,29 @@ const handleExecute = async ({
   localStorage.setItem('executions', JSON.stringify(executions));
 
   const dealRequest = {
-    salePrice: amount,
-    saleCurrency: toCurrency,
+    amount: {
+      mantissa: Math.round(amount * Math.pow(10, 2)),
+      exponent: -2
+    },
+    currency: toCurrency,
     side: 'BUY',
     symbol: `${fromCurrency}/${toCurrency}`,
     deliveryDate: selectedDate.toISOString().split('T')[0],
     transactTime: new Date().toISOString(),
     quoteRequestID: generateUUID(),
-    currencyOwned: fromCurrency,
-    kycStatus,
+    quoteID: generateUUID(), // Assuming you generate a new UUID for the quote ID as well
+    dealRequestID: generateUUID(),
+    fxRate: {
+      mantissa: Math.round(conversionRate * Math.pow(10, 6)),
+      exponent: -6
+    }
   };
 
-  await sendMessage('dealRequest', dealRequest);
+  // Encode the data using the JavaScript encoder
+  const encodedMessage = encodeDealRequest(dealRequest);
+
+  // Send the encoded message via WebSocket
+  sendMessage(encodedMessage);
 
   handleExecutionMessage({
     salePrice: amount,

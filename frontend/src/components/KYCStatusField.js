@@ -1,6 +1,6 @@
 // KYCStatusField.js
 import React from 'react';
-import FormField from './FormField';
+import FormField from './FormField.js';
 
 const KYCStatusField = ({ kycStatus, setKycStatus }) => (
   <FormField label="My KYC status:">

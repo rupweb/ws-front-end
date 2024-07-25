@@ -1,11 +1,23 @@
+import encodeQuoteRequest from '../messages/encodeQuoteRequest.js';
+import encodeDealRequest from '../messages/encodeDealRequest.js';
+
 const handleOutgoingMessage = (socketRef) => {
     const sendMessage = (message) => {
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-            if (message instanceof Buffer) {
-                socketRef.current.send(message);
-            } else {
-                socketRef.current.send(JSON.stringify(message));
+            let encodedMessage;
+            switch (message.type) {
+                case 'QuoteRequest':
+                    encodedMessage = encodeQuoteRequest(message.data);
+                    break;
+                case 'DealRequest':
+                    encodedMessage = encodeDealRequest(message.data);
+                    break;
+                default:
+                    console.error('Unknown message type:', message.type);
+                    return;
             }
+
+            socketRef.current.send(encodedMessage);
         } else {
             console.error('WebSocket is not open. Unable to send message.');
         }
@@ -15,3 +27,4 @@ const handleOutgoingMessage = (socketRef) => {
 };
 
 export default handleOutgoingMessage;
+

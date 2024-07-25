@@ -1,10 +1,6 @@
-/* eslint-disable no-undef */
-const Java = Polyglot.import('java');
-const ByteOrder = Java.type('java.nio.ByteOrder').LITTLE_ENDIAN;
-/* eslint-enable no-undef */
-
 class MessageHeaderDecoder {
     static ENCODED_LENGTH = 8;
+    static LITTLE_ENDIAN = true;
 
     constructor() {
         this.offset = 0;
@@ -12,29 +8,30 @@ class MessageHeaderDecoder {
     }
 
     wrap(buffer, offset) {
-        this.buffer = buffer;
+        this.buffer = new DataView(buffer);
         this.offset = offset;
         return this;
     }
 
     blockLength() {
-        return this.buffer.getShort(this.offset + 0, ByteOrder) & 0xFFFF;
+        return this.buffer.getUint16(this.offset, MessageHeaderDecoder.LITTLE_ENDIAN);
     }
 
     templateId() {
-        return this.buffer.getShort(this.offset + 2, ByteOrder) & 0xFFFF;
+        return this.buffer.getUint16(this.offset + 2, MessageHeaderDecoder.LITTLE_ENDIAN);
     }
 
     schemaId() {
-        return this.buffer.getShort(this.offset + 4, ByteOrder) & 0xFFFF;
+        return this.buffer.getUint16(this.offset + 4, MessageHeaderDecoder.LITTLE_ENDIAN);
     }
 
     version() {
-        return this.buffer.getShort(this.offset + 6, ByteOrder) & 0xFFFF;
+        return this.buffer.getUint16(this.offset + 6, MessageHeaderDecoder.LITTLE_ENDIAN);
+    }
+
+    toString() {
+        return `MessageHeaderDecoder(blockLength=${this.blockLength()}, templateId=${this.templateId()}, schemaId=${this.schemaId()}, version=${this.version()})`;
     }
 }
 
-// Expose the class to JavaScript
-/* eslint-disable no-undef */
-Polyglot.export('MessageHeaderDecoder', MessageHeaderDecoder);
-/* eslint-enable no-undef */
+export default MessageHeaderDecoder;

@@ -1,33 +1,40 @@
-import { MessageHeaderDecoder } from '../messages/MessageHeaderDecoder';
-import { decodeQuote } from '../messages/decodeQuote';
-import { decodeExecutionReport } from '../messages/decodeExecutionReport';
+import MessageHeaderDecoder from '../messages/MessageHeaderDecoder.js';
+import QuoteDecoder from '../messages/QuoteDecoder.js';
+import ExecutionReportDecoder from '../messages/ExecutionReportDecoder.js';
+import ErrorDecoder from '../messages/ErrorDecoder.js';
 
 const handleIncomingMessage = (data) => {
-    // Create a buffer from the incoming data
-    const buffer = Buffer.from(data);
-
-    // Decode the header to determine the message type
+    const buffer = new DataView(data);
     const headerDecoder = new MessageHeaderDecoder();
     headerDecoder.wrap(buffer, 0);
 
-    const templateId = headerDecoder.templateId();
-
     let decodedMessage;
-    switch (templateId) {
-        case 2: // ExecutionReport
-            decodedMessage = decodeExecutionReport(buffer);
-            console.log('Decoded ExecutionReport message:', decodedMessage);
+
+    switch (headerDecoder.templateId()) {
+        case 4: { // Quote
+            const quoteDecoder = new QuoteDecoder();
+            quoteDecoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
+            decodedMessage = quoteDecoder.toString();
             break;
-        case 4: // Quote
-            decodedMessage = decodeQuote(buffer);
-            console.log('Decoded Quote message:', decodedMessage);
+        }
+        case 2: { // Execution Report
+            const executionReportDecoder = new ExecutionReportDecoder();
+            executionReportDecoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
+            decodedMessage = executionReportDecoder.toString();
             break;
-        // Add cases for other message types
+        }
+        case 5: { // Error
+            const errorDecoder = new ErrorDecoder();
+            errorDecoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
+            decodedMessage = errorDecoder.toString();
+            break;
+        }
         default:
-            console.error('Unknown message type:', templateId);
+            console.error('Unknown message type:', headerDecoder.templateId());
+            return;
     }
 
-    // Handle the decoded message...
+    console.log('Decoded Message:', decodedMessage);
 };
 
 export default handleIncomingMessage;

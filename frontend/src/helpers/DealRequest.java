@@ -1,11 +1,9 @@
-package messages;
+package helpers;
 
-public class ExecutionReport {
+public class DealRequest {
 
     private double amount;
     private String currency;
-    private double secondaryAmount;
-    private String secondaryCurrency;
     private String side;
     private String symbol;
     private String deliveryDate;
@@ -13,9 +11,9 @@ public class ExecutionReport {
     private String quoteRequestID;
     private String quoteID;
     private String dealRequestID;
-    private String dealID;
+    private String ticketRef;
     private double fxRate;
-    
+
     public double getAmount() {
         return amount;
     }
@@ -27,18 +25,6 @@ public class ExecutionReport {
     }
     public void setCurrency(String currency) {
         this.currency = currency;
-    }
-    public double getSecondaryAmount() {
-        return secondaryAmount;
-    }
-    public void setSecondaryAmount(double secondaryAmount) {
-        this.secondaryAmount = secondaryAmount;
-    }
-    public String getSecondaryCurrency() {
-        return secondaryCurrency;
-    }
-    public void setSecondaryCurrency(String secondaryCurrency) {
-        this.secondaryCurrency = secondaryCurrency;
     }
     public String getSide() {
         return side;
@@ -82,11 +68,11 @@ public class ExecutionReport {
     public void setDealRequestID(String dealRequestID) {
         this.dealRequestID = dealRequestID;
     }
-    public String getDealID() {
-        return dealID;
+    public String getTicketRef() {
+        return ticketRef;
     }
-    public void setDealID(String dealID) {
-        this.dealID = dealID;
+    public void setTicketRef(String ticketRef) {
+        this.ticketRef = ticketRef;
     }
     public double getFxRate() {
         return fxRate;
@@ -94,6 +80,4 @@ public class ExecutionReport {
     public void setFxRate(double fxRate) {
         this.fxRate = fxRate;
     }
-    
-    
 }

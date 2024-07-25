@@ -1,4 +1,4 @@
-package messages;
+package helpers;
 
 public class Quote {
 

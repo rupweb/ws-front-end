@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.agrona.concurrent.UnsafeBuffer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

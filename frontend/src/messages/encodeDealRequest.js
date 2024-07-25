@@ -1,35 +1,26 @@
-if (typeof UnsafeBuffer === 'undefined') {
-    var UnsafeBuffer = Java.type('org.agrona.concurrent.UnsafeBuffer');
-}
+import DealRequestEncoder from './DealRequestEncoder.js';
+import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
-const DealRequestEncoder = Java.type('agrona.messages.DealRequestEncoder');
-const DecimalEncoder = Java.type('agrona.messages.DecimalEncoder');
-const MessageHeaderEncoder = Java.type('agrona.messages.MessageHeaderEncoder');
+const encodeDealRequest = (data) => {
+    const buffer = new ArrayBuffer(DealRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH);
+    const dealRequestEncoder = new DealRequestEncoder();
+    const messageHeaderEncoder = new MessageHeaderEncoder();
 
-// Function to encode a DealRequest message
-function encodeDealRequest(data) {
-    console.log("Data received for encoding:", JSON.stringify(data));
-    const byteArray = Java.type('byte[]');
-    const buffer = new UnsafeBuffer(new byteArray(MessageHeaderEncoder.ENCODED_LENGTH + DealRequestEncoder.BLOCK_LENGTH));
-    
-    const encoder = new DealRequestEncoder();
-    const headerEncoder = new MessageHeaderEncoder();
-    encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+    dealRequestEncoder.wrapAndApplyHeader(buffer, 0, messageHeaderEncoder);
 
-    // Encode the data
-    console.log("Encoding...");
-    encoder.amount().wrap(buffer, encoder.amount().offset()).mantissa(data.amount.mantissa).exponent(data.amount.exponent);
-    encoder.currency(data.currency);
-    encoder.side(data.side);
-    encoder.symbol(data.symbol);
-    encoder.deliveryDate(data.deliveryDate);
-    encoder.transactTime(data.transactTime);
-    encoder.quoteRequestID(data.quoteRequestID);
-    encoder.quoteID(data.quoteID);
-    encoder.dealRequestID(data.dealRequestID);
-    encoder.fxRate().wrap(buffer, encoder.fxRate().offset()).mantissa(data.fxRate.mantissa).exponent(data.fxRate.exponent);
+    dealRequestEncoder.amount().mantissa(data.amount.mantissa).exponent(data.amount.exponent)
+    dealRequestEncoder.currency(data.currency)
+    dealRequestEncoder.side(data.side)
+    dealRequestEncoder.symbol(data.symbol)
+    dealRequestEncoder.deliveryDate(data.deliveryDate)
+    dealRequestEncoder.transactTime(data.transactTime)
+    dealRequestEncoder.quoteRequestID(data.quoteRequestID)
+    dealRequestEncoder.quoteID(data.quoteID)
+    dealRequestEncoder.dealRequestID(data.dealRequestID)
+    dealRequestEncoder.fxRate().mantissa(data.fxRate.mantissa).exponent(data.fxRate.exponent);
 
-    return buffer.byteArray();
-}
+    return buffer;
+};
 
-Polyglot.export('encodeDealRequest', encodeDealRequest);
+export default encodeDealRequest;
+

@@ -1,6 +1,6 @@
 // SaleCurrencyField.js
 import React from 'react';
-import FormField from './FormField';
+import FormField from './FormField.js';
 
 const SaleCurrencyField = ({ toCurrency, setToCurrency }) => (
   <FormField label="Sale currency:">

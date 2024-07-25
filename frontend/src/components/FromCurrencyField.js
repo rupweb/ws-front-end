@@ -1,6 +1,6 @@
 // FromCurrencyField.js
 import React from 'react';
-import FormField from './FormField';
+import FormField from './FormField.js';
 
 const FromCurrencyField = ({ fromCurrency, setFromCurrency, toCurrency }) => (
   <FormField label="Currency I have:">

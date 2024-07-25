@@ -1,13 +1,9 @@
-import { generateUUID } from '../utils/utils';
-
-/* eslint-disable no-undef */
-const encodeQuoteRequest = Polyglot.import('encodeQuoteRequest');
-/* eslint-enable no-undef */
+import { generateUUID } from '../utils/utils.js';
+import encodeQuoteRequest from '../messages/encodeQuoteRequest.js';
 
 const handleConvert = async ({
   kycStatus,
   amount,
-  convert,
   setShowExecute,
   selectedDate,
   toCurrency,
@@ -34,7 +30,7 @@ const handleConvert = async ({
     kycStatus: 2 // Assuming 'VERIFIED' status corresponds to 2
   };
 
-  // Encode the data using the Java encoder
+  // Encode the data using the JavaScript encoder
   const encodedMessage = encodeQuoteRequest(requestData);
 
   // Send the encoded message via WebSocket

@@ -23,7 +23,8 @@ module.exports = {
       "os": require.resolve("os-browserify/browser"),
       "fs": false,
       "child_process": false
-    }
+    },
+    extensions: ['.js', '.jsx', '.mjs'] // Add .mjs to the extensions
   },
   plugins: [
     new webpack.ProvidePlugin({
@@ -35,7 +36,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|mjs|jsx)$/, // Add mjs and jsx to the test pattern
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -43,12 +44,19 @@ module.exports = {
             presets: ['@babel/preset-env', '@babel/preset-react']
           }
         }
+      },
+      {
+        test: /\.css$/, // Add rule for CSS files
+        use: ['style-loader', 'css-loader']
       }
     ]
   },
-  entry: './src/index.js',
+  entry: './src/index.js', // Ensure this matches your entry point
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
+  },
+  experiments: {
+    topLevelAwait: true // Optional: if you're using top-level await
   }
 };

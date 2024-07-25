@@ -6,9 +6,11 @@ import agrona.messages.QuoteEncoder;
 import agrona.messages.QuoteRequestEncoder;
 import agrona.messages.ErrorEncoder;
 import agrona.messages.DecimalEncoder;
+import agrona.messages.KycStatus;
 import agrona.messages.MessageHeaderEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
+
 
 public class SbeEncoder {
     public DirectBuffer encodeDealRequest(double amount, String currency, String side, String symbol,
