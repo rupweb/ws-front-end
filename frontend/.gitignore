@@ -10,7 +10,7 @@ node_modules
 # production
 build
 logs
-backend/logs
+../backend/logs
 
 # misc
 .DS_Store
@@ -22,5 +22,4 @@ yarn-error.log*
 
 # amplify
 /.aws
-aws-exports.js
 amplifyconfiguration.json

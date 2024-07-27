@@ -39,5 +39,4 @@ yarn-error.log*
 
 # amplify
 .aws
-aws-exports.js
 amplifyconfiguration.json
