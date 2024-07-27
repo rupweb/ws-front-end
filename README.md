@@ -2,6 +2,29 @@
 
 Webster Systems front end for FIX connection
 
+## runbook
+
+### start
+
+- navigate to relevant directory
+- `pm2 start npm --name "ws-frontend" -- start`
+
+### stop
+
+- `pm2 stop ws-frontend`
+
+## Logs
+
+`pm2 status`
+`pm2 logs`
+`pm2 logs proxy-server --lines 100`
+`pm2 logs ws-backend --lines 100`
+`pm2 logs ws-frontend --lines 100`
+
+## Clear logs
+
+`pm2 flush`
+
 ## frontend
 
 This contains the FX panel JS code.
@@ -17,7 +40,7 @@ To ensure start on reboot run
 
 `pm2 startup`
 
-See logs
+## See logs
 
 `pm2 logs ws-frontend --lines 100`
 `pm2 logs proxy-server --lines 100`
@@ -78,6 +101,7 @@ Check the logs for running processes with
 ## Logs
 
 `pm2 status`
+`pm2 logs`
 
 ## IP tables
 
