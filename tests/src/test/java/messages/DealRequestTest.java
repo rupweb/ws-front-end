@@ -1,44 +1,55 @@
 package messages;
 
+import org.agrona.concurrent.UnsafeBuffer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import agrona.messages.DealRequestDecoder;
+import agrona.messages.MessageHeaderDecoder;
+import utils.Utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DealRequestTest {
     private static final Logger log = LogManager.getLogger(DealRequestTest.class);
 
     @Test
-    public void testSbeDealRequest() throws IOException {
-        log.info("Running testSbeDealRequest");
+    public void testDealRequest() throws IOException {
+        log.info("In testDealRequest");
+        System.out.println("Test Working Directory: " + System.getProperty("user.dir"));
 
-        // Manually load classes and add them to the context
-        try (Context context = Context.newBuilder("js")
-                .allowAllAccess(true)
-                .build()) {
+        // GraalVM context
+        Context context = Context.newBuilder("js").allowAllAccess(true).build();
+    
+        // Redirect console
+        context.eval("js", "console.log = function(...args) { java.lang.System.out.println(args.map(String).join(' ')); };");
 
-            // Load JavaScript files
-            String encodeDealRequest = new String(Files.readAllBytes(Paths.get("../frontend/src/messages/encodeDealRequest.js")));
-            String decodeDealRequest = new String(Files.readAllBytes(Paths.get("../frontend/src/messages/decodeDealRequest.js")));
+        // Load and prepare scripts
+        String textEncoderScript = Utils.loadScript("tests/src/test/java/aeron/TextEncoder.js");
+        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DecimalEncoder.js"));
+        String messageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/MessageHeaderEncoder.js"));
+        String dealRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DealRequestEncoder.js"));
+        String encodeDealRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/encodeDealRequest.js"));
 
-            log.info("Loaded JavaScript files");
+        // Concatenate scripts in the correct order
+        String combinedScript = textEncoderScript + "\n" +
+                                decimalEncoderScript + "\n" +
+                                messageHeaderEncoderScript + "\n" +
+                                dealRequestEncoderScript + "\n" +
+                                encodeDealRequestScript;
 
-            // Evaluate JavaScript files
-            context.eval(Source.newBuilder("js", encodeDealRequest, "encodeDealRequest.js").build());
-            context.eval(Source.newBuilder("js", decodeDealRequest, "decodeDealRequest.js").build());
-            log.info("Evaluated JavaScript files");
+        // Evaluate the combined script
+        context.eval("js", combinedScript);
 
-            // Define the data to encode
-            Value data = context.eval("js", "({ " +
+        // Test data
+        String dataScript = "const data = {" +
                     "amount: { mantissa: 1000, exponent: 2 }, " +
                     "currency: 'USD', " +
                     "side: 'BUY', " +
@@ -48,33 +59,50 @@ public class DealRequestTest {
                     "quoteRequestID: 'QR123456', " +
                     "quoteID: 'Q123456', " +
                     "dealRequestID: 'DR123456', " +
-                    "fxRate: { mantissa: 100, exponent: -2 } })");
+                    "fxRate: { mantissa: 100, exponent: -2 }" +
+                    "};";
+        context.eval("js", dataScript);
 
-            // Call encodeDealRequest function
-            Value encodeDealRequestFunc = context.getBindings("js").getMember("encodeDealRequest");
-            byte[] encodedMessage = encodeDealRequestFunc.execute(data).as(byte[].class);
-            log.info("Called encoder");
+        log.info("Encode deal request");
+        Value result = context.eval("js", "encodeDealRequest(data);");
 
-            // Call decodeDealRequest function
-            Value decodeDealRequestFunc = context.getBindings("js").getMember("decodeDealRequest");
-            Value decodedMessage = decodeDealRequestFunc.execute(encodedMessage);
-            log.info("Called decoder");
+        // Evaluate and create byte[] from ArrayBuffer
+        context.getBindings("js").putMember("resultBuffer", result);
+        Value byteView = context.eval("js", "new Uint8Array(resultBuffer);");
 
-            // Verify the decoded message
-            assertEquals(1000, decodedMessage.getMember("amount").getMember("mantissa").asInt());
-            assertEquals(2, decodedMessage.getMember("amount").getMember("exponent").asInt());
-            assertEquals("USD", decodedMessage.getMember("currency").asString());
-            assertEquals("BUY", decodedMessage.getMember("side").asString());
-            assertEquals("EURUSD", decodedMessage.getMember("symbol").asString());
-            assertEquals("20240201", decodedMessage.getMember("deliveryDate").asString());
-            assertEquals("20240101-00:00:00.000", decodedMessage.getMember("transactTime").asString());
-            assertEquals("QR123456", decodedMessage.getMember("quoteRequestID").asString());
-            assertEquals("Q123456", decodedMessage.getMember("quoteID").asString());
-            assertEquals("DR123456", decodedMessage.getMember("dealRequestID").asString());
-            assertEquals(100, decodedMessage.getMember("fxRate").getMember("mantissa").asInt());
-            assertEquals(-2, decodedMessage.getMember("fxRate").getMember("exponent").asInt());
+        int length = (int) byteView.getArraySize();
+        byte[] encodedMessage = new byte[length];
+        for (int i = 0; i < length; i++) {
+            encodedMessage[i] = (byte) byteView.getArrayElement(i).asInt();
         }
 
-        log.info("Completed testSbeDealRequest");
+        // Assertions
+        assertNotNull(encodedMessage);
+        assertTrue(encodedMessage.length > 0);
+
+        // Use the Java decoder to decode the message
+        UnsafeBuffer buffer = new UnsafeBuffer(encodedMessage);
+        DealRequestDecoder dealRequestDecoder = new DealRequestDecoder();
+        MessageHeaderDecoder headerDecoder = new MessageHeaderDecoder();
+
+        headerDecoder.wrap(buffer, 0);
+        dealRequestDecoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
+
+        // Verify the decoded message
+        assertEquals(1000, dealRequestDecoder.amount().mantissa());
+        assertEquals(2, dealRequestDecoder.amount().exponent());
+        assertEquals("USD", dealRequestDecoder.currency());
+        assertEquals("BUY", dealRequestDecoder.side());
+        assertEquals("EURUSD", dealRequestDecoder.symbol());
+        assertEquals("20240201", dealRequestDecoder.deliveryDate());
+        assertEquals("20240101-00:00:00.000", dealRequestDecoder.transactTime());
+        assertEquals("QR123456", dealRequestDecoder.quoteRequestID());
+        assertEquals("Q123456", dealRequestDecoder.quoteID());
+        assertEquals("DR123456", dealRequestDecoder.dealRequestID());
+        assertEquals(100, dealRequestDecoder.fxRate().mantissa());
+        assertEquals(-2, dealRequestDecoder.fxRate().exponent());
+
+        context.close();
+        log.info("Out testDealRequest");
     }
 }

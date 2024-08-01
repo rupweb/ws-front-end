@@ -1,6 +1,8 @@
 import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
+// This file is manually generated from the SBE messages.xml
+
 class DealRequestEncoder {
     static BLOCK_LENGTH = 214;
     static TEMPLATE_ID = 1;
@@ -62,22 +64,22 @@ class DealRequestEncoder {
     }
 
     quoteRequestID(value) {
-        this.putString(this.offset + 61, value, 36);
+        this.putString(this.offset + 61, value, 16);
         return this;
     }
 
     quoteID(value) {
-        this.putString(this.offset + 97, value, 36);
+        this.putString(this.offset + 77, value, 16);
         return this;
     }
 
     dealRequestID(value) {
-        this.putString(this.offset + 133, value, 36);
+        this.putString(this.offset + 93, value, 16);
         return this;
     }
 
     fxRate() {
-        this.fxRateDecimal.wrap(this.buffer.buffer, this.offset + 169);
+        this.fxRateDecimal.wrap(this.buffer.buffer, this.offset + 109);
         return this.fxRateDecimal;
     }
 

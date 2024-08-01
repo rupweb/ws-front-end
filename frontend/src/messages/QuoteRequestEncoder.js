@@ -1,6 +1,8 @@
 import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
+// This file is manually generated from the SBE messages.xml
+
 class QuoteRequestEncoder {
     static BLOCK_LENGTH = 292;
     static TEMPLATE_ID = 3;
@@ -61,17 +63,17 @@ class QuoteRequestEncoder {
     }
 
     quoteRequestID(value) {
-        this.putString(this.offset + 61, value, 36);
+        this.putString(this.offset + 61, value, 16);
         return this;
     }
 
     currencyOwned(value) {
-        this.putString(this.offset + 97, value, 3);
+        this.putString(this.offset + 77, value, 3);
         return this;
     }
 
     kycStatus(value) {
-        this.buffer.setUint8(this.offset + 100, value);
+        this.buffer.setUint8(this.offset + 81, value);
         return this;
     }
 

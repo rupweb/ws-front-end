@@ -6,9 +6,9 @@ import useConversion from './useConversion.js';
 import useKycHandling from './useKycHandling.js';
 import useMessageHandling from './useMessageHandling.js';
 import { useWebSocket } from '../handlers/WebSocketContext.js'; 
-import handleQuoteRequest from '../handlers/handleQuoteRequest.js';
-import handleDealRequest from '../handlers/handleDealRequest.js';
-import handleReset from '../handlers/handleReset.js';
+import prepareQuoteRequest from '../handlers/handleQuoteRequest.js';
+import prepareDealRequest from '../handlers/handleDealRequest.js';
+import prepareReset from '../handlers/handleReset.js';
 
 const useCurrencyConversion = () => {
   const [fromCurrency, setFromCurrency] = useState('EUR');
@@ -18,7 +18,7 @@ const useCurrencyConversion = () => {
   const [showExecute, setShowExecute] = useState(false);
 
   const { kycStatus, setKycStatus } = useKycStatus();
-  const { conversionRate, convertedAmount, convert, setConversionRate, setConvertedAmount } = useConversion(fromCurrency, toCurrency, amount);
+  const { conversionRate, convertedAmount, setConversionRate, setConvertedAmount } = useConversion(fromCurrency, toCurrency, amount);
   const isFormValid = useFormValidation(fromCurrency, toCurrency, amount);
 
   const [kycModalMessage, setKycModalMessage] = useState('');
@@ -42,10 +42,9 @@ const useCurrencyConversion = () => {
 
   const { sendMessage } = useWebSocket();
 
-  const handleConvertFunction = () => handleQuoteRequest({
+  const handleQuoteRequest = () => prepareQuoteRequest({
     kycStatus,
     amount,
-    convert,
     setShowExecute,
     selectedDate,
     toCurrency,
@@ -54,7 +53,7 @@ const useCurrencyConversion = () => {
     handleKycCheck
   });
 
-  const handleExecuteFunction = () => handleDealRequest({
+  const handleDealRequest = () => prepareDealRequest({
     amount,
     toCurrency,
     selectedDate,
@@ -63,11 +62,11 @@ const useCurrencyConversion = () => {
     convertedAmount,
     sendMessage,
     handleExecutionMessage,
-    handleReset: handleResetFunction,
+    handleReset,
     kycStatus 
   });
 
-  const handleResetFunction = () => handleReset({
+  const handleReset = () => prepareReset({
     setFromCurrency,
     setToCurrency,
     setAmount,
@@ -95,9 +94,9 @@ const useCurrencyConversion = () => {
     showKycModal,
     executionModalMessage,
     showExecutionModal,
-    handleConvert: handleConvertFunction,
-    handleExecute: handleExecuteFunction,
-    handleReset: handleResetFunction,
+    handleQuoteRequest,
+    handleDealRequest,
+    handleReset,
     handleKycModalClose,
     handleExecutionModalClose,
     handleQuoteMessage,

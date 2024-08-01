@@ -18,7 +18,19 @@
             "cwd": "${workspaceFolder}/frontend",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
-          }
+        },
+        {
+            "type": "java",
+            "name": "Launch Java Tests",
+            "request": "launch",
+            "mainClass": "tests.App",
+            "projectName": "tests",
+            "cwd": "${workspaceFolder}/tests",
+            "vmArgs": [
+                "-Dpolyglot.log.file=truffle.log", 
+                "-Dpolyglot.engine.WarnInterpreterOnly=false"
+            ]
+        }
     ]
-  }
+}
   

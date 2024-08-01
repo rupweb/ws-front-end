@@ -4,6 +4,12 @@ Webster Systems front end for FIX connection
 
 ## runbook
 
+DANGER: if you change the SBE messages.xml then you have to manually change the Java script
+`class QuoteRequestEncoder`
+`class DealRequestEncoder`
+
+The SBE is tested by the `tests` project with `DealRequestTest.java` and `QuoteRequestTest.java`
+
 ### start
 
 - navigate to relevant directory

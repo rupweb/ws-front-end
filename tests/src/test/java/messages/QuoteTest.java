@@ -1,13 +1,11 @@
 package messages;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
+import org.agrona.DirectBuffer;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import aeron.SbeEncoder;
+import agrona.messages.MessageHeaderDecoder;
+import agrona.messages.QuoteDecoder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,59 +16,35 @@ public class QuoteTest {
     private static final Logger log = LogManager.getLogger(QuoteTest.class);
 
     @Test
-    public void testSbeQuote() throws IOException {
-        log.info("Running testSbeQuote");
+    public void testSbeQuote() {
+        log.info("In testSbeQuote");
+        System.out.println("Test Working Directory: " + System.getProperty("user.dir"));
 
-        // Manually load classes and add them to the context
-        try (Context context = Context.newBuilder("js")
-                .allowAllAccess(true)
-                .build()) {
+        // Initialize the encoder
+        SbeEncoder sbeEncoder = new SbeEncoder();
 
-            // Load JavaScript files
-            String encodeQuote = new String(Files.readAllBytes(Paths.get("../frontend/src/messages/encodeQuote.js")));
-            String decodeQuote = new String(Files.readAllBytes(Paths.get("../frontend/src/messages/decodeQuote.js")));
+        // Define the data to encode
+        DirectBuffer dataBuffer = sbeEncoder.encodeQuote(
+                1000, "USD", "BUY", "EURUSD", "20240101-00:00:00.000",
+                 "Q12345", "QR123456", 1.2345
+        );
 
-            log.info("Loaded JavaScript files");
+        // Decode the message
+        QuoteDecoder quoteDecoder = new QuoteDecoder();
+        quoteDecoder.wrap(dataBuffer, MessageHeaderDecoder.ENCODED_LENGTH, QuoteDecoder.BLOCK_LENGTH, QuoteDecoder.SCHEMA_VERSION);
 
-            // Evaluate JavaScript files
-            context.eval(Source.newBuilder("js", encodeQuote, "encodeQuote.js").build());
-            context.eval(Source.newBuilder("js", decodeQuote, "decodeQuote.js").build());
-            log.info("Evaluated JavaScript files");
+        // Verify the decoded message
+        assertEquals(100000, quoteDecoder.amount().mantissa());
+        assertEquals(-2, quoteDecoder.amount().exponent());
+        assertEquals("USD", quoteDecoder.currency());
+        assertEquals("BUY", quoteDecoder.side());
+        assertEquals("EURUSD", quoteDecoder.symbol());
+        assertEquals("20240101-00:00:00.000", quoteDecoder.transactTime());
+        assertEquals("QR123456", quoteDecoder.quoteRequestID());
+        assertEquals("Q12345", quoteDecoder.quoteID());
+        assertEquals(123450, quoteDecoder.fxRate().mantissa());
+        assertEquals(-5, quoteDecoder.fxRate().exponent());
 
-            // Define the data to encode
-            Value data = context.eval("js", "({ " +
-                    "amount: { mantissa: 1000, exponent: 2 }, " +
-                    "currency: 'USD', " +
-                    "fxRate: { mantissa: 100, exponent: -2 }, " +
-                    "transactTime: '20240101-00:00:00.000', " +
-                    "side: 'BUY', " +
-                    "symbol: 'EURUSD', " +
-                    "quoteID: 'Q123456', " +
-                    "quoteRequestID: 'QR123456' })");
-
-            // Call encodeQuote function
-            Value encodeQuoteFunc = context.getBindings("js").getMember("encodeQuote");
-            byte[] encodedMessage = encodeQuoteFunc.execute(data).as(byte[].class);
-            log.info("Called encoder");
-
-            // Call decodeQuote function
-            Value decodeQuoteFunc = context.getBindings("js").getMember("decodeQuote");
-            Value decodedMessage = decodeQuoteFunc.execute(encodedMessage);
-            log.info("Called decoder");
-
-            // Verify the decoded message
-            assertEquals(1000, decodedMessage.getMember("amount").getMember("mantissa").asInt());
-            assertEquals(2, decodedMessage.getMember("amount").getMember("exponent").asInt());
-            assertEquals("USD", decodedMessage.getMember("currency").asString());
-            assertEquals(100, decodedMessage.getMember("fxRate").getMember("mantissa").asInt());
-            assertEquals(-2, decodedMessage.getMember("fxRate").getMember("exponent").asInt());
-            assertEquals("20240101-00:00:00.000", decodedMessage.getMember("transactTime").asString());
-            assertEquals("BUY", decodedMessage.getMember("side").asString());
-            assertEquals("EURUSD", decodedMessage.getMember("symbol").asString());
-            assertEquals("Q123456", decodedMessage.getMember("quoteID").asString());
-            assertEquals("QR123456", decodedMessage.getMember("quoteRequestID").asString());
-        }
-
-        log.info("Completed testSbeQuote");
+        log.info("Out testSbeQuote");
     }
 }

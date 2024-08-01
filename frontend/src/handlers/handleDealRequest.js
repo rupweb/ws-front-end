@@ -1,7 +1,7 @@
 import { generateUUID } from '../utils/utils.js';
 import encodeDealRequest from '../messages/encodeDealRequest.js';
 
-const handleExecute = async ({
+const handleDealRequest = async ({
   amount,
   toCurrency,
   selectedDate,
@@ -12,6 +12,11 @@ const handleExecute = async ({
   handleExecutionMessage,
   handleReset
 }) => {
+  if (!convertedAmount || !conversionRate) {
+    console.error('Conversion amount or rate is missing');
+    return;
+  }
+
   const execution = {
     date: new Date().toLocaleDateString(),
     salePrice: amount,
@@ -63,4 +68,4 @@ const handleExecute = async ({
   handleReset();
 };
 
-export default handleExecute;
+export default handleDealRequest;

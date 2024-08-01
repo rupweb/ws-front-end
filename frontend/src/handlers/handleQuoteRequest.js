@@ -1,7 +1,7 @@
 import { generateUUID } from '../utils/utils.js';
 import encodeQuoteRequest from '../messages/encodeQuoteRequest.js';
 
-const handleConvert = async ({
+const handleQuoteRequest = async ({
   kycStatus,
   amount,
   setShowExecute,
@@ -39,4 +39,4 @@ const handleConvert = async ({
   setShowExecute(true);
 };
 
-export default handleConvert;
+export default handleQuoteRequest;

@@ -1,12 +1,16 @@
 {
     "java.project.sourcePaths": [
         "backend/app/src/main/java",
-        "backend/app/src/test/java"
+        "backend/app/src/test/java",
+        "tests/src/test/java"  
     ],
     "java.test.config": {
         "name": "JUnit",
-        "workingDirectory": "${workspaceFolder}"
+        "workingDirectory": "${workspaceFolder}",
+        "projectName": "ws-front-end"
     },
+    "java.test.report.showAfterExecution": "onFailure",
+    "java.test.log.level": "info",
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.settings.url": ".vscode/java-formatter.xml"
