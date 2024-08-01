@@ -24,6 +24,8 @@ logs
 
 # gradle
 .gradle
+gradlew
+gradlew.bat
 
 # tests
 tests/build
