@@ -4,8 +4,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
+import io.aeron.Aeron;
+import io.aeron.driver.MediaDriver;
+
 public class App {
     private static final Logger log = LogManager.getLogger(App.class);
+    private static AeronClient aeronClient;
+    public static AeronClient getAeronClient() { return aeronClient; }
 
     static {
         System.out.println("Log4j2 initialized: " + LogManager.getContext(false).hasLogger(App.class.getName()));
@@ -15,12 +20,10 @@ public class App {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        log.info("In App main");
+        log.debug("In App main");
 
         int webSocketPort = 8090; // Default WebSocket port
-
         WebSocketServer webSocketServer = new WebSocketServer(webSocketPort);
-        AeronClient aeronClient = new AeronClient();
 
         // Start WebSocket server in a new thread
         new Thread(() -> {
@@ -31,9 +34,15 @@ public class App {
             }
         }).start();
 
-        // Start Aeron client
+        // Use AeronConfiguration to create dependencies
+        AeronConfiguration config = new AeronConfiguration();
+        MediaDriver mediaDriver = config.createMediaDriver();
+        Aeron aeron = config.createAeron(mediaDriver);
+
+        // Create the AeronMonitor instance with injected dependencies
+        aeronClient = new AeronClient(aeron);
         aeronClient.start();
 
-        log.info("Out App main");
+        log.debug("Out App main");
     }
 }

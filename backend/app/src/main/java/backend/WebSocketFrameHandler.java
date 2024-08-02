@@ -17,7 +17,6 @@ import io.netty.buffer.Unpooled;
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     private static final Logger logger = LogManager.getLogger(WebSocketFrameHandler.class);
     private static final CopyOnWriteArraySet<Channel> channels = new CopyOnWriteArraySet<>();
-    private final AeronClient aeronClient = new AeronClient();
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
@@ -32,15 +31,15 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         if (frame instanceof BinaryWebSocketFrame) {
-            logger.info("Received binary message");
+            logger.debug("Received binary message");
             ByteBuf byteBuf = frame.content();
             byte[] data = new byte[byteBuf.readableBytes()];
             byteBuf.readBytes(data);
-            aeronClient.sendMessageToFix(data);  // Publish binary data to Aeron multicast
+            App.getAeronClient().getBackendToFix().sendMessage(data);  // Publish binary data to Aeron multicast
         } else if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
             String request = textFrame.text();
-            logger.info("Received message: {}", request);
+            logger.debug("Received message: {}", request);
             ctx.channel().writeAndFlush(new TextWebSocketFrame("Echo: " + request));
         } else {
             String message = "unsupported frame type: " + frame.getClass().getName();
@@ -56,12 +55,14 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 
     public static void broadcast(String message) {
         for (Channel channel : channels) {
+            logger.debug("Broadcast message: {}", message);
             channel.writeAndFlush(new TextWebSocketFrame(message));
         }
     }
 
     public static void broadcast(byte[] data) {
         for (Channel channel : channels) {
+            logger.debug("Broadcast binary data");
             channel.writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer(data)));
         }
     }
