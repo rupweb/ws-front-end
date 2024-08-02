@@ -1,5 +1,6 @@
 import { generateUUID } from '../utils/utils.js';
 import encodeQuoteRequest from '../messages/encodeQuoteRequest.js';
+import { format } from 'date-fns';
 
 const handleQuoteRequest = async ({
   kycStatus,
@@ -23,11 +24,11 @@ const handleQuoteRequest = async ({
     saleCurrency: fromCurrency,
     side: 'BUY',
     symbol: `${fromCurrency}${toCurrency}`,
-    deliveryDate: selectedDate.toISOString().slice(0, 10),
-    transactTime: new Date().toISOString(),
+    deliveryDate: format(selectedDate, 'yyyyMMdd'),
+    transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
     quoteRequestID: generateUUID(),
     currencyOwned: 'USD',
-    kycStatus: 2 // Assuming 'VERIFIED' status corresponds to 2
+    kycStatus: 1 // Assuming 'VERIFIED' status corresponds to 2
   };
 
   // Encode the data using the JavaScript encoder

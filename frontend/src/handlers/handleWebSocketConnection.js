@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 
 const useWebSocketConnection = (url, handleIncomingMessage) => {
+    console.log('In useWebSocketConnection');
     const socketRef = useRef(null);
     const pingIntervalRef = useRef(null);
 
@@ -20,7 +21,6 @@ const useWebSocketConnection = (url, handleIncomingMessage) => {
             };
 
             socket.onmessage = (event) => {
-                // Check if the received data is an ArrayBuffer
                 if (event.data instanceof ArrayBuffer) {
                     handleIncomingMessage(event.data);
                 } else {
@@ -65,13 +65,13 @@ const useWebSocketConnection = (url, handleIncomingMessage) => {
         return () => {
             console.log('WebSocketProvider unmounted');
             if (socketRef.current) {
-                console.log('Closing WebSocket connection due to component unmounting');
                 socketRef.current.close(1000, 'Component unmounted'); // Cleanly close the WebSocket
             }
             stopPing();
         };
     }, [url, handleIncomingMessage]);
 
+    console.log('Out useWebSocketConnection');
     return socketRef;
 };
 

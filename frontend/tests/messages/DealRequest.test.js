@@ -1,5 +1,5 @@
-import { WebSocketProvider, useWebSocket } from '../src/handlers/WebSocketContext';
-import { encodeDealRequest } from '../src/messages/encodeDealRequest';
+import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext';
+import { encodeDealRequest } from '../../src/messages/encodeDealRequest';
 import { WebSocketServer } from 'ws';
 import React from 'react';
 import { render, act } from '@testing-library/react';

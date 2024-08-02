@@ -1,7 +1,8 @@
 const handleOutgoingMessage = (socketRef) => {
-    const sendMessage = (encodedMessage) => {
+    const sendMessage = (data) => {
         if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-            socketRef.current.send(encodedMessage);
+            console.log('Outgoing data: ', data);
+            socketRef.current.send(data);
         } else {
             console.error('WebSocket is not open. Unable to send message.');
         }

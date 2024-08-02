@@ -1,5 +1,6 @@
 import { generateUUID } from '../utils/utils.js';
 import encodeDealRequest from '../messages/encodeDealRequest.js';
+import { format } from 'date-fns';
 
 const handleDealRequest = async ({
   amount,
@@ -39,8 +40,8 @@ const handleDealRequest = async ({
     currency: toCurrency,
     side: 'BUY',
     symbol: `${fromCurrency}/${toCurrency}`,
-    deliveryDate: selectedDate.toISOString().split('T')[0],
-    transactTime: new Date().toISOString(),
+    deliveryDate: format(selectedDate, 'yyyyMMdd'),
+    transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
     quoteRequestID: generateUUID(),
     quoteID: generateUUID(), // Assuming you generate a new UUID for the quote ID as well
     dealRequestID: generateUUID(),

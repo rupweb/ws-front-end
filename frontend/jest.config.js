@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     // Automatically clear mock calls and instances between every test
     clearMocks: true,
   
@@ -7,6 +7,8 @@ module.exports = {
   
     // An array of file extensions your modules use
     moduleFileExtensions: ["js", "jsx", "json", "node"],
+
+    rootDir: 'tests',
 
     // A map from regular expressions to module names that allow to stub out resources with a single module
     moduleNameMapper: {
@@ -18,7 +20,8 @@ module.exports = {
     },
   
     // The test environment that will be used for testing
-    testEnvironment: 'jest-environment-jsdom', // 'node'
+    // testEnvironment: 'jest-environment-jsdom',
+    testEnvironment: 'node', 
 
     // The glob patterns Jest uses to detect test files
     testMatch: [

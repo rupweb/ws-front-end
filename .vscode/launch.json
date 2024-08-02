@@ -14,10 +14,21 @@
             "type": "node",
             "name": "Debug Jest Tests",
             "request": "launch",
-            "program": "${workspaceFolder}/frontend/run-tests.js",
-            "cwd": "${workspaceFolder}/frontend",
+            "program": "${workspaceFolder}/frontend/node_modules/jest/bin/jest.js",
+            "args": [
+                "--runInBand",
+                "${workspaceFolder}/frontend/tests/handlers/handleIncomingMessageTest.js"
+            ],
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "internalConsoleOptions": "neverOpen",
+            "cwd": "${workspaceFolder}/frontend",
+            "runtimeArgs": [
+                "--experimental-vm-modules"
+            ],
+            "env": {
+                "NODE_OPTIONS": "--experimental-vm-modules"
+            },
+            "skipFiles": ["<node_internals>/**"]
         },
         {
             "type": "java",
@@ -27,10 +38,29 @@
             "projectName": "tests",
             "cwd": "${workspaceFolder}/tests",
             "vmArgs": [
-                "-Dpolyglot.log.file=truffle.log", 
+                "-Dpolyglot.log.file=truffle.log",
                 "-Dpolyglot.engine.WarnInterpreterOnly=false"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run Incoming Message Test",
+            "program": "${workspaceFolder}/frontend/node_modules/jest/bin/jest.js",
+            "args": [
+                "--runInBand",
+                "${workspaceFolder}/frontend/tests/handlers/handleIncomingMessageTest.js"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "cwd": "${workspaceFolder}/frontend",
+            "runtimeArgs": [
+                "--experimental-vm-modules"
+            ],
+            "env": {
+                "NODE_OPTIONS": "--experimental-vm-modules"
+            },
+            "skipFiles": ["<node_internals>/**"]
         }
     ]
 }
-  

@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
 import { WebSocketServer } from 'jest-websocket-mock';
-import { WebSocketProvider, useWebSocket } from '../src/handlers/WebSocketContext';
-import { encodeDealRequest } from '../src/messages/encodeDealRequest';
+import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext';
+import { encodeDealRequest } from '../../src/messages/encodeDealRequest';
 
 jest.mock('../src/messages/encodeDealRequest', () => ({
     encodeDealRequest: jest.fn(() => new Uint8Array([1, 2, 3, 4])) // Mock the encoded message
 }));
 
-jest.mock('../src/messages/MessageHeaderDecoder', () => require('../../mocks/MessageHeaderDecoder'));
+jest.mock('../src/messages/MessageHeaderDecoder', () => require('../../../mocks/MessageHeaderDecoder'));
 
 // Test component that uses the WebSocket context
 const TestComponent = () => {
