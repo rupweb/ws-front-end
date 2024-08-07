@@ -61,6 +61,25 @@
                 "NODE_OPTIONS": "--experimental-vm-modules"
             },
             "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest Current File",
+            "cwd": "${workspaceFolder}/frontend",
+            "runtimeExecutable": "npx",
+            "runtimeArgs": [
+              "jest",
+              "--runTestsByPath",
+              "${file}", 
+              "--config",
+              "${workspaceFolder}/frontend/jest.config.js"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+              "NODE_ENV": "test"
+            }
         }
     ]
 }

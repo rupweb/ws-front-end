@@ -1,5 +1,5 @@
-import { WebSocketProvider } from './WebSocketContext';
-import { decodeQuote } from './QuoteDecoder';
+import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext.js';
+import { decodeQuote } from '../../src/aeron/js/QuoteDecoder.js';
 import { WebSocketServer } from 'ws';
 import React, { useEffect, useState } from 'react';
 import { render } from '@testing-library/react';
@@ -76,6 +76,8 @@ describe('WebSocket integration test', () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         expect(getByText(/Received Quote:/)).toBeInTheDocument();
+
+        console.log('Test finished')
     });
 });
 

@@ -1,5 +1,5 @@
-import { WebSocketProvider } from './WebSocketContext';
-import { decodeExecutionReport } from './ExecutionReportDecoder';
+import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext.js';
+import { decodeExecutionReport } from '../../src/aeron/js/ExecutionReportDecoder.js';
 import { WebSocketServer } from 'ws';
 import React, { useEffect, useState } from 'react';
 import { render } from '@testing-library/react';
@@ -86,6 +86,8 @@ describe('WebSocket integration test', () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         expect(getByText(/Received ExecutionReport:/)).toBeInTheDocument();
+
+        console.log('Test finished')
     });
 });
 

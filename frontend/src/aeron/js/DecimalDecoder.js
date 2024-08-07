@@ -14,7 +14,7 @@ class DecimalDecoder {
     }
 
     mantissa() {
-        return this.buffer.getBigInt64(this.offset, DecimalDecoder.LITTLE_ENDIAN);
+        return this.buffer.getFloat64(this.offset, DecimalDecoder.LITTLE_ENDIAN);
     }
 
     exponent() {

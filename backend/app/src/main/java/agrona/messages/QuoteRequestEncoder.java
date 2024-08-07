@@ -520,7 +520,7 @@ public final class QuoteRequestEncoder
 
     public static int deliveryDateEncodingLength()
     {
-        return 10;
+        return 8;
     }
 
     public static String deliveryDateMetaAttribute(final MetaAttribute metaAttribute)
@@ -550,13 +550,13 @@ public final class QuoteRequestEncoder
 
     public static int deliveryDateLength()
     {
-        return 10;
+        return 8;
     }
 
 
     public QuoteRequestEncoder deliveryDate(final int index, final byte value)
     {
-        if (index < 0 || index >= 10)
+        if (index < 0 || index >= 8)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
@@ -574,7 +574,7 @@ public final class QuoteRequestEncoder
 
     public QuoteRequestEncoder putDeliveryDate(final byte[] src, final int srcOffset)
     {
-        final int length = 10;
+        final int length = 8;
         if (srcOffset < 0 || srcOffset > (src.length - length))
         {
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
@@ -587,7 +587,7 @@ public final class QuoteRequestEncoder
 
     public QuoteRequestEncoder deliveryDate(final String src)
     {
-        final int length = 10;
+        final int length = 8;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         if (bytes.length > length)
         {
@@ -616,7 +616,7 @@ public final class QuoteRequestEncoder
 
     public static int transactTimeEncodingOffset()
     {
-        return 40;
+        return 38;
     }
 
     public static int transactTimeEncodingLength()
@@ -662,7 +662,7 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 40 + (index * 1);
+        final int pos = offset + 38 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -681,7 +681,7 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 40, src, srcOffset, length);
+        buffer.putBytes(offset + 38, src, srcOffset, length);
 
         return this;
     }
@@ -695,11 +695,11 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 40, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 38, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 40 + start, (byte)0);
+            buffer.putByte(offset + 38 + start, (byte)0);
         }
 
         return this;
@@ -717,7 +717,7 @@ public final class QuoteRequestEncoder
 
     public static int quoteRequestIDEncodingOffset()
     {
-        return 61;
+        return 59;
     }
 
     public static int quoteRequestIDEncodingLength()
@@ -763,7 +763,7 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 61 + (index * 1);
+        final int pos = offset + 59 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -782,7 +782,7 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 61, src, srcOffset, length);
+        buffer.putBytes(offset + 59, src, srcOffset, length);
 
         return this;
     }
@@ -796,11 +796,11 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 61, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 59, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 61 + start, (byte)0);
+            buffer.putByte(offset + 59 + start, (byte)0);
         }
 
         return this;
@@ -818,7 +818,7 @@ public final class QuoteRequestEncoder
 
     public static int currencyOwnedEncodingOffset()
     {
-        return 77;
+        return 75;
     }
 
     public static int currencyOwnedEncodingLength()
@@ -864,16 +864,16 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 77 + (index * 1);
+        final int pos = offset + 75 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
     }
     public QuoteRequestEncoder putCurrencyOwned(final byte value0, final byte value1, final byte value2)
     {
-        buffer.putByte(offset + 77, value0);
-        buffer.putByte(offset + 78, value1);
-        buffer.putByte(offset + 79, value2);
+        buffer.putByte(offset + 75, value0);
+        buffer.putByte(offset + 76, value1);
+        buffer.putByte(offset + 77, value2);
 
         return this;
     }
@@ -891,7 +891,7 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 77, src, srcOffset, length);
+        buffer.putBytes(offset + 75, src, srcOffset, length);
 
         return this;
     }
@@ -905,11 +905,11 @@ public final class QuoteRequestEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 77, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 75, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 77 + start, (byte)0);
+            buffer.putByte(offset + 75 + start, (byte)0);
         }
 
         return this;
@@ -927,7 +927,7 @@ public final class QuoteRequestEncoder
 
     public static int kycStatusEncodingOffset()
     {
-        return 80;
+        return 78;
     }
 
     public static int kycStatusEncodingLength()
@@ -947,7 +947,7 @@ public final class QuoteRequestEncoder
 
     public QuoteRequestEncoder kycStatus(final KycStatus value)
     {
-        buffer.putByte(offset + 80, (byte)value.value());
+        buffer.putByte(offset + 78, (byte)value.value());
         return this;
     }
 

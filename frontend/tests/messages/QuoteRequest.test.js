@@ -1,5 +1,5 @@
-import { WebSocketProvider, useWebSocket } from './WebSocketContext';
-import { encodeQuoteRequest } from './QuoteRequestEncoder';
+import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext.js';
+import { encodeQuoteRequest } from '../../src/aeron/js/QuoteRequestEncoder';
 import { WebSocketServer } from 'ws';
 import React from 'react';
 import { render, act } from '@testing-library/react';
@@ -52,6 +52,7 @@ describe('WebSocket integration test', () => {
 
         // Verify that the message was sent correctly
         // You can use assertions to check the server logs or other means to validate the test
+        console.log('Test finished')
     });
 });
 

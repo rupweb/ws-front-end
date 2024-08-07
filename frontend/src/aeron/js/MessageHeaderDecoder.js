@@ -30,7 +30,7 @@ class MessageHeaderDecoder {
     }
 
     toString() {
-        return `MessageHeaderDecoder(blockLength=${this.blockLength()}, templateId=${this.templateId()}, schemaId=${this.schemaId()}, version=${this.version()})`;
+        return `messageHeaderDecoder(blockLength=${this.blockLength()}, templateId=${this.templateId()}, schemaId=${this.schemaId()}, version=${this.version()})`;
     }
 }
 

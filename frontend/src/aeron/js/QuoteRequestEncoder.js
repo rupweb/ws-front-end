@@ -1,10 +1,8 @@
 import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
-// This file is manually generated from the SBE messages.xml
-
 class QuoteRequestEncoder {
-    static BLOCK_LENGTH = 292;
+    static BLOCK_LENGTH = 81;
     static TEMPLATE_ID = 3;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -13,7 +11,7 @@ class QuoteRequestEncoder {
     constructor() {
         this.buffer = null;
         this.offset = 0;
-        this.amountDecimal = new DecimalEncoder();
+        this.amountEncoder = new DecimalEncoder();
     }
 
     wrap(buffer, offset) {
@@ -28,52 +26,75 @@ class QuoteRequestEncoder {
             .templateId(QuoteRequestEncoder.TEMPLATE_ID)
             .schemaId(QuoteRequestEncoder.SCHEMA_ID)
             .version(QuoteRequestEncoder.SCHEMA_VERSION);
-
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
-    amount() {
-        this.amountDecimal.wrap(this.buffer.buffer, this.offset + 8);
-        return this.amountDecimal;
+    // Encode amount mantissa
+    amountMantissa(value) {
+        this.buffer.setInt32(this.offset + 0, value, true);
+        return this;
     }
 
+    // Encode amount exponent
+    amountExponent(value) {
+        this.buffer.setInt8(this.offset + 4, value);
+        return this;
+    }
+
+    // Encode saleCurrency
     saleCurrency(value) {
-        this.putString(this.offset + 17, value, 3);
+        this.putString(this.offset + 9, value, 3);
         return this;
     }
 
+    // Encode side
     side(value) {
-        this.putString(this.offset + 20, value, 4);
+        this.putString(this.offset + 12, value, 4);
         return this;
     }
 
+    // Encode symbol
     symbol(value) {
-        this.putString(this.offset + 24, value, 6);
+        this.putString(this.offset + 16, value, 6);
         return this;
     }
 
+    // Encode deliveryDate
     deliveryDate(value) {
-        this.putString(this.offset + 30, value, 10);
+        this.putString(this.offset + 22, value, 8);
         return this;
     }
 
+    // Encode transactTime
     transactTime(value) {
-        this.putString(this.offset + 40, value, 21);
+        this.putString(this.offset + 30, value, 21);
         return this;
     }
 
+    // Encode quoteRequestID
     quoteRequestID(value) {
-        this.putString(this.offset + 61, value, 16);
+        this.putString(this.offset + 51, value, 16);
         return this;
     }
 
+    // Encode currencyOwned
     currencyOwned(value) {
-        this.putString(this.offset + 77, value, 3);
+        this.putString(this.offset + 67, value, 3);
         return this;
     }
 
+    // Encode kycStatus
     kycStatus(value) {
-        this.buffer.setUint8(this.offset + 81, value);
+        const valueMap = {
+            OTHER: 3,
+            NOT_STARTED: 0,
+            PENDING: 1,
+            VERIFIED: 2,
+        };
+        if (!(value in valueMap)) {
+            throw new Error('Invalid enum value: ' + value);
+        }
+        this.buffer.setUint8(this.offset + 70, valueMap[value]);
         return this;
     }
 

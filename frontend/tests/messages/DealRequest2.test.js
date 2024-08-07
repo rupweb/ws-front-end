@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
 import { WebSocketServer } from 'jest-websocket-mock';
-import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext';
-import { encodeDealRequest } from '../../src/messages/encodeDealRequest';
+import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext.js';
+import { encodeDealRequest } from '../../src/messages/encodeDealRequest.js';
 
 jest.mock('../src/messages/encodeDealRequest', () => ({
     encodeDealRequest: jest.fn(() => new Uint8Array([1, 2, 3, 4])) // Mock the encoded message
@@ -62,5 +62,6 @@ describe('WebSocket integration test', () => {
         await expect(server).toReceiveMessage(new Uint8Array([1, 2, 3, 4]));
 
         // You can also verify the content of the message here if necessary
+        console.log('Test finished')
     });
 });

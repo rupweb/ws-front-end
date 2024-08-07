@@ -14,7 +14,7 @@ class DecimalEncoder {
     }
 
     mantissa(value) {
-        this.buffer.setBigInt64(this.offset, BigInt(value), DecimalEncoder.LITTLE_ENDIAN);
+        this.buffer.setFloat64(this.offset, value, DecimalEncoder.LITTLE_ENDIAN);
         return this;
     }
 

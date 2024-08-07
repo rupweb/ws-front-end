@@ -1,11 +1,9 @@
-import DecimalEncoder from './DecimalEncoder.js';
-import MessageHeaderEncoder from './MessageHeaderEncoder.js';
+import DecimalEncoder from '../../../../../frontend/src/messages/DecimalEncoder.js'
+import MessageHeaderEncoder from '../../../../../frontend/src/messages/MessageHeaderEncoder.js';
 
-// This file is manually generated from the SBE messages.xml
-
-class DealRequestEncoder {
-    static BLOCK_LENGTH = 214;
-    static TEMPLATE_ID = 1;
+class ErrorEncoder {
+    static BLOCK_LENGTH = 390; // Length of the Error message block
+    static TEMPLATE_ID = 5;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
@@ -25,17 +23,18 @@ class DealRequestEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(DealRequestEncoder.BLOCK_LENGTH)
-            .templateId(DealRequestEncoder.TEMPLATE_ID)
-            .schemaId(DealRequestEncoder.SCHEMA_ID)
-            .version(DealRequestEncoder.SCHEMA_VERSION);
+            .blockLength(ErrorEncoder.BLOCK_LENGTH)
+            .templateId(ErrorEncoder.TEMPLATE_ID)
+            .schemaId(ErrorEncoder.SCHEMA_ID)
+            .version(ErrorEncoder.SCHEMA_VERSION);
 
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
-    amount() {
+    amount(mantissa, exponent) {
         this.amountDecimal.wrap(this.buffer.buffer, this.offset + 8);
-        return this.amountDecimal;
+        this.amountDecimal.mantissa(mantissa).exponent(exponent);
+        return this;
     }
 
     currency(value) {
@@ -78,9 +77,20 @@ class DealRequestEncoder {
         return this;
     }
 
-    fxRate() {
-        this.fxRateDecimal.wrap(this.buffer.buffer, this.offset + 109);
-        return this.fxRateDecimal;
+    dealID(value) {
+        this.putString(this.offset + 109, value, 16);
+        return this;
+    }
+
+    fxRate(mantissa, exponent) {
+        this.fxRateDecimal.wrap(this.buffer.buffer, this.offset + 125);
+        this.fxRateDecimal.mantissa(mantissa).exponent(exponent);
+        return this;
+    }
+
+    message(value) {
+        this.putString(this.offset + 134, value, 256);
+        return this;
     }
 
     putString(offset, value, length) {
@@ -92,4 +102,4 @@ class DealRequestEncoder {
     }
 }
 
-export default DealRequestEncoder;
+export default ErrorEncoder;

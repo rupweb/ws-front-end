@@ -672,7 +672,7 @@ public final class ExecutionReportEncoder
 
     public static int deliveryDateEncodingLength()
     {
-        return 10;
+        return 8;
     }
 
     public static String deliveryDateMetaAttribute(final MetaAttribute metaAttribute)
@@ -702,13 +702,13 @@ public final class ExecutionReportEncoder
 
     public static int deliveryDateLength()
     {
-        return 10;
+        return 8;
     }
 
 
     public ExecutionReportEncoder deliveryDate(final int index, final byte value)
     {
-        if (index < 0 || index >= 10)
+        if (index < 0 || index >= 8)
         {
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
@@ -726,7 +726,7 @@ public final class ExecutionReportEncoder
 
     public ExecutionReportEncoder putDeliveryDate(final byte[] src, final int srcOffset)
     {
-        final int length = 10;
+        final int length = 8;
         if (srcOffset < 0 || srcOffset > (src.length - length))
         {
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
@@ -739,7 +739,7 @@ public final class ExecutionReportEncoder
 
     public ExecutionReportEncoder deliveryDate(final String src)
     {
-        final int length = 10;
+        final int length = 8;
         final byte[] bytes = (null == src || src.isEmpty()) ? org.agrona.collections.ArrayUtil.EMPTY_BYTE_ARRAY : src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         if (bytes.length > length)
         {
@@ -768,7 +768,7 @@ public final class ExecutionReportEncoder
 
     public static int transactTimeEncodingOffset()
     {
-        return 52;
+        return 50;
     }
 
     public static int transactTimeEncodingLength()
@@ -814,7 +814,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 52 + (index * 1);
+        final int pos = offset + 50 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -833,7 +833,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 52, src, srcOffset, length);
+        buffer.putBytes(offset + 50, src, srcOffset, length);
 
         return this;
     }
@@ -847,11 +847,11 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 52, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 50, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 52 + start, (byte)0);
+            buffer.putByte(offset + 50 + start, (byte)0);
         }
 
         return this;
@@ -869,7 +869,7 @@ public final class ExecutionReportEncoder
 
     public static int quoteRequestIDEncodingOffset()
     {
-        return 73;
+        return 71;
     }
 
     public static int quoteRequestIDEncodingLength()
@@ -915,7 +915,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 73 + (index * 1);
+        final int pos = offset + 71 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -934,7 +934,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 73, src, srcOffset, length);
+        buffer.putBytes(offset + 71, src, srcOffset, length);
 
         return this;
     }
@@ -948,11 +948,11 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 73, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 71, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 73 + start, (byte)0);
+            buffer.putByte(offset + 71 + start, (byte)0);
         }
 
         return this;
@@ -970,7 +970,7 @@ public final class ExecutionReportEncoder
 
     public static int quoteIDEncodingOffset()
     {
-        return 89;
+        return 87;
     }
 
     public static int quoteIDEncodingLength()
@@ -1016,7 +1016,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 89 + (index * 1);
+        final int pos = offset + 87 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -1035,7 +1035,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 89, src, srcOffset, length);
+        buffer.putBytes(offset + 87, src, srcOffset, length);
 
         return this;
     }
@@ -1049,11 +1049,11 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 89, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 87, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 89 + start, (byte)0);
+            buffer.putByte(offset + 87 + start, (byte)0);
         }
 
         return this;
@@ -1071,7 +1071,7 @@ public final class ExecutionReportEncoder
 
     public static int dealRequestIDEncodingOffset()
     {
-        return 105;
+        return 103;
     }
 
     public static int dealRequestIDEncodingLength()
@@ -1117,7 +1117,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 105 + (index * 1);
+        final int pos = offset + 103 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -1136,7 +1136,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 105, src, srcOffset, length);
+        buffer.putBytes(offset + 103, src, srcOffset, length);
 
         return this;
     }
@@ -1150,11 +1150,11 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 105, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 103, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 105 + start, (byte)0);
+            buffer.putByte(offset + 103 + start, (byte)0);
         }
 
         return this;
@@ -1172,7 +1172,7 @@ public final class ExecutionReportEncoder
 
     public static int dealIDEncodingOffset()
     {
-        return 121;
+        return 119;
     }
 
     public static int dealIDEncodingLength()
@@ -1218,7 +1218,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 121 + (index * 1);
+        final int pos = offset + 119 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -1237,7 +1237,7 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 121, src, srcOffset, length);
+        buffer.putBytes(offset + 119, src, srcOffset, length);
 
         return this;
     }
@@ -1251,11 +1251,11 @@ public final class ExecutionReportEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 121, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 119, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 121 + start, (byte)0);
+            buffer.putByte(offset + 119 + start, (byte)0);
         }
 
         return this;
@@ -1273,7 +1273,7 @@ public final class ExecutionReportEncoder
 
     public static int fxRateEncodingOffset()
     {
-        return 137;
+        return 135;
     }
 
     public static int fxRateEncodingLength()
@@ -1300,7 +1300,7 @@ public final class ExecutionReportEncoder
      */
     public DecimalEncoder fxRate()
     {
-        fxRate.wrap(buffer, offset + 137);
+        fxRate.wrap(buffer, offset + 135);
         return fxRate;
     }
 

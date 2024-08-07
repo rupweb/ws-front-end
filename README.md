@@ -73,12 +73,16 @@ Server running on <http://localhost:3001>
 
 SBE files are found in a backend jar by running `gradle createJar` in directory `build/libs`
 
+## smoke test
+
+use `npx jest tests/smoke/App.test.js --config jest.config.js --verbose`
+
 ## tests
 
 The jest is configured using jest.config.js to look for tests in the tests directory.
 Run the tests using `npm run jest-test` or `npm run jest-test tests/App.test.js`
 
-There's a separate project `tests` to run GraalVM polyglot tests for SBE encoding & decoding using Gradle.
+There's a separate project `tests` to run tests for SBE encoding & decoding using Gradle.
 Ensure the `backend` project has already been `gradle build` before running the `tests`.
 
 To run a specific test in the `tests` project

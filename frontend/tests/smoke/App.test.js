@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from '../../src/App';
+import App from '../../src/App.js';
 
 // Mock the Authenticator component from AWS Amplify
 jest.mock('@aws-amplify/ui-react', () => ({
@@ -8,7 +8,7 @@ jest.mock('@aws-amplify/ui-react', () => ({
 }));
 
 // Mock the WebSocketProvider
-jest.mock('../src/handlers/WebSocketContext', () => ({
+jest.mock('../../src/handlers/WebSocketContext.js', () => ({
   WebSocketProvider: ({ children }) => <div>{children}</div>,
   useWebSocket: jest.fn(() => ({
     sendMessage: jest.fn()
@@ -23,9 +23,9 @@ jest.mock('Polyglot', () => ({
 }));
 
 test('renders the app with header and footer', () => {
-  render(
-    <App />
-  );
+  console.log('Test started')
+
+  render(<App />);
 
   // Check if the CookieConsent component is rendered
   expect(screen.getByText(/This website uses cookies/i)).toBeInTheDocument();
@@ -49,4 +49,6 @@ test('renders the app with header and footer', () => {
   // Check if the footer is rendered
   const footer = screen.getByRole('contentinfo');
   expect(footer).toBeInTheDocument();
+
+  console.log('Test finished')
 });

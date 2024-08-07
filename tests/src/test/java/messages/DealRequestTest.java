@@ -34,14 +34,14 @@ public class DealRequestTest {
         // Load and prepare scripts
         String textEncoderScript = Utils.loadScript("tests/src/test/java/aeron/TextEncoder.js");
         String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DecimalEncoder.js"));
-        String messageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/MessageHeaderEncoder.js"));
+        String MessageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/MessageHeaderEncoder.js"));
         String dealRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DealRequestEncoder.js"));
         String encodeDealRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/encodeDealRequest.js"));
 
         // Concatenate scripts in the correct order
         String combinedScript = textEncoderScript + "\n" +
                                 decimalEncoderScript + "\n" +
-                                messageHeaderEncoderScript + "\n" +
+                                MessageHeaderEncoderScript + "\n" +
                                 dealRequestEncoderScript + "\n" +
                                 encodeDealRequestScript;
 

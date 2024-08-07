@@ -1,5 +1,5 @@
-import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext';
-import { encodeDealRequest } from '../../src/messages/encodeDealRequest';
+import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext.js';
+import { encodeDealRequest } from '../../src/messages/encodeDealRequest.js';
 import { WebSocketServer } from 'ws';
 import React from 'react';
 import { render, act } from '@testing-library/react';
@@ -17,6 +17,7 @@ mockServer.on('connection', socket => {
 
 describe('WebSocket integration test', () => {
     it('sends a DealRequest message via WebSocket', async () => {
+        console.log('WebSocket integration test')
         const TestComponent = () => {
             const { sendMessage } = useWebSocket();
 
@@ -54,6 +55,7 @@ describe('WebSocket integration test', () => {
 
         // Verify that the message was sent correctly
         // You can use assertions to check the server logs or other means to validate the test
+        console.log('Test finished')
     });
 });
 
