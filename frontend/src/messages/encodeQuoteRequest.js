@@ -3,7 +3,7 @@ import MessageHeaderEncoder from '../aeron/js/MessageHeaderEncoder.js';
 
 const encodeQuoteRequest = (data) => {
     const buffer = new ArrayBuffer(QuoteRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH);
-    const messageHeaderEncoder = new MessageHeaderEncoder();
+    const headerEncoder = new MessageHeaderEncoder();
     const encoder = new QuoteRequestEncoder();
 
     // Encode the data

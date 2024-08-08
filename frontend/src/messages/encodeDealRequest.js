@@ -3,7 +3,7 @@ import MessageHeaderEncoder from '../aeron/js/MessageHeaderEncoder.js'
 
 const encodeDealRequest = (data) => {
     const buffer = new ArrayBuffer(DealRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH);
-    const messageHeaderEncoder = new MessageHeaderEncoder();
+    const headerEncoder = new MessageHeaderEncoder();
     const encoder = new DealRequestEncoder();
 
     // Encode the data
