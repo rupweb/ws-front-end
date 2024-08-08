@@ -27,8 +27,8 @@ const handleQuoteRequest = async ({
     deliveryDate: format(selectedDate, 'yyyyMMdd'),
     transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
     quoteRequestID: generateUUID(),
-    currencyOwned: 'USD',
-    kycStatus: 1 // Assuming 'VERIFIED' status corresponds to 2
+    currencyOwned: toCurrency,
+    kycStatus: kycStatus
   };
 
   // Encode the data using the JavaScript encoder

@@ -17,7 +17,7 @@ class DealRequestEncoder {
 
     wrap(buffer, offset) {
         this.buffer = new DataView(buffer);
-        this.offset = offset;
+        this.offset = offset + 8; // Add the header again? The first field starts at 16
         return this;
     }
 
@@ -30,16 +30,10 @@ class DealRequestEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
-    // Encode amount mantissa
-    amountMantissa(value) {
-        this.buffer.setInt32(this.offset + 0, value, true);
-        return this;
-    }
-
-    // Encode amount exponent
-    amountExponent(value) {
-        this.buffer.setInt8(this.offset + 4, value);
-        return this;
+    encodeamount(value) {
+        this.amountEncoder.wrap(this.buffer.buffer, this.offset + 0);
+        this.amountEncoder.mantissa(value.mantissa);
+        this.amountEncoder.exponent(value.exponent);
     }
 
     // Encode currency
@@ -90,16 +84,10 @@ class DealRequestEncoder {
         return this;
     }
 
-    // Encode fxRate mantissa
-    fxRateMantissa(value) {
-        this.buffer.setInt32(this.offset + 99, value, true);
-        return this;
-    }
-
-    // Encode fxRate exponent
-    fxRateExponent(value) {
-        this.buffer.setInt8(this.offset + 103, value);
-        return this;
+    encodefxRate(value) {
+        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 99);
+        this.fxRateEncoder.mantissa(value.mantissa);
+        this.fxRateEncoder.exponent(value.exponent);
     }
 
     putString(offset, value, length) {

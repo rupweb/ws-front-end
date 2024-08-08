@@ -12,7 +12,7 @@ describe('handleIncomingError', () => {
     it('should correctly decode and log an Error message', () => {
         console.log('handleIncomingError test');
 
-        const error = {
+        const data = {
             amount: {
                 mantissa: 500000,
                 exponent: -2
@@ -33,45 +33,50 @@ describe('handleIncomingError', () => {
             message: 'Error processing the request due to invalid input parameters.'
         };
 
-        console.log(error);
+        console.log(data);
         console.log("Setup encoder");
 
         // Setup the error encoder
         const bufferLength = ErrorEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH;
-        const testData = new ArrayBuffer(bufferLength);
+        const buffer = new ArrayBuffer(bufferLength);
         const headerEncoder = new MessageHeaderEncoder();
-        const errorEncoder = new ErrorEncoder();
+        const encoder = new ErrorEncoder();
 
         console.log("Encode");
 
-        // Encode the error
-        errorEncoder.wrapAndApplyHeader(testData, 0, headerEncoder);
+        // Wrap and set header
+        headerEncoder.wrap(buffer, 0)
+        .blockLength(ErrorEncoder.BLOCK_LENGTH)
+        .templateId(5) 
+        .schemaId(1)
+        .version(1);
 
-        errorEncoder.amountMantissa(error.amount.mantissa);
-        errorEncoder.amountExponent(error.amount.exponent);
-        errorEncoder.currency(error.currency);
-        errorEncoder.side(error.side);
-        errorEncoder.symbol(error.symbol);
-        errorEncoder.deliveryDate(error.deliveryDate);
-        errorEncoder.transactTime(error.transactTime);
-        errorEncoder.quoteID(error.quoteID);
-        errorEncoder.quoteRequestID(error.quoteRequestID);
-        errorEncoder.dealRequestID(error.dealRequestID);
-        errorEncoder.dealID(error.dealID);
-        errorEncoder.fxRateMantissa(error.fxRate.mantissa);
-        errorEncoder.fxRateExponent(error.fxRate.exponent);
-        errorEncoder.message(error.message);
+        // Encode the data
+        encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+        encoder.encodeamount(data.amount);
+        encoder.currency(data.currency);
+        encoder.side(data.side);
+        encoder.symbol(data.symbol);
+        encoder.deliveryDate(data.deliveryDate);
+        encoder.transactTime(data.transactTime);
+        encoder.quoteRequestID(data.quoteRequestID);
+        encoder.quoteID(data.quoteID);
+        encoder.dealRequestID(data.dealRequestID);
+        encoder.dealID(data.dealID);
+        encoder.encodefxRate(data.fxRate);
+        encoder.message(data.message);
 
         // Mock console to capture the output
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
         // Call test function
-        handleIncomingMessage(testData);
+        console.log("Test");
+        handleIncomingMessage(buffer);
 
         console.log("Check log");
 
         // Check if the log contains the expected message
-        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', error);
+        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', data);
 
         // Restore console
         consoleSpy.mockRestore();

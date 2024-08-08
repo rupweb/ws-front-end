@@ -8,7 +8,7 @@ import { render } from '@testing-library/react';
 const mockServer = new WebSocketServer({ port: 8090 });
 
 const sendMockExecutionReport = () => {
-    const executionReportData = {
+    const data = {
         amount: { mantissa: 1000, exponent: -2 },
         currency: 'USD',
         secondaryAmount: { mantissa: 2000, exponent: -2 },
@@ -27,21 +27,21 @@ const sendMockExecutionReport = () => {
     const buffer = new UnsafeBuffer(ByteBuffer.allocateDirect(ExecutionReportDecoder.BLOCK_LENGTH + MessageHeaderDecoder.ENCODED_LENGTH));
     const encoder = new ExecutionReportEncoder();
     const headerEncoder = new MessageHeaderEncoder();
-    encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
 
-    encoder.amount().mantissa(executionReportData.amount.mantissa).exponent(executionReportData.amount.exponent);
-    encoder.currency(executionReportData.currency);
-    encoder.secondaryAmount().mantissa(executionReportData.secondaryAmount.mantissa).exponent(executionReportData.secondaryAmount.exponent);
-    encoder.secondaryCurrency(executionReportData.secondaryCurrency);
-    encoder.side(executionReportData.side);
-    encoder.symbol(executionReportData.symbol);
-    encoder.deliveryDate(executionReportData.deliveryDate);
-    encoder.transactTime(executionReportData.transactTime);
-    encoder.quoteRequestID(executionReportData.quoteRequestID);
-    encoder.quoteID(executionReportData.quoteID);
-    encoder.dealRequestID(executionReportData.dealRequestID);
-    encoder.dealID(executionReportData.dealID);
-    encoder.fxRate().mantissa(executionReportData.fxRate.mantissa).exponent(executionReportData.fxRate.exponent);
+    encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+    encoder.encodeamount(data.amount);
+    encoder.currency(data.currency);
+    encoder.encodesecondaryAmount(data.secondaryAmount);
+    encoder.secondaryCurrency(data.secondaryCurrency);
+    encoder.side(data.side);
+    encoder.symbol(data.symbol);
+    encoder.deliveryDate(data.deliveryDate);
+    encoder.transactTime(data.transactTime);
+    encoder.quoteRequestID(data.quoteRequestID);
+    encoder.quoteID(data.quoteID);
+    encoder.dealRequestID(data.dealRequestID);
+    encoder.dealID(data.dealID);
+    encoder.encodefxRate(data.fxRate);
 
     mockServer.clients.forEach(client => {
         client.send(buffer.byteArray());

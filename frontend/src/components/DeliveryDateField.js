@@ -1,6 +1,6 @@
 // DeliveryDateField.js
 import React from 'react';
-import * as DatePickerModule from 'react-datepicker';
+import DatePickerModule from 'react-datepicker';
 import FormField from './FormField.js';
 import 'react-datepicker/dist/react-datepicker.css';
 

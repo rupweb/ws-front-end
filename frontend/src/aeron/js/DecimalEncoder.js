@@ -14,7 +14,9 @@ class DecimalEncoder {
     }
 
     mantissa(value) {
-        this.buffer.setFloat64(this.offset, value, DecimalEncoder.LITTLE_ENDIAN);
+        // This is a BigInt64 because the Java DecimalEncoder uses a setLong
+        const bigIntValue = BigInt(value);
+        this.buffer.setBigInt64(this.offset, bigIntValue, DecimalEncoder.LITTLE_ENDIAN);
         return this;
     }
 

@@ -16,7 +16,9 @@ const handleIncomingMessage = (data) => {
 
     try {
         const headerDecoder = new MessageHeaderDecoder();
-        const buffer = headerDecoder.wrap(data, 0);
+
+        // Wrap the header to read it
+        headerDecoder.wrap(data, 0);
 
         switch (headerDecoder.templateId()) {
             case 4: { // Quote

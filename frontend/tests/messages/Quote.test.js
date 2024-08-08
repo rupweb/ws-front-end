@@ -22,16 +22,17 @@ const sendMockQuote = () => {
     const buffer = new UnsafeBuffer(ByteBuffer.allocateDirect(QuoteDecoder.BLOCK_LENGTH + MessageHeaderDecoder.ENCODED_LENGTH));
     const encoder = new QuoteEncoder();
     const headerEncoder = new MessageHeaderEncoder();
-    encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
 
-    encoder.amount().mantissa(quoteData.amount.mantissa).exponent(quoteData.amount.exponent);
-    encoder.currency(quoteData.currency);
-    encoder.fxRate().mantissa(quoteData.fxRate.mantissa).exponent(quoteData.fxRate.exponent);
-    encoder.transactTime(quoteData.transactTime);
-    encoder.side(quoteData.side);
-    encoder.symbol(quoteData.symbol);
-    encoder.quoteID(quoteData.quoteID);
-    encoder.quoteRequestID(quoteData.quoteRequestID);
+    // Encode the quote
+    encoder.wrapAndApplyHeader(data, 0, headerEncoder);
+    encoder.encodeamount(data.amount);
+    encoder.currency(data.currency);
+    encoder.side(data.side);
+    encoder.symbol(data.symbol);
+    encoder.transactTime(data.transactTime);
+    encoder.quoteID(data.quoteID);
+    encoder.quoteRequestID(data.quoteRequestID);
+    encoder.encodefxRate(data.fxRate);
 
     mockServer.clients.forEach(client => {
         client.send(buffer.byteArray());

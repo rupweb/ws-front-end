@@ -11,18 +11,15 @@ class QuoteRequestDecoder {
 
     wrap(buffer, offset) {
         this.buffer = new DataView(buffer);
-        this.offset = offset;
+        this.offset = offset + 8; // Add the header again? The first field starts at 16
         return this;
     }
 
-    // Decode amount mantissa
-    amountMantissa() {
-        return this.buffer.getInt32(this.offset + 0, true);
-    }
-
-    // Decode amount exponent
-    amountExponent() {
-        return this.buffer.getInt8(this.offset + 4);
+    decodeamount() {
+        this.amountDecoder.wrap(this.buffer.buffer, this.offset + 0);
+        const mantissa = Number(this.amountDecoder.mantissa());
+        const exponent = this.amountDecoder.exponent();
+        return { mantissa, exponent };
     }
 
     // Decode saleCurrency
@@ -77,10 +74,7 @@ class QuoteRequestDecoder {
 
     toString() {
         return {
-            amount: {
-                mantissa: this.amountMantissa(),
-                exponent: this.amountExponent(),
-            },
+            amount: this.decodeamount(),
             saleCurrency: this.saleCurrency().replace(/\0/g, ''),
             side: this.side().replace(/\0/g, ''),
             symbol: this.symbol().replace(/\0/g, ''),

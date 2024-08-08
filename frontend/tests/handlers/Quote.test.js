@@ -12,7 +12,7 @@ describe('handleIncomingQuote', () => {
     it('should correctly decode and log a Quote message', () => {
         console.log('handleIncomingQuote test');
 
-        const quote = {
+        const data = {
             amount: {
                 mantissa: 100000,
                 exponent: -2
@@ -29,41 +29,43 @@ describe('handleIncomingQuote', () => {
             },
         };
 
-        console.log(quote);
+        console.log(data);
         console.log("Setup encoder");
 
         // Setup the quote encoder
         const bufferLength = QuoteEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH;
-        const testData = new ArrayBuffer(bufferLength);
+        const buffer = new ArrayBuffer(bufferLength);
         const headerEncoder = new MessageHeaderEncoder();
-        const quoteEncoder = new QuoteEncoder();
+        const encoder = new QuoteEncoder();
 
         console.log("Encode");
 
-        // Encode the quote
-        quoteEncoder.wrapAndApplyHeader(testData, 0, headerEncoder);
+        // Wrap and set header
+        headerEncoder.wrap(buffer, 0)
+        .blockLength(QuoteEncoder.BLOCK_LENGTH)
+        .templateId(4) 
+        .schemaId(1)
+        .version(1);
 
-        quoteEncoder.amountMantissa(quote.amount.mantissa);
-        quoteEncoder.amountExponent(quote.amount.exponent);
-        quoteEncoder.currency(quote.currency)
-        quoteEncoder.side(quote.side)
-        quoteEncoder.symbol(quote.symbol)
-        quoteEncoder.transactTime(quote.transactTime)
-        quoteEncoder.quoteID(quote.quoteID)
-        quoteEncoder.quoteRequestID(quote.quoteRequestID)
-        quoteEncoder.fxRateMantissa(quote.fxRate.mantissa);
-        quoteEncoder.fxRateExponent(quote.fxRate.exponent);
+        // Encode the quote
+        encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+        encoder.encodeamount(data.amount);
+        encoder.currency(data.currency);
+        encoder.side(data.side);
+        encoder.symbol(data.symbol);
+        encoder.transactTime(data.transactTime);
+        encoder.quoteID(data.quoteID);
+        encoder.quoteRequestID(data.quoteRequestID);
+        encoder.encodefxRate(data.fxRate);
 
         // Mock console to capture the output
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
         // Call test function
-        handleIncomingMessage(testData);
-
-        console.log("Check log");
+        handleIncomingMessage(buffer);
 
         // Check if the log contains the expected message
-        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', quote);
+        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', data);
 
         // Restore console
         consoleSpy.mockRestore();

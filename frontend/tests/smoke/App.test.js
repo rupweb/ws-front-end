@@ -22,6 +22,11 @@ jest.mock('Polyglot', () => ({
   }))
 }));
 
+// Mock DeliveryDateField
+jest.mock('../../src/components/DeliveryDateField.js', () => {
+  return jest.requireActual('./mock/DeliveryDateField.js');
+});
+
 test('renders the app with header and footer', () => {
   console.log('Test started')
 

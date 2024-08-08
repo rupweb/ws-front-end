@@ -12,7 +12,7 @@ describe('handleIncomingExecutionReport', () => {
     it('should correctly decode and log an ExecutionReport message', () => {
         console.log('handleIncomingExecutionReport test');
 
-        const executionReport = {
+        const data = {
             amount: {
                 mantissa: 100000,
                 exponent: -2
@@ -37,47 +37,48 @@ describe('handleIncomingExecutionReport', () => {
             },
         };
 
-        console.log(executionReport);
+        console.log(data);
         console.log("Setup encoder");
 
         // Setup the execution report encoder
         const bufferLength = ExecutionReportEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH;
-        const testData = new ArrayBuffer(bufferLength);
+        const buffer = new ArrayBuffer(bufferLength);
         const headerEncoder = new MessageHeaderEncoder();
-        const executionReportEncoder = new ExecutionReportEncoder();
+        const encoder = new ExecutionReportEncoder();
 
         console.log("Encode");
 
-        // Encode the execution report
-        executionReportEncoder.wrapAndApplyHeader(testData, 0, headerEncoder);
+        // Wrap and set header
+        headerEncoder.wrap(buffer, 0)
+        .blockLength(ExecutionReportEncoder.BLOCK_LENGTH)
+        .templateId(2) 
+        .schemaId(1)
+        .version(1);
 
-        executionReportEncoder.amountMantissa(executionReport.amount.mantissa);
-        executionReportEncoder.amountExponent(executionReport.amount.exponent);
-        executionReportEncoder.currency(executionReport.currency);
-        executionReportEncoder.secondaryAmountMantissa(executionReport.secondaryAmount.mantissa);
-        executionReportEncoder.secondaryAmountExponent(executionReport.secondaryAmount.exponent);
-        executionReportEncoder.secondaryCurrency(executionReport.secondaryCurrency);
-        executionReportEncoder.side(executionReport.side);
-        executionReportEncoder.symbol(executionReport.symbol);
-        executionReportEncoder.deliveryDate(executionReport.deliveryDate);
-        executionReportEncoder.transactTime(executionReport.transactTime);
-        executionReportEncoder.quoteID(executionReport.quoteID);
-        executionReportEncoder.quoteRequestID(executionReport.quoteRequestID);
-        executionReportEncoder.dealRequestID(executionReport.dealRequestID);
-        executionReportEncoder.dealID(executionReport.dealID);
-        executionReportEncoder.fxRateMantissa(executionReport.fxRate.mantissa);
-        executionReportEncoder.fxRateExponent(executionReport.fxRate.exponent);
+        // Encode the data
+        encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+        encoder.encodeamount(data.amount);
+        encoder.currency(data.currency);
+        encoder.encodesecondaryAmount(data.secondaryAmount);
+        encoder.secondaryCurrency(data.secondaryCurrency);
+        encoder.side(data.side);
+        encoder.symbol(data.symbol);
+        encoder.deliveryDate(data.deliveryDate);
+        encoder.transactTime(data.transactTime);
+        encoder.quoteRequestID(data.quoteRequestID);
+        encoder.quoteID(data.quoteID);
+        encoder.dealRequestID(data.dealRequestID);
+        encoder.dealID(data.dealID);
+        encoder.encodefxRate(data.fxRate);
 
         // Mock console to capture the output
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
         // Call test function
-        handleIncomingMessage(testData);
-
-        console.log("Check log");
+        handleIncomingMessage(buffer);
 
         // Check if the log contains the expected message
-        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', executionReport);
+        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', data);
 
         // Restore console
         consoleSpy.mockRestore();

@@ -13,18 +13,15 @@ class ExecutionReportDecoder {
 
     wrap(buffer, offset) {
         this.buffer = new DataView(buffer);
-        this.offset = offset;
+        this.offset = offset + 8; // Add the header again? The first field starts at 16
         return this;
     }
 
-    // Decode amount mantissa
-    amountMantissa() {
-        return this.buffer.getInt32(this.offset + 0, true);
-    }
-
-    // Decode amount exponent
-    amountExponent() {
-        return this.buffer.getInt8(this.offset + 4);
+    decodeamount() {
+        this.amountDecoder.wrap(this.buffer.buffer, this.offset + 0);
+        const mantissa = Number(this.amountDecoder.mantissa());
+        const exponent = this.amountDecoder.exponent();
+        return { mantissa, exponent };
     }
 
     // Decode currency
@@ -32,14 +29,11 @@ class ExecutionReportDecoder {
         return this.getString(this.offset + 9, 3);
     }
 
-    // Decode secondaryAmount mantissa
-    secondaryAmountMantissa() {
-        return this.buffer.getInt32(this.offset + 12, true);
-    }
-
-    // Decode secondaryAmount exponent
-    secondaryAmountExponent() {
-        return this.buffer.getInt8(this.offset + 16);
+    decodesecondaryAmount() {
+        this.secondaryAmountDecoder.wrap(this.buffer.buffer, this.offset + 12);
+        const mantissa = Number(this.secondaryAmountDecoder.mantissa());
+        const exponent = this.secondaryAmountDecoder.exponent();
+        return { mantissa, exponent };
     }
 
     // Decode secondaryCurrency
@@ -87,27 +81,18 @@ class ExecutionReportDecoder {
         return this.getString(this.offset + 111, 16);
     }
 
-    // Decode fxRate mantissa
-    fxRateMantissa() {
-        return this.buffer.getInt32(this.offset + 127, true);
-    }
-
-    // Decode fxRate exponent
-    fxRateExponent() {
-        return this.buffer.getInt8(this.offset + 131);
+    decodefxRate() {
+        this.fxRateDecoder.wrap(this.buffer.buffer, this.offset + 127);
+        const mantissa = Number(this.fxRateDecoder.mantissa());
+        const exponent = this.fxRateDecoder.exponent();
+        return { mantissa, exponent };
     }
 
     toString() {
         return {
-            amount: {
-                mantissa: this.amountMantissa(),
-                exponent: this.amountExponent(),
-            },
+            amount: this.decodeamount(),
             currency: this.currency().replace(/\0/g, ''),
-            secondaryAmount: {
-                mantissa: this.secondaryAmountMantissa(),
-                exponent: this.secondaryAmountExponent(),
-            },
+            secondaryAmount: this.decodesecondaryAmount(),
             secondaryCurrency: this.secondaryCurrency().replace(/\0/g, ''),
             side: this.side().replace(/\0/g, ''),
             symbol: this.symbol().replace(/\0/g, ''),
@@ -117,10 +102,7 @@ class ExecutionReportDecoder {
             quoteID: this.quoteID().replace(/\0/g, ''),
             dealRequestID: this.dealRequestID().replace(/\0/g, ''),
             dealID: this.dealID().replace(/\0/g, ''),
-            fxRate: {
-                mantissa: this.fxRateMantissa(),
-                exponent: this.fxRateExponent(),
-            },
+            fxRate: this.decodefxRate(),
         };
     }
 

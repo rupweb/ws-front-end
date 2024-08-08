@@ -3,22 +3,20 @@ import MessageHeaderEncoder from '../aeron/js/MessageHeaderEncoder.js';
 
 const encodeQuoteRequest = (data) => {
     const buffer = new ArrayBuffer(QuoteRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH);
-    const quoteRequestEncoder = new QuoteRequestEncoder();
     const messageHeaderEncoder = new MessageHeaderEncoder();
+    const encoder = new QuoteRequestEncoder();
 
-    // Wrap and apply header, then set data fields
-    quoteRequestEncoder.wrapAndApplyHeader(buffer, 0, messageHeaderEncoder);
-
-    quoteRequestEncoder.amountMantissa(data.amount.mantissa);
-    quoteRequestEncoder.amountExponent(data.amount.exponent);
-    quoteRequestEncoder.saleCurrency(data.saleCurrency);
-    quoteRequestEncoder.side(data.side);
-    quoteRequestEncoder.symbol(data.symbol);
-    quoteRequestEncoder.deliveryDate(data.deliveryDate);
-    quoteRequestEncoder.transactTime(data.transactTime);
-    quoteRequestEncoder.quoteRequestID(data.quoteRequestID);
-    quoteRequestEncoder.currencyOwned(data.currencyOwned);
-    quoteRequestEncoder.kycStatus(data.kycStatus);
+    // Encode the data
+    encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+    encoder.encodeamount(data.amount);
+    encoder.saleCurrency(data.saleCurrency);
+    encoder.side(data.side);
+    encoder.symbol(data.symbol);
+    encoder.deliveryDate(data.deliveryDate);
+    encoder.transactTime(data.transactTime);
+    encoder.quoteRequestID(data.quoteRequestID);
+    encoder.currencyOwned(data.currencyOwned);
+    encoder.kycStatus(data.kycStatus);
 
     return buffer;
 };

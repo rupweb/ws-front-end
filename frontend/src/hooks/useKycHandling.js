@@ -1,13 +1,13 @@
 const useKycHandling = (kycStatus, setKycModalMessageParent, setShowKycModalParent) => {
 
   const handleKycCheck = (kycStatus, amount) => {
-    if (kycStatus === 'Not Started' || kycStatus === 'Pending') {
+    if (kycStatus === 'NOT_STARTED' || kycStatus === 'PENDING') {
       setKycModalMessageParent('Please complete the Dotmed KYC form.');
       setShowKycModalParent(true);
       return true;
     }
 
-    if (kycStatus !== 'Verified') {
+    if (kycStatus !== 'VERIFIED') {
       setKycModalMessageParent('KYC check in process');
       setShowKycModalParent(true);
 
