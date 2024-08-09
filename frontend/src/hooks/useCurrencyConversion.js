@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { addBusinessDays } from '../utils/utils.js';
 import useFormValidation from './useFormValidation.js';
 import useKycStatus from './useKycStatus.js';
-import useConversion from './useConversion.js';
 import useKycHandling from './useKycHandling.js';
+import useConversion from './useConversion.js';
 import useMessageHandling from './useMessageHandling.js';
-import { useWebSocket } from '../handlers/WebSocketContext.js'; 
+import { useWebSocket } from '../contexts/WebSocketContext.js'; 
 import prepareQuoteRequest from '../handlers/handleQuoteRequest.js';
 import prepareDealRequest from '../handlers/handleDealRequest.js';
 import prepareReset from '../handlers/handleReset.js';
@@ -18,8 +18,12 @@ const useCurrencyConversion = () => {
   const [showExecute, setShowExecute] = useState(false);
 
   const { kycStatus, setKycStatus } = useKycStatus();
-  const { conversionRate, convertedAmount, setConversionRate, setConvertedAmount } = useConversion(fromCurrency, toCurrency, amount);
   const isFormValid = useFormValidation(fromCurrency, toCurrency, amount);
+
+  const { quoteData, setQuoteData, sendMessage } = useWebSocket();
+
+  // Optionally useConversion if local calculations are needed
+  useConversion(fromCurrency, toCurrency, amount, setQuoteData);
 
   const [kycModalMessage, setKycModalMessage] = useState('');
   const [showKycModal, setShowKycModal] = useState(false);
@@ -34,13 +38,11 @@ const useCurrencyConversion = () => {
   );
 
   const { handleQuoteMessage, handleExecutionMessage, handleExecutionModalClose } = useMessageHandling(
-    setConversionRate,
-    setConvertedAmount,
+    (rate) => setQuoteData({ ...quoteData, conversionRate: rate }),
+    (amount) => setQuoteData({ ...quoteData, convertedAmount: amount }),
     setShowExecutionModal,
     setExecutionModalMessage
   );
-
-  const { sendMessage } = useWebSocket();
 
   const handleQuoteRequest = () => prepareQuoteRequest({
     kycStatus,
@@ -58,8 +60,8 @@ const useCurrencyConversion = () => {
     toCurrency,
     selectedDate,
     fromCurrency,
-    conversionRate,
-    convertedAmount,
+    conversionRate: quoteData.conversionRate,
+    convertedAmount: quoteData.convertedAmount,
     sendMessage,
     handleExecutionMessage,
     handleReset,
@@ -82,8 +84,6 @@ const useCurrencyConversion = () => {
     setToCurrency,
     amount,
     setAmount,
-    conversionRate,
-    convertedAmount,
     selectedDate,
     setSelectedDate,
     showExecute,
@@ -101,6 +101,7 @@ const useCurrencyConversion = () => {
     handleExecutionModalClose,
     handleQuoteMessage,
     handleExecutionMessage,
+    quoteData, // Expose quoteData 
   };
 };
 

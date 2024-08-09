@@ -3,7 +3,7 @@ import QuoteDecoder from '../aeron/js/QuoteDecoder.js';
 import ExecutionReportDecoder from '../aeron/js/ExecutionReportDecoder.js';
 import ErrorDecoder from '../aeron/js/ErrorDecoder.js';
 
-const handleIncomingMessage = (data) => {
+const handleIncomingMessage = (data, setQuoteData) => {
     console.log('Incoming data: ', data);
 
     // Check if data is an ArrayBuffer
@@ -25,6 +25,27 @@ const handleIncomingMessage = (data) => {
                 const quoteDecoder = new QuoteDecoder();
                 quoteDecoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
                 decodedMessage = quoteDecoder.toString();
+
+                // Decode the fxRate
+                const fxRateMantissa = decodedMessage.fxRate.mantissa;
+                const fxRateExponent = decodedMessage.fxRate.exponent;
+                const conversionRate = fxRateMantissa * Math.pow(10, fxRateExponent);
+
+                // Decode the amount
+                const amountMantissa = decodedMessage.amount.mantissa;
+                const amountExponent = decodedMessage.amount.exponent;
+                const convertedAmount = amountMantissa * Math.pow(10, amountExponent);
+
+                if (!isNaN(conversionRate) && !isNaN(convertedAmount)) {
+                    setQuoteData({
+                        conversionRate: conversionRate,
+                        fromCurrency: decodedMessage.currency,
+                        convertedAmount: convertedAmount,
+                    });
+                } else {
+                    console.error('Invalid data received for conversion rate or amount');
+                }
+
                 break;
             }
             case 2: { // Execution Report

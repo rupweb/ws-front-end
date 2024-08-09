@@ -1,35 +1,44 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getConversionRate, currencyRates } from '../utils/utils.js';
 
-const useConversion = (fromCurrency, toCurrency, amount) => {
-  const [conversionRate, setConversionRate] = useState(null);
-  const [convertedAmount, setConvertedAmount] = useState(null);
+// The onConversionUpdate uses local state to handle incoming quotes
+const useConversion = (fromCurrency, toCurrency, amount, onConversionUpdate) => {
+  const [conversionRate, setConversionRate] = useState(0);
+  const [convertedAmount, setConvertedAmount] = useState(0);
 
-  const convert = () => {
-    const rate = getConversionRate(fromCurrency, toCurrency, currencyRates);
-    setConversionRate(rate);
+  useEffect(() => {
+    if (amount && fromCurrency && toCurrency) {
+      const rate = getConversionRate(fromCurrency, toCurrency, currencyRates);
+      let converted = 0;
 
-    let converted;
-    const pair = `${fromCurrency}${toCurrency}`;
-    const reversePair = `${toCurrency}${fromCurrency}`;
+      const pair = `${fromCurrency}${toCurrency}`;
+      const reversePair = `${toCurrency}${fromCurrency}`;
 
-    if (currencyRates[pair]) {
-      converted = amount / rate;
-    } else if (currencyRates[reversePair]) {
-      converted = amount * rate;
-    } else {
-      alert('Currency pair not supported');
-      return;
+      if (currencyRates[pair]) {
+        converted = amount / rate;
+      } else if (currencyRates[reversePair]) {
+        converted = amount * rate;
+      } else {
+        alert('Currency pair not supported');
+        return;
+      }
+
+      setConversionRate(rate);
+      setConvertedAmount(converted);
+
+      if (onConversionUpdate) {
+        onConversionUpdate({
+          conversionRate: rate,
+          convertedAmount: converted,
+          fromCurrency: fromCurrency,
+        });
+      }
     }
-
-    setConvertedAmount(converted);
-    return { rate, converted };
-  };
+  }, [fromCurrency, toCurrency, amount, onConversionUpdate]);
 
   return {
     conversionRate,
     convertedAmount,
-    convert
   };
 };
 

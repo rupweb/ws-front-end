@@ -4,8 +4,8 @@ import './css/App.css';
 import CurrencyConverter from './components/CurrencyConverter.js';
 import Blotter from './components/Blotter.js';
 import { Authenticator } from '@aws-amplify/ui-react';
-import CookieConsent from "react-cookie-consent";
-import { WebSocketProvider } from './handlers/WebSocketContext.js';
+import CookieConsent from 'react-cookie-consent';
+import { WebSocketProvider } from './contexts/WebSocketContext.js';
 
 function App() {
   return (
@@ -16,21 +16,21 @@ function App() {
       <div className="auth-container">
         <Authenticator signUpAttributes={['email']}>
           {({ signOut, user }) => (
-            <WebSocketProvider url="ws://localhost:8090/ws">
+              <WebSocketProvider url="ws://localhost:8090/ws">
               {/* <WebSocketProvider url="ws://ec2-13-42-7-2.eu-west-2.compute.amazonaws.com:8081/ws"> */}
-              <Router>
-                <div className="App">
-                  <Header user={user} signOut={signOut} />
-                  <div className="content-container">
-                    <Routes>
-                      <Route path="/" element={<CurrencyConverter />} />
-                      <Route path="/blotter" element={<BlotterPage />} />
-                    </Routes>
+                <Router>
+                  <div className="App">
+                    <Header user={user} signOut={signOut} />
+                    <div className="content-container">
+                      <Routes>
+                        <Route path="/" element={<CurrencyConverter />} />
+                        <Route path="/blotter" element={<BlotterPage />} />
+                      </Routes>
+                    </div>
+                    <Footer />
                   </div>
-                  <Footer />
-                </div>
-              </Router>
-            </WebSocketProvider>
+                </Router>
+              </WebSocketProvider>
           )}
         </Authenticator>
       </div>
