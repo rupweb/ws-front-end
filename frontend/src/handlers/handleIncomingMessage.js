@@ -22,42 +22,78 @@ const handleIncomingMessage = (data, setQuoteData) => {
 
         switch (headerDecoder.templateId()) {
             case 4: { // Quote
-                const quoteDecoder = new QuoteDecoder();
-                quoteDecoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
-                decodedMessage = quoteDecoder.toString();
+                const decoder = new QuoteDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 
-                // Decode the fxRate
-                const fxRateMantissa = decodedMessage.fxRate.mantissa;
-                const fxRateExponent = decodedMessage.fxRate.exponent;
-                const conversionRate = fxRateMantissa * Math.pow(10, fxRateExponent);
+                // Decode the data
+                const decodedData = {
+                    amount: decoder.decodeamount(),
+                    currency: decoder.currency(),
+                    side: decoder.side().replace(/\0/g, ''),
+                    symbol: decoder.symbol(),
+                    transactTime: decoder.transactTime(),
+                    quoteID: decoder.quoteID().replace(/\0/g, ''),
+                    quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
+                    fxRate: decoder.decodefxRate(),
+                    secondaryAmount: decoder.decodesecondaryAmount()
+                };
 
-                // Decode the amount
-                const amountMantissa = decodedMessage.amount.mantissa;
-                const amountExponent = decodedMessage.amount.exponent;
-                const convertedAmount = amountMantissa * Math.pow(10, amountExponent);
+                const fxRate = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
+                const secondaryAmount = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
 
-                if (!isNaN(conversionRate) && !isNaN(convertedAmount)) {
-                    setQuoteData({
-                        conversionRate: conversionRate,
-                        fromCurrency: decodedMessage.currency,
-                        convertedAmount: convertedAmount,
-                    });
-                } else {
-                    console.error('Invalid data received for conversion rate or amount');
-                }
+                setQuoteData({
+                    conversionRate: fxRate,
+                    fromCurrency: getFromCcy(decodedData.currency, decodedData.symbol),
+                    convertedAmount: secondaryAmount,
+                });
 
                 break;
             }
             case 2: { // Execution Report
-                const executionReportDecoder = new ExecutionReportDecoder();
-                executionReportDecoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
-                decodedMessage = executionReportDecoder.toString();
+                const decoder = new ExecutionReportDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+
+                const decodedData = {
+                    amount: decoder.decodeamount(),
+                    currency: decoder.currency(),
+                    secondaryAmount: decoder.decodesecondaryAmount(),
+                    secondaryCurrency: decoder.secondaryCurrency(),
+                    side: decoder.side().replace(/\0/g, ''),
+                    symbol: decoder.symbol(),
+                    deliveryDate: decoder.deliveryDate(),
+                    transactTime: decoder.transactTime(),
+                    quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
+                    quoteID: decoder.quoteID().replace(/\0/g, ''),
+                    dealRequestID: decoder.dealRequestID().replace(/\0/g, ''),
+                    dealID: decoder.dealID().replace(/\0/g, ''),
+                    fxRate: decoder.decodefxRate()
+                };
+
+                console.log(decodedData);
+
                 break;
             }
             case 5: { // Error
-                const errorDecoder = new ErrorDecoder();
-                errorDecoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
-                decodedMessage = errorDecoder.toString();
+                const decoder = new ErrorDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+
+                const decodedData = {
+                    amount: decoder.decodeamount(),
+                    currency: decoder.currency(),
+                    side: decoder.side().replace(/\0/g, ''),
+                    symbol: decoder.symbol(),
+                    deliveryDate: decoder.deliveryDate(),
+                    transactTime: decoder.transactTime(),
+                    quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
+                    quoteID: decoder.quoteID().replace(/\0/g, ''),
+                    dealRequestID: decoder.dealRequestID().replace(/\0/g, ''),
+                    dealID: decoder.dealID().replace(/\0/g, ''),
+                    fxRate: decoder.decodefxRate(),
+                    message: decoder.message().replace(/\0/g, '')
+                };
+
+                console.log(decodedData);
+
                 break;
             }
             default:
@@ -69,6 +105,12 @@ const handleIncomingMessage = (data, setQuoteData) => {
     }
 
     console.log('Decoded Message:', decodedMessage);
+};
+
+const getFromCcy = (currency, symbol) => {
+    const firstCurrency = symbol.substring(0, 3);
+    const secondCurrency = symbol.substring(3, 6);
+    return firstCurrency === currency ? secondCurrency : firstCurrency;
 };
 
 export default handleIncomingMessage;

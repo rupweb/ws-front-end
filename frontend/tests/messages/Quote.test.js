@@ -16,7 +16,8 @@ const sendMockQuote = () => {
         side: 'BUY',
         symbol: 'EURUSD',
         quoteID: 'test-quote-id',
-        quoteRequestID: 'test-quote-request-id'
+        quoteRequestID: 'test-quote-request-id',
+        secondaryAmount: { mantissa: 100, exponent: -2 },
     };
 
     const buffer = new UnsafeBuffer(ByteBuffer.allocateDirect(QuoteDecoder.BLOCK_LENGTH + MessageHeaderDecoder.ENCODED_LENGTH));
@@ -33,6 +34,7 @@ const sendMockQuote = () => {
     encoder.quoteID(data.quoteID);
     encoder.quoteRequestID(data.quoteRequestID);
     encoder.encodefxRate(data.fxRate);
+    encoder.encodesecondaryAmount(data.secondaryAmount);
 
     mockServer.clients.forEach(client => {
         client.send(buffer.byteArray());

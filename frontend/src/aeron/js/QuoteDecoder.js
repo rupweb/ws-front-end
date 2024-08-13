@@ -8,6 +8,7 @@ class QuoteDecoder {
         this.buffer = null;
         this.amountDecoder = new DecimalDecoder();
         this.fxRateDecoder = new DecimalDecoder();
+        this.secondaryAmountDecoder = new DecimalDecoder();
     }
 
     wrap(buffer, offset) {
@@ -60,6 +61,13 @@ class QuoteDecoder {
         return { mantissa, exponent };
     }
 
+    decodesecondaryAmount() {
+        this.secondaryAmountDecoder.wrap(this.buffer.buffer, this.offset + 84);
+        const mantissa = Number(this.secondaryAmountDecoder.mantissa());
+        const exponent = this.secondaryAmountDecoder.exponent();
+        return { mantissa, exponent };
+    }
+
     toString() {
         return {
             amount: this.decodeamount(),
@@ -70,6 +78,7 @@ class QuoteDecoder {
             quoteID: this.quoteID().replace(/\0/g, ''),
             quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
             fxRate: this.decodefxRate(),
+            secondaryAmount: this.decodesecondaryAmount(),
         };
     }
 

@@ -30,6 +30,10 @@ describe('handleIncomingError', () => {
                 mantissa: 134560,
                 exponent: -5
             },
+            secondaryAmount: {
+                mantissa: 672800,
+                exponent: -2
+            },
             message: 'Error processing the request due to invalid input parameters.'
         };
 
@@ -64,6 +68,7 @@ describe('handleIncomingError', () => {
         encoder.dealRequestID(data.dealRequestID);
         encoder.dealID(data.dealID);
         encoder.encodefxRate(data.fxRate);
+        encoder.encodesecondaryAmount(data.secondaryAmount);
         encoder.message(data.message);
 
         // Mock console to capture the output

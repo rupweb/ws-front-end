@@ -30,10 +30,10 @@ public class WebSocketSbeEncoding {
     }
 
     public byte[] encodeQuote(double amount, String currency, String side, String symbol, String transactTime, 
-                                String quoteID, String quoteRequestID, double fxRate) {
+                                String quoteID, String quoteRequestID, double fxRate, double secondaryAmount) {
 
         DirectBuffer buffer = sbeEncoder.encodeQuote(amount, currency, side, symbol, transactTime,
-                                                    quoteID, quoteRequestID, fxRate);
+                                                    quoteID, quoteRequestID, fxRate, secondaryAmount);
         return buffer.byteArray();
     }
 

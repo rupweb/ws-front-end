@@ -10,7 +10,7 @@ import org.agrona.MutableDirectBuffer;
 @SuppressWarnings("all")
 public final class ErrorEncoder
 {
-    public static final int BLOCK_LENGTH = 390;
+    public static final int BLOCK_LENGTH = 399;
     public static final int TEMPLATE_ID = 5;
     public static final int SCHEMA_ID = 1;
     public static final int SCHEMA_VERSION = 1;
@@ -1152,9 +1152,52 @@ public final class ErrorEncoder
         return fxRate;
     }
 
-    public static int messageId()
+    public static int secondaryAmountId()
     {
         return 12;
+    }
+
+    public static int secondaryAmountSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int secondaryAmountEncodingOffset()
+    {
+        return 132;
+    }
+
+    public static int secondaryAmountEncodingLength()
+    {
+        return 9;
+    }
+
+    public static String secondaryAmountMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    private final DecimalEncoder secondaryAmount = new DecimalEncoder();
+
+    /**
+     * The counter amount
+     *
+     * @return DecimalEncoder : The counter amount
+     */
+    public DecimalEncoder secondaryAmount()
+    {
+        secondaryAmount.wrap(buffer, offset + 132);
+        return secondaryAmount;
+    }
+
+    public static int messageId()
+    {
+        return 13;
     }
 
     public static int messageSinceVersion()
@@ -1164,7 +1207,7 @@ public final class ErrorEncoder
 
     public static int messageEncodingOffset()
     {
-        return 132;
+        return 141;
     }
 
     public static int messageEncodingLength()
@@ -1210,7 +1253,7 @@ public final class ErrorEncoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 132 + (index * 1);
+        final int pos = offset + 141 + (index * 1);
         buffer.putByte(pos, value);
 
         return this;
@@ -1229,7 +1272,7 @@ public final class ErrorEncoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + srcOffset);
         }
 
-        buffer.putBytes(offset + 132, src, srcOffset, length);
+        buffer.putBytes(offset + 141, src, srcOffset, length);
 
         return this;
     }
@@ -1243,11 +1286,11 @@ public final class ErrorEncoder
             throw new IndexOutOfBoundsException("String too large for copy: byte length=" + bytes.length);
         }
 
-        buffer.putBytes(offset + 132, bytes, 0, bytes.length);
+        buffer.putBytes(offset + 141, bytes, 0, bytes.length);
 
         for (int start = bytes.length; start < length; ++start)
         {
-            buffer.putByte(offset + 132 + start, (byte)0);
+            buffer.putByte(offset + 141 + start, (byte)0);
         }
 
         return this;

@@ -10,7 +10,7 @@ import org.agrona.DirectBuffer;
 @SuppressWarnings("all")
 public final class ErrorDecoder
 {
-    public static final int BLOCK_LENGTH = 390;
+    public static final int BLOCK_LENGTH = 399;
     public static final int TEMPLATE_ID = 5;
     public static final int SCHEMA_ID = 1;
     public static final int SCHEMA_VERSION = 1;
@@ -1107,9 +1107,52 @@ public final class ErrorDecoder
         return fxRate;
     }
 
-    public static int messageId()
+    public static int secondaryAmountId()
     {
         return 12;
+    }
+
+    public static int secondaryAmountSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int secondaryAmountEncodingOffset()
+    {
+        return 132;
+    }
+
+    public static int secondaryAmountEncodingLength()
+    {
+        return 9;
+    }
+
+    public static String secondaryAmountMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    private final DecimalDecoder secondaryAmount = new DecimalDecoder();
+
+    /**
+     * The counter amount
+     *
+     * @return DecimalDecoder : The counter amount
+     */
+    public DecimalDecoder secondaryAmount()
+    {
+        secondaryAmount.wrap(buffer, offset + 132);
+        return secondaryAmount;
+    }
+
+    public static int messageId()
+    {
+        return 13;
     }
 
     public static int messageSinceVersion()
@@ -1119,7 +1162,7 @@ public final class ErrorDecoder
 
     public static int messageEncodingOffset()
     {
-        return 132;
+        return 141;
     }
 
     public static int messageEncodingLength()
@@ -1165,7 +1208,7 @@ public final class ErrorDecoder
             throw new IndexOutOfBoundsException("index out of range: index=" + index);
         }
 
-        final int pos = offset + 132 + (index * 1);
+        final int pos = offset + 141 + (index * 1);
 
         return buffer.getByte(pos);
     }
@@ -1184,7 +1227,7 @@ public final class ErrorDecoder
             throw new IndexOutOfBoundsException("Copy will go out of range: offset=" + dstOffset);
         }
 
-        buffer.getBytes(offset + 132, dst, dstOffset, length);
+        buffer.getBytes(offset + 141, dst, dstOffset, length);
 
         return length;
     }
@@ -1192,7 +1235,7 @@ public final class ErrorDecoder
     public String message()
     {
         final byte[] dst = new byte[256];
-        buffer.getBytes(offset + 132, dst, 0, 256);
+        buffer.getBytes(offset + 141, dst, 0, 256);
 
         int end = 0;
         for (; end < 256 && dst[end] != 0; ++end);
@@ -1323,6 +1366,17 @@ public final class ErrorDecoder
         if (null != fxRate)
         {
             fxRate.appendTo(builder);
+        }
+        else
+        {
+            builder.append("null");
+        }
+        builder.append('|');
+        builder.append("secondaryAmount=");
+        final DecimalDecoder secondaryAmount = this.secondaryAmount();
+        if (null != secondaryAmount)
+        {
+            secondaryAmount.appendTo(builder);
         }
         else
         {

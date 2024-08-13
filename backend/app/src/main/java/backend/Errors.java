@@ -17,9 +17,9 @@ public class Errors {
     }
 
     public void sendError(double amount, String currency, String side, String symbol, String deliveryDate, String transactTime,
-                          String quoteRequestID, String quoteID, String dealRequestID, String dealID, double fxRate, String message) {
+                          String quoteRequestID, String quoteID, String dealRequestID, String dealID, double fxRate, double secondaryAmount, String message) {
 
-        DirectBuffer buffer = sbeEncoder.encodeError(amount, currency, side, symbol, deliveryDate, transactTime, quoteRequestID, quoteID, dealRequestID, dealID, fxRate, message);
+        DirectBuffer buffer = sbeEncoder.encodeError(amount, currency, side, symbol, deliveryDate, transactTime, quoteRequestID, quoteID, dealRequestID, dealID, fxRate, secondaryAmount, message);
         long result;
         do {
             result = publication.offer(buffer);

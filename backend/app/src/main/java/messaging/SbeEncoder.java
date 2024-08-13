@@ -2,15 +2,14 @@ package messaging;
 
 import agrona.messages.DealRequestEncoder;
 import agrona.messages.ExecutionReportEncoder;
+import agrona.messages.KycStatus;
 import agrona.messages.QuoteEncoder;
 import agrona.messages.QuoteRequestEncoder;
 import agrona.messages.ErrorEncoder;
 import agrona.messages.DecimalEncoder;
-import agrona.messages.KycStatus;
 import agrona.messages.MessageHeaderEncoder;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
-
 
 public class SbeEncoder {
     public DirectBuffer encodeDealRequest(double amount, String currency, String side, String symbol,
@@ -22,7 +21,7 @@ public class SbeEncoder {
 
         encoder.wrapAndApplyHeader(buffer, 0, new MessageHeaderEncoder());
 
-        long mantissa = (long) (amount * 100); // Amounts are always to 2 decimal places
+        long mantissa = Math.round(amount * 100); // Amounts are always to 2 decimal places
         byte exponent = -2;
         DecimalEncoder amountEncoder = new DecimalEncoder();
         amountEncoder.wrap(buffer, encoder.amount().offset()).mantissa(mantissa).exponent(exponent);
@@ -36,7 +35,7 @@ public class SbeEncoder {
         encoder.quoteID(quoteID);
         encoder.dealRequestID(dealRequestID);
 
-        long mantissa2 = (long) (fxRate * 100000); // Rates to 5 dp
+        long mantissa2 = Math.round(fxRate * 100000); // Rates to 5 dp
         byte exponent2 = -5;
         DecimalEncoder fxRateEncoder = new DecimalEncoder();
         fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa2).exponent(exponent2);
@@ -52,7 +51,7 @@ public class SbeEncoder {
 
         encoder.wrapAndApplyHeader(buffer, 0, new MessageHeaderEncoder());
 
-        long mantissa = (long) (amount * 100); // Amounts are always to 2 decimal places
+        long mantissa = Math.round(amount * 100); // Amounts are always to 2 decimal places
         byte exponent = -2;
         DecimalEncoder amountEncoder = new DecimalEncoder();
         amountEncoder.wrap(buffer, encoder.amount().offset()).mantissa(mantissa).exponent(exponent);
@@ -70,14 +69,15 @@ public class SbeEncoder {
     }
 
     public DirectBuffer encodeQuote(double amount, String currency, String side, String symbol, 
-                            String transactTime, String quoteID, String quoteRequestID, double fxRate) {
+                            String transactTime, String quoteID, String quoteRequestID, 
+                            double fxRate, double secondaryAmount) {
 
         QuoteEncoder encoder = new QuoteEncoder();
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[QuoteEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH]);
 
         encoder.wrapAndApplyHeader(buffer, 0, new MessageHeaderEncoder());
 
-        long mantissa = (long) (amount * 100); // Amounts are always to 2 decimal places
+        long mantissa = Math.round(amount * 100); // Amounts are always to 2 decimal places
         byte exponent = -2;
         DecimalEncoder amountEncoder = new DecimalEncoder();
         amountEncoder.wrap(buffer, encoder.amount().offset()).mantissa(mantissa).exponent(exponent);
@@ -89,10 +89,15 @@ public class SbeEncoder {
         encoder.quoteID(quoteID);
         encoder.quoteRequestID(quoteRequestID);
 
-        long mantissa2 = (long) (fxRate * 100000); // Rates to 5 dp
+        long mantissa2 = Math.round(fxRate * 100000); // Rates to 5 dp
         byte exponent2 = -5;
         DecimalEncoder fxRateEncoder = new DecimalEncoder();
         fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa2).exponent(exponent2);
+
+        mantissa = Math.round(secondaryAmount * 100); // Amounts to 2 dp
+        exponent = -2;
+        DecimalEncoder secondaryAmountEncoder = new DecimalEncoder();
+        secondaryAmountEncoder.wrap(buffer, encoder.secondaryAmount().offset()).mantissa(mantissa).exponent(exponent);
 
         return buffer;
     }
@@ -107,17 +112,17 @@ public class SbeEncoder {
 
         encoder.wrapAndApplyHeader(buffer, 0, new MessageHeaderEncoder());
 
-        long mantissa = (long) (amount * 100); // Amounts are always to 2 decimal places
+        long mantissa = Math.round(amount * 100); // Amounts are always to 2 decimal places
         byte exponent = -2;
         DecimalEncoder amountEncoder = new DecimalEncoder();
         amountEncoder.wrap(buffer, encoder.amount().offset()).mantissa(mantissa).exponent(exponent);
 
         encoder.currency(currency);
 
-        long mantissa2 = (long) (secondaryAmount * 100); // Amounts are always to 2 decimal places
-        byte exponent2 = -2;
+        mantissa = Math.round(secondaryAmount * 100); // Amounts to 2 dp
+        exponent = -2;
         DecimalEncoder secondaryAmountEncoder = new DecimalEncoder();
-        secondaryAmountEncoder.wrap(buffer, encoder.secondaryAmount().offset()).mantissa(mantissa2).exponent(exponent2);
+        secondaryAmountEncoder.wrap(buffer, encoder.secondaryAmount().offset()).mantissa(mantissa).exponent(exponent);
 
         encoder.secondaryCurrency(secondaryCurrency);
         encoder.side(side);
@@ -129,24 +134,25 @@ public class SbeEncoder {
         encoder.dealRequestID(dealRequestID);
         encoder.dealID(dealID);
 
-        long mantissa3 = (long) (fxRate * 100000); // Rates to 5 dp
-        byte exponent3 = -5;
+        mantissa = Math.round(fxRate * 100000); // Rates to 5 dp
+        exponent = -5;
         DecimalEncoder fxRateEncoder = new DecimalEncoder();
-        fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa3).exponent(exponent3);
+        fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa).exponent(exponent);
 
         return buffer;
     }
 
     public DirectBuffer encodeError(double amount, String currency, String side, String symbol, 
                                     String deliveryDate, String transactTime, String quoteRequestID,
-                                    String quoteID, String dealRequestID, String dealID, double fxRate, String message) {
+                                    String quoteID, String dealRequestID, String dealID, double fxRate, 
+                                    double secondaryAmount, String message) {
 
         ErrorEncoder encoder = new ErrorEncoder();
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[ErrorEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH]);
 
         encoder.wrapAndApplyHeader(buffer, 0, new MessageHeaderEncoder());
 
-        long mantissa = (long) (amount * 100); // Amounts are always to 2 decimal places
+        long mantissa = Math.round(amount * 100); // Amounts are always to 2 decimal places
         byte exponent = -2;
         DecimalEncoder amountEncoder = new DecimalEncoder();
         amountEncoder.wrap(buffer, encoder.amount().offset()).mantissa(mantissa).exponent(exponent);
@@ -161,10 +167,15 @@ public class SbeEncoder {
         encoder.dealRequestID(dealRequestID);
         encoder.dealID(dealID);
 
-        long mantissa2 = (long) (fxRate * 100000); // Rates to 5 dp
-        byte exponent2 = -5;
+        mantissa = Math.round(fxRate * 100000); // Rates to 5 dp
+        exponent = -5;
         DecimalEncoder fxRateEncoder = new DecimalEncoder();
-        fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa2).exponent(exponent2);
+        fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa).exponent(exponent);
+
+        mantissa = Math.round(secondaryAmount * 100); // Amounts to 2 dp
+        exponent = -2;
+        DecimalEncoder secondaryAmountEncoder = new DecimalEncoder();
+        secondaryAmountEncoder.wrap(buffer, encoder.secondaryAmount().offset()).mantissa(mantissa).exponent(exponent);
 
         encoder.message(message);
 

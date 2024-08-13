@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class ErrorEncoder {
-    static BLOCK_LENGTH = 390;
+    static BLOCK_LENGTH = 399;
     static TEMPLATE_ID = 5;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -13,6 +13,7 @@ class ErrorEncoder {
         this.offset = 0;
         this.amountEncoder = new DecimalEncoder();
         this.fxRateEncoder = new DecimalEncoder();
+        this.secondaryAmountEncoder = new DecimalEncoder();
     }
 
     wrap(buffer, offset) {
@@ -96,9 +97,15 @@ class ErrorEncoder {
         this.fxRateEncoder.exponent(value.exponent);
     }
 
+    encodesecondaryAmount(value) {
+        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 124);
+        this.secondaryAmountEncoder.mantissa(value.mantissa);
+        this.secondaryAmountEncoder.exponent(value.exponent);
+    }
+
     // Encode message
     message(value) {
-        this.putString(this.offset + 124, value, 256);
+        this.putString(this.offset + 133, value, 256);
         return this;
     }
 

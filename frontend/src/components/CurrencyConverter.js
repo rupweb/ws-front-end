@@ -68,7 +68,7 @@ const CurrencyConverter = () => {
         </div>
         {quoteData.conversionRate && (
           <div className="mt-3">
-            <p>FX Rate: {quoteData.conversionRate}</p>
+            <p>FX Rate: {quoteData.conversionRate.toFixed(5)}</p>
             <p>Amount to pay: {quoteData.convertedAmount.toFixed(2)} {quoteData.fromCurrency}</p>
           </div>
         )}

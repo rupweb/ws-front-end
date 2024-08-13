@@ -8,6 +8,7 @@ class ErrorDecoder {
         this.buffer = null;
         this.amountDecoder = new DecimalDecoder();
         this.fxRateDecoder = new DecimalDecoder();
+        this.secondaryAmountDecoder = new DecimalDecoder();
     }
 
     wrap(buffer, offset) {
@@ -75,9 +76,16 @@ class ErrorDecoder {
         return { mantissa, exponent };
     }
 
+    decodesecondaryAmount() {
+        this.secondaryAmountDecoder.wrap(this.buffer.buffer, this.offset + 124);
+        const mantissa = Number(this.secondaryAmountDecoder.mantissa());
+        const exponent = this.secondaryAmountDecoder.exponent();
+        return { mantissa, exponent };
+    }
+
     // Decode message
     message() {
-        return this.getString(this.offset + 124, 256);
+        return this.getString(this.offset + 133, 256);
     }
 
     toString() {
@@ -93,6 +101,7 @@ class ErrorDecoder {
             dealRequestID: this.dealRequestID().replace(/\0/g, ''),
             dealID: this.dealID().replace(/\0/g, ''),
             fxRate: this.decodefxRate(),
+            secondaryAmount: this.decodesecondaryAmount(),
             message: this.message().replace(/\0/g, ''),
         };
     }

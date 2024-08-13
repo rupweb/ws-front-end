@@ -27,6 +27,10 @@ describe('handleIncomingQuote', () => {
                 mantissa: 123450,
                 exponent: -5
             },
+            secondaryAmount: {
+                mantissa: 123450,
+                exponent: -2
+            },
         };
 
         console.log(data);
@@ -57,6 +61,7 @@ describe('handleIncomingQuote', () => {
         encoder.quoteID(data.quoteID);
         encoder.quoteRequestID(data.quoteRequestID);
         encoder.encodefxRate(data.fxRate);
+        encoder.encodesecondaryAmount(data.secondaryAmount);
 
         // Mock console to capture the output
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation();

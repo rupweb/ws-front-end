@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class QuoteEncoder {
-    static BLOCK_LENGTH = 92;
+    static BLOCK_LENGTH = 101;
     static TEMPLATE_ID = 4;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -13,6 +13,7 @@ class QuoteEncoder {
         this.offset = 0;
         this.amountEncoder = new DecimalEncoder();
         this.fxRateEncoder = new DecimalEncoder();
+        this.secondaryAmountEncoder = new DecimalEncoder();
     }
 
     wrap(buffer, offset) {
@@ -76,6 +77,12 @@ class QuoteEncoder {
         this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 75);
         this.fxRateEncoder.mantissa(value.mantissa);
         this.fxRateEncoder.exponent(value.exponent);
+    }
+
+    encodesecondaryAmount(value) {
+        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 84);
+        this.secondaryAmountEncoder.mantissa(value.mantissa);
+        this.secondaryAmountEncoder.exponent(value.exponent);
     }
 
     putString(offset, value, length) {
