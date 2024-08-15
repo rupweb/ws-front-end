@@ -10,6 +10,11 @@ const Blotter = () => {
     setExecutions(storedExecutions);
   }, []);
 
+  const formatFxRate = (rate) => {
+    const numericRate = Number(rate);
+    return isNaN(numericRate) ? '' : numericRate.toFixed(7);
+  };
+
   return (
     <div className="blotter-container">
       <table className="table table-striped">
@@ -32,7 +37,7 @@ const Blotter = () => {
               <td>{execution.saleCurrency}</td>
               <td>{execution.deliveryDate}</td>
               <td>{execution.currencyIHave}</td>
-              <td>{execution.fxRate}</td>
+              <td>{formatFxRate(execution.fxRate)}</td>
               <td>{execution.amountToPay}</td>
             </tr>
           ))}
@@ -43,4 +48,6 @@ const Blotter = () => {
 };
 
 export default Blotter;
+
+
 

@@ -16,21 +16,21 @@ function App() {
       <div className="auth-container">
         <Authenticator signUpAttributes={['email']}>
           {({ signOut, user }) => (
-              <WebSocketProvider url="ws://localhost:8090/ws">
+            <WebSocketProvider url="ws://localhost:8090/ws">
               {/* <WebSocketProvider url="ws://ec2-13-42-7-2.eu-west-2.compute.amazonaws.com:8081/ws"> */}
-                <Router>
-                  <div className="App">
-                    <Header user={user} signOut={signOut} />
-                    <div className="content-container">
-                      <Routes>
-                        <Route path="/" element={<CurrencyConverter />} />
-                        <Route path="/blotter" element={<BlotterPage />} />
-                      </Routes>
-                    </div>
-                    <Footer />
+              <Router>
+                <div className="App">
+                  <Header user={user} signOut={signOut} />
+                  <div className="content-container">
+                    <Routes>
+                      <Route path="/" element={<CurrencyConverter />} />
+                      <Route path="/blotter" element={<Blotter />} />
+                    </Routes>
                   </div>
-                </Router>
-              </WebSocketProvider>
+                  <Footer />
+                </div>
+              </Router>
+            </WebSocketProvider>
           )}
         </Authenticator>
       </div>
@@ -61,16 +61,6 @@ const Footer = () => (
     <div className="footer-content">
     </div>
   </footer>
-);
-
-const BlotterPage = () => (
-  <div className="App-content">
-    <h1 className="blotter-title">My FX Blotter</h1>
-    <Blotter />
-    <div className="back-link">
-      <Link to="/" className="small-link">Back</Link>
-    </div>
-  </div>
 );
 
 export default App;
