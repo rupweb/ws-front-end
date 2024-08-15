@@ -3,7 +3,7 @@ import QuoteDecoder from '../aeron/js/QuoteDecoder.js';
 import ExecutionReportDecoder from '../aeron/js/ExecutionReportDecoder.js';
 import ErrorDecoder from '../aeron/js/ErrorDecoder.js';
 
-const handleIncomingMessage = (data, setQuoteData) => {
+const handleIncomingMessage = (data, setQuoteData, setDealData) => {
     console.log('Incoming data: ', data);
 
     // Check if data is an ArrayBuffer
@@ -38,13 +38,13 @@ const handleIncomingMessage = (data, setQuoteData) => {
                     secondaryAmount: decoder.decodesecondaryAmount()
                 };
 
-                const fxRate = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
-                const secondaryAmount = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
+                const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
+                const secondaryAmount1 = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
 
                 setQuoteData({
-                    conversionRate: fxRate,
-                    fromCurrency: getFromCcy(decodedData.currency, decodedData.symbol),
-                    convertedAmount: secondaryAmount,
+                    fxRate: fxRate1,
+                    secondaryAmount: secondaryAmount1,
+                    symbol: decodedData.symbol
                 });
 
                 break;
@@ -69,7 +69,22 @@ const handleIncomingMessage = (data, setQuoteData) => {
                     fxRate: decoder.decodefxRate()
                 };
 
-                console.log(decodedData);
+                const amount1 = decodedData.amount.mantissa * Math.pow(10, decodedData.amount.exponent);
+                const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
+                const secondaryAmount1 = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
+
+                console.log('Before setting deal data:', decodedData);
+
+                setDealData({
+                    dealRate: fxRate1,
+                    secondaryAmount: secondaryAmount1,
+                    dealID: decodedData.dealID,
+                    salePrice: amount1,
+                    saleCurrency: decodedData.currency,
+                    symbol: decodedData.symbol,
+                    deliveryDate: decodedData.deliveryDate,
+                    currencyIHave: decodedData.secondaryCurrency
+                });
 
                 break;
             }
@@ -105,12 +120,6 @@ const handleIncomingMessage = (data, setQuoteData) => {
     }
 
     console.log('Decoded Message:', decodedMessage);
-};
-
-const getFromCcy = (currency, symbol) => {
-    const firstCurrency = symbol.substring(0, 3);
-    const secondCurrency = symbol.substring(3, 6);
-    return firstCurrency === currency ? secondCurrency : firstCurrency;
 };
 
 export default handleIncomingMessage;

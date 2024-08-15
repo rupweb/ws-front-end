@@ -13,11 +13,11 @@ public class WebSocketSbeEncoding {
     SbeEncoder sbeEncoder = new SbeEncoder();
 
     public byte[] encodeDealRequest(double amount, String currency, String side, String symbol, 
-                                           String deliveryDate, String transactTime, String quoteRequestID, 
-                                           String quoteID, String dealRequestID, double fxRate) {
+                                           String deliveryDate, String transactTime, String quoteRequestID, String quoteID, 
+                                           String dealRequestID, double fxRate, double secondaryAmount) {
 
-        DirectBuffer buffer = sbeEncoder.encodeDealRequest(amount, currency, side, symbol, deliveryDate,
-                                                            transactTime, quoteRequestID, quoteID, dealRequestID, fxRate);
+        DirectBuffer buffer = sbeEncoder.encodeDealRequest(amount, currency, side, symbol, deliveryDate, transactTime, 
+                                                            quoteRequestID, quoteID, dealRequestID, fxRate, secondaryAmount);
         return buffer.byteArray();
     }
 

@@ -14,7 +14,8 @@ import org.agrona.concurrent.UnsafeBuffer;
 public class SbeEncoder {
     public DirectBuffer encodeDealRequest(double amount, String currency, String side, String symbol,
                                           String deliveryDate, String transactTime, String quoteRequestID,
-                                          String quoteID, String dealRequestID, double fxRate) {
+                                          String quoteID, String dealRequestID,
+                                          double fxRate, double secondaryAmount) {
 
         DealRequestEncoder encoder = new DealRequestEncoder();
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[DealRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH]);
@@ -39,6 +40,11 @@ public class SbeEncoder {
         byte exponent2 = -5;
         DecimalEncoder fxRateEncoder = new DecimalEncoder();
         fxRateEncoder.wrap(buffer, encoder.fxRate().offset()).mantissa(mantissa2).exponent(exponent2);
+
+        mantissa = Math.round(secondaryAmount * 100); // Amounts to 2 dp
+        exponent = -2;
+        DecimalEncoder secondaryAmountEncoder = new DecimalEncoder();
+        secondaryAmountEncoder.wrap(buffer, encoder.secondaryAmount().offset()).mantissa(mantissa).exponent(exponent);
 
         return buffer;
     }

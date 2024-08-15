@@ -7,25 +7,21 @@ const handleDealRequest = async ({
   toCurrency,
   selectedDate,
   fromCurrency,
-  conversionRate,
-  convertedAmount,
+  fxRate,
+  secondaryAmount,
+  symbol,
   sendMessage,
-  handleExecutionMessage,
-  handleReset
+  setShowReport
 }) => {
-  if (!convertedAmount || !conversionRate) {
-    console.error('Conversion amount or rate is missing');
-    return;
-  }
-
   const execution = {
     date: new Date().toLocaleDateString(),
     salePrice: amount,
     saleCurrency: toCurrency,
+    symbol: symbol,
     deliveryDate: selectedDate.toLocaleDateString(),
     currencyIHave: fromCurrency,
-    fxRate: conversionRate,
-    amountToPay: convertedAmount.toFixed(2),
+    fxRate: fxRate,
+    amountToPay: secondaryAmount,
   };
 
   const executions = JSON.parse(localStorage.getItem('executions')) || [];
@@ -39,15 +35,19 @@ const handleDealRequest = async ({
     },
     currency: toCurrency,
     side: 'BUY',
-    symbol: `${fromCurrency}/${toCurrency}`,
+    symbol: symbol,
     deliveryDate: format(selectedDate, 'yyyyMMdd'),
     transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
     quoteRequestID: generateUUID(),
-    quoteID: generateUUID(), // Assuming you generate a new UUID for the quote ID as well
+    quoteID: generateUUID(),
     dealRequestID: generateUUID(),
     fxRate: {
-      mantissa: Math.round(conversionRate * Math.pow(10, 6)),
-      exponent: -6
+      mantissa: Math.round(fxRate * Math.pow(10, 5)),
+      exponent: -5
+    },
+    secondaryAmount: {
+      mantissa: Math.round(secondaryAmount * Math.pow(10, 2)),
+      exponent: -2
     }
   };
 
@@ -57,16 +57,8 @@ const handleDealRequest = async ({
   // Send the encoded message via WebSocket
   sendMessage(encodedMessage);
 
-  handleExecutionMessage({
-    salePrice: amount,
-    saleCurrency: toCurrency,
-    deliveryDate: selectedDate.toLocaleDateString(),
-    currencyIHave: fromCurrency,
-    fxRate: conversionRate,
-    amountToPay: convertedAmount.toFixed(2),
-  });
-
-  handleReset();
+  // Show the report panel
+  setShowReport(true);
 };
 
 export default handleDealRequest;

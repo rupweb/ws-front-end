@@ -8,6 +8,7 @@ class DealRequestDecoder {
         this.buffer = null;
         this.amountDecoder = new DecimalDecoder();
         this.fxRateDecoder = new DecimalDecoder();
+        this.secondaryAmountDecoder = new DecimalDecoder();
     }
 
     wrap(buffer, offset) {
@@ -70,6 +71,13 @@ class DealRequestDecoder {
         return { mantissa, exponent };
     }
 
+    decodesecondaryAmount() {
+        this.secondaryAmountDecoder.wrap(this.buffer.buffer, this.offset + 108);
+        const mantissa = Number(this.secondaryAmountDecoder.mantissa());
+        const exponent = this.secondaryAmountDecoder.exponent();
+        return { mantissa, exponent };
+    }
+
     toString() {
         return {
             amount: this.decodeamount(),
@@ -82,6 +90,7 @@ class DealRequestDecoder {
             quoteID: this.quoteID().replace(/\0/g, ''),
             dealRequestID: this.dealRequestID().replace(/\0/g, ''),
             fxRate: this.decodefxRate(),
+            secondaryAmount: this.decodesecondaryAmount(),
         };
     }
 

@@ -5,12 +5,13 @@ import { format } from 'date-fns';
 const handleQuoteRequest = async ({
   kycStatus,
   amount,
-  setShowExecute,
   selectedDate,
   toCurrency,
   fromCurrency,
   sendMessage,
-  handleKycCheck
+  handleKycCheck,
+  setShowQuote,
+  setShowExecute
 }) => {
   const kycCheckResult = handleKycCheck(kycStatus, amount);
   if (kycCheckResult) return;
@@ -21,13 +22,13 @@ const handleQuoteRequest = async ({
       mantissa: Math.round(amount * Math.pow(10, 2)),
       exponent: -2
     },
-    saleCurrency: fromCurrency,
+    saleCurrency: toCurrency,
     side: 'BUY',
     symbol: `${fromCurrency}${toCurrency}`,
     deliveryDate: format(selectedDate, 'yyyyMMdd'),
     transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
     quoteRequestID: generateUUID(),
-    currencyOwned: toCurrency,
+    currencyOwned: fromCurrency,
     kycStatus: kycStatus
   };
 
@@ -37,6 +38,7 @@ const handleQuoteRequest = async ({
   // Send the encoded message via WebSocket
   sendMessage(encodedMessage);
 
+  setShowQuote(true);
   setShowExecute(true);
 };
 

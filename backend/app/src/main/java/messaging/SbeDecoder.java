@@ -54,10 +54,8 @@ public class SbeDecoder {
         DealRequestDecoder decoder = new DealRequestDecoder();
         decoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, DealRequestDecoder.BLOCK_LENGTH, DealRequestDecoder.SCHEMA_VERSION);
 
-        DecimalDecoder decimalDecoder = new DecimalDecoder();
-        decimalDecoder.wrap(buffer, decoder.amount().offset());
-        long mantissa = decimalDecoder.mantissa();
-        byte exponent = decimalDecoder.exponent();
+        long mantissa = decoder.amount().mantissa();
+        byte exponent = decoder.amount().exponent();
         double amount = mantissa * Math.pow(10, exponent);
 
         String currency = decoder.currency();
@@ -69,13 +67,17 @@ public class SbeDecoder {
         String quoteID = decoder.quoteID();
         String dealRequestID = decoder.dealRequestID();
 
-        decimalDecoder.wrap(buffer, decoder.fxRate().offset());
-        mantissa = decimalDecoder.mantissa();
-        exponent = decimalDecoder.exponent();
-        double fxRate = mantissa * Math.pow(10, exponent);
+        long fxMantissa = decoder.fxRate().mantissa();
+        byte fxExponent = decoder.fxRate().exponent();
+        double fxRate = fxMantissa * Math.pow(10, fxExponent);
 
-        logger.info("Amount: {}, Currency: {}, Side: {}, Symbol: {}, DeliveryDate: {}, TransactTime: {}, QuoteRequestID: {}, QuoteID: {}, DealRequestID: {}, FxRate: {}",
-                amount, currency, side, symbol, deliveryDate, transactTime, quoteRequestID, quoteID, dealRequestID, fxRate);
+        // Decode Secondary Amount
+        long saMantissa = decoder.secondaryAmount().mantissa();
+        byte saExponent = decoder.secondaryAmount().exponent();
+        double secondaryAmount = saMantissa * Math.pow(10, saExponent);
+
+        logger.info("Amount: {}, Currency: {}, Side: {}, Symbol: {}, DeliveryDate: {}, TransactTime: {}, QuoteRequestID: {}, QuoteID: {}, DealRequestID: {}, FxRate: {}, SecondaryAmount: {}",
+                amount, currency, side, symbol, deliveryDate, transactTime, quoteRequestID, quoteID, dealRequestID, fxRate, secondaryAmount);
     }
 
     private void decodeQuoteRequest(DirectBuffer buffer) {

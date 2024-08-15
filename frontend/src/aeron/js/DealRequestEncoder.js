@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class DealRequestEncoder {
-    static BLOCK_LENGTH = 118;
+    static BLOCK_LENGTH = 125;
     static TEMPLATE_ID = 1;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -13,6 +13,7 @@ class DealRequestEncoder {
         this.offset = 0;
         this.amountEncoder = new DecimalEncoder();
         this.fxRateEncoder = new DecimalEncoder();
+        this.secondaryAmountEncoder = new DecimalEncoder();
     }
 
     wrap(buffer, offset) {
@@ -88,6 +89,12 @@ class DealRequestEncoder {
         this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 99);
         this.fxRateEncoder.mantissa(value.mantissa);
         this.fxRateEncoder.exponent(value.exponent);
+    }
+
+    encodesecondaryAmount(value) {
+        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 108);
+        this.secondaryAmountEncoder.mantissa(value.mantissa);
+        this.secondaryAmountEncoder.exponent(value.exponent);
     }
 
     putString(offset, value, length) {

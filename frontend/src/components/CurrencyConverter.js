@@ -20,20 +20,22 @@ const CurrencyConverter = () => {
     setAmount,
     selectedDate,
     setSelectedDate,
+    showQuote,
     showExecute,
+    showReport,
     isFormValid,
     kycStatus,
     setKycStatus,
-    kycModalMessage,
-    showKycModal,
-    executionModalMessage,
-    showExecutionModal,
+    kycMessage,
+    showKyc,
+    handleKycModalClose,
     handleQuoteRequest,
     handleDealRequest,
     handleReset,
-    handleKycModalClose,
+    executionMessage,
     handleExecutionModalClose,
-    quoteData, // Destructure quoteData from the hook
+    quoteData,
+    dealData
   } = useCurrencyConversion();
 
   const minDate = addBusinessDays(new Date(), 2);
@@ -42,8 +44,7 @@ const CurrencyConverter = () => {
 
   return (
     <div className="converter-container">
-      <KYCStatusModal show={showKycModal} message={kycModalMessage} onClose={handleKycModalClose} />
-      <ExecutionReportModal show={showExecutionModal} message={executionModalMessage} onClose={handleExecutionModalClose} />
+      <KYCStatusModal show={showKyc} message={kycMessage} onClose={handleKycModalClose} />
       <div className="card rounded p-4">
         <SalePriceField amount={amount} setAmount={setAmount} />
         <SaleCurrencyField toCurrency={toCurrency} setToCurrency={setToCurrency} />
@@ -66,10 +67,10 @@ const CurrencyConverter = () => {
             Convert
           </button>
         </div>
-        {quoteData.conversionRate && (
+        {showQuote && (
           <div className="mt-3">
-            <p>FX Rate: {quoteData.conversionRate.toFixed(5)}</p>
-            <p>Amount to pay: {quoteData.convertedAmount.toFixed(2)} {quoteData.fromCurrency}</p>
+            <p>FX Rate: {(quoteData.fxRate ?? 0).toFixed(5)}</p>
+            <p>Amount to pay: {(quoteData.secondaryAmount ?? 0).toFixed(2)} {quoteData.fromCurrency}</p>
           </div>
         )}
         {showExecute && (
@@ -82,6 +83,18 @@ const CurrencyConverter = () => {
               </div>
             </div>
           </div>
+        )}
+        {showReport && (
+          console.log("showReport", showReport),
+          console.log("executionMessage", executionMessage),
+          console.log("dealData", dealData),
+          <ExecutionReportModal 
+            show={showReport} 
+            message={executionMessage} 
+            onClose={handleExecutionModalClose} 
+            dealData={dealData}
+            handleReset={handleReset} 
+          />
         )}
       </div>
     </div>

@@ -10,7 +10,7 @@ import org.agrona.DirectBuffer;
 @SuppressWarnings("all")
 public final class DealRequestDecoder
 {
-    public static final int BLOCK_LENGTH = 118;
+    public static final int BLOCK_LENGTH = 125;
     public static final int TEMPLATE_ID = 1;
     public static final int SCHEMA_ID = 1;
     public static final int SCHEMA_VERSION = 1;
@@ -1013,6 +1013,49 @@ public final class DealRequestDecoder
         return fxRate;
     }
 
+    public static int secondaryAmountId()
+    {
+        return 11;
+    }
+
+    public static int secondaryAmountSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int secondaryAmountEncodingOffset()
+    {
+        return 116;
+    }
+
+    public static int secondaryAmountEncodingLength()
+    {
+        return 9;
+    }
+
+    public static String secondaryAmountMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    private final DecimalDecoder secondaryAmount = new DecimalDecoder();
+
+    /**
+     * The counter amount
+     *
+     * @return DecimalDecoder : The counter amount
+     */
+    public DecimalDecoder secondaryAmount()
+    {
+        secondaryAmount.wrap(buffer, offset + 116);
+        return secondaryAmount;
+    }
+
     public String toString()
     {
         if (null == buffer)
@@ -1129,6 +1172,17 @@ public final class DealRequestDecoder
         if (null != fxRate)
         {
             fxRate.appendTo(builder);
+        }
+        else
+        {
+            builder.append("null");
+        }
+        builder.append('|');
+        builder.append("secondaryAmount=");
+        final DecimalDecoder secondaryAmount = this.secondaryAmount();
+        if (null != secondaryAmount)
+        {
+            secondaryAmount.appendTo(builder);
         }
         else
         {

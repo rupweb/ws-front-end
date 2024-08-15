@@ -3,56 +3,57 @@ import { addBusinessDays } from '../utils/utils.js';
 import useFormValidation from './useFormValidation.js';
 import useKycStatus from './useKycStatus.js';
 import useKycHandling from './useKycHandling.js';
-import useConversion from './useConversion.js';
-import useMessageHandling from './useMessageHandling.js';
+import useQuoteHandling from './useQuoteHandling.js';
+import useDealHandling from './useDealHandling.js';
+import useExecutionModal from './useExecutionModal.js';
 import { useWebSocket } from '../contexts/WebSocketContext.js'; 
 import prepareQuoteRequest from '../handlers/handleQuoteRequest.js';
 import prepareDealRequest from '../handlers/handleDealRequest.js';
 import prepareReset from '../handlers/handleReset.js';
 
 const useCurrencyConversion = () => {
-  const [fromCurrency, setFromCurrency] = useState('EUR');
-  const [toCurrency, setToCurrency] = useState('USD');
+  const [fromCurrency, setFromCurrency] = useState('EUR'); // Default from ccy is EUR
+  const [toCurrency, setToCurrency] = useState('USD'); // Default to ccy is USD
   const [amount, setAmount] = useState('');
   const [selectedDate, setSelectedDate] = useState(addBusinessDays(new Date(), 2));
-  const [showExecute, setShowExecute] = useState(false);
 
+  // Panels on the screen
+  const [showQuote, setShowQuote] = useState(false);
+  const [showExecute, setShowExecute] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+
+  // KYC status
   const { kycStatus, setKycStatus } = useKycStatus();
   const isFormValid = useFormValidation(fromCurrency, toCurrency, amount);
+  const [kycMessage, setKycMessage] = useState('');
+  const [showKyc, setShowKyc] = useState(false);
 
-  const { quoteData, setQuoteData, sendMessage } = useWebSocket();
+  // Align with websocket
+  const { quoteData, setQuoteData, dealData, setDealData, sendMessage } = useWebSocket();
 
-  // Optionally useConversion if local calculations are needed
-  useConversion(fromCurrency, toCurrency, amount, setQuoteData);
-
-  const [kycModalMessage, setKycModalMessage] = useState('');
-  const [showKycModal, setShowKycModal] = useState(false);
-
-  const [executionModalMessage, setExecutionModalMessage] = useState('');
-  const [showExecutionModal, setShowExecutionModal] = useState(false);
+  // Execution message
+  const [executionMessage, setExecutionMessage] = useState('');
 
   const { handleKycCheck, handleKycModalClose } = useKycHandling(
     setKycStatus,
-    setKycModalMessage,
-    setShowKycModal
+    setKycMessage,
+    setShowKyc
   );
 
-  const { handleQuoteMessage, handleExecutionMessage, handleExecutionModalClose } = useMessageHandling(
-    (rate) => setQuoteData({ ...quoteData, conversionRate: rate }),
-    (amount) => setQuoteData({ ...quoteData, convertedAmount: amount }),
-    setShowExecutionModal,
-    setExecutionModalMessage
-  );
+  const { handleQuoteMessage } = useQuoteHandling(setQuoteData);
+  const { handleDealMessage } = useDealHandling(setDealData, setExecutionMessage, setShowReport);
+  const { handleExecutionModalClose } = useExecutionModal(setShowReport);
 
   const handleQuoteRequest = () => prepareQuoteRequest({
     kycStatus,
     amount,
-    setShowExecute,
     selectedDate,
     toCurrency,
     fromCurrency,
     sendMessage,
-    handleKycCheck
+    handleKycCheck,
+    setShowQuote,
+    setShowExecute,
   });
 
   const handleDealRequest = () => prepareDealRequest({
@@ -60,12 +61,11 @@ const useCurrencyConversion = () => {
     toCurrency,
     selectedDate,
     fromCurrency,
-    conversionRate: quoteData.conversionRate,
-    convertedAmount: quoteData.convertedAmount,
+    fxRate: quoteData.fxRate,
+    secondaryAmount: quoteData.secondaryAmount,
+    symbol: quoteData.symbol,
     sendMessage,
-    handleExecutionMessage,
-    handleReset,
-    kycStatus 
+    setShowReport
   });
 
   const handleReset = () => prepareReset({
@@ -74,7 +74,9 @@ const useCurrencyConversion = () => {
     setAmount,
     setSelectedDate,
     setShowExecute,
-    setKycStatus
+    setKycStatus,
+    setQuoteData,
+    setShowQuote
   });
 
   return {
@@ -86,22 +88,24 @@ const useCurrencyConversion = () => {
     setAmount,
     selectedDate,
     setSelectedDate,
+    showQuote,
     showExecute,
+    showReport,
     isFormValid,
     kycStatus,
     setKycStatus,
-    kycModalMessage,
-    showKycModal,
-    executionModalMessage,
-    showExecutionModal,
-    handleQuoteRequest,
-    handleDealRequest,
-    handleReset,
+    kycMessage,
+    showKyc,
     handleKycModalClose,
-    handleExecutionModalClose,
+    handleQuoteRequest,
     handleQuoteMessage,
-    handleExecutionMessage,
-    quoteData, // Expose quoteData 
+    handleDealRequest,
+    handleDealMessage,
+    handleReset,
+    executionMessage,
+    handleExecutionModalClose,
+    quoteData, 
+    dealData // Expose data 
   };
 };
 

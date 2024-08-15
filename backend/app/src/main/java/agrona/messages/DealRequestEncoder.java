@@ -10,7 +10,7 @@ import org.agrona.MutableDirectBuffer;
 @SuppressWarnings("all")
 public final class DealRequestEncoder
 {
-    public static final int BLOCK_LENGTH = 118;
+    public static final int BLOCK_LENGTH = 125;
     public static final int TEMPLATE_ID = 1;
     public static final int SCHEMA_ID = 1;
     public static final int SCHEMA_VERSION = 1;
@@ -1049,6 +1049,49 @@ public final class DealRequestEncoder
     {
         fxRate.wrap(buffer, offset + 107);
         return fxRate;
+    }
+
+    public static int secondaryAmountId()
+    {
+        return 11;
+    }
+
+    public static int secondaryAmountSinceVersion()
+    {
+        return 0;
+    }
+
+    public static int secondaryAmountEncodingOffset()
+    {
+        return 116;
+    }
+
+    public static int secondaryAmountEncodingLength()
+    {
+        return 9;
+    }
+
+    public static String secondaryAmountMetaAttribute(final MetaAttribute metaAttribute)
+    {
+        if (MetaAttribute.PRESENCE == metaAttribute)
+        {
+            return "required";
+        }
+
+        return "";
+    }
+
+    private final DecimalEncoder secondaryAmount = new DecimalEncoder();
+
+    /**
+     * The counter amount
+     *
+     * @return DecimalEncoder : The counter amount
+     */
+    public DecimalEncoder secondaryAmount()
+    {
+        secondaryAmount.wrap(buffer, offset + 116);
+        return secondaryAmount;
     }
 
     public String toString()
