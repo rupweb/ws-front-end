@@ -79,15 +79,6 @@
   text-decoration: underline;
 }
 
-.content-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
 /* Additional styles for the auth container */
 
 .auth-container {

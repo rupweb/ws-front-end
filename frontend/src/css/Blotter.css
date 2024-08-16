@@ -23,12 +23,16 @@
 }
 
 .blotter-container th {
-  background-color: #e9ecef;
+  background-color: #d7f3ff;
   font-weight: bold;
 }
 
 .blotter-container tbody tr:nth-child(odd) {
-  background-color: #f1f1f1;
+  background-color: #ffffff;
+}
+
+.blotter-container tbody tr:nth-child(even) {
+  background-color: #d7f3ff;
 }
 
 .blotter-title-row {
