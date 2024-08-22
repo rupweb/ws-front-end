@@ -11,12 +11,14 @@ export const WebSocketProvider = ({ url, children }) => {
     const [quoteData, setQuoteData] = useState({
         fxRate: 0,
         secondaryAmount: 0,
-        symbol: ''
+        symbol: '',
+        quoteRequestID: '',
+        quoteID: ''
       });
 
     // local state variable for incoming deals
     const [dealData, setDealData] = useState({
-        dealRate: 0,
+        fxRate: 0,
         secondaryAmount: 0,
         dealID: ''
       });

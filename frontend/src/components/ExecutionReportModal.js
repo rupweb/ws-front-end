@@ -22,7 +22,7 @@ const ExecutionReportModal = ({ show, message, onClose, dealData, handleReset })
         dealData.symbol,
         dealData.deliveryDate,
         dealData.currencyIHave,
-        dealData.fxRate,
+        dealData.dealRate,
         dealData.secondaryAmount
       ]
     : [];

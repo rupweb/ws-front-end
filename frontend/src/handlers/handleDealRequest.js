@@ -10,6 +10,8 @@ const handleDealRequest = async ({
   fxRate,
   secondaryAmount,
   symbol,
+  quoteRequestID,
+  quoteID,
   sendMessage,
   setShowReport
 }) => {
@@ -38,8 +40,8 @@ const handleDealRequest = async ({
     symbol: symbol,
     deliveryDate: format(selectedDate, 'yyyyMMdd'),
     transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
-    quoteRequestID: generateUUID(),
-    quoteID: generateUUID(),
+    quoteRequestID: quoteRequestID,
+    quoteID: quoteID,
     dealRequestID: generateUUID(),
     fxRate: {
       mantissa: Math.round(fxRate * Math.pow(10, 5)),

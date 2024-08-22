@@ -73,17 +73,33 @@ const CurrencyConverter = () => {
             <p>Amount to pay: {(quoteData.secondaryAmount ?? 0).toFixed(2)} {quoteData.fromCurrency}</p>
           </div>
         )}
-        {showExecute && (
-          <div className="mt-3">
-            <div className="form-group row align-items-center">
-              <label className="col-sm-8 col-form-label text-right">Execute:</label>
-              <div className="col-sm-4">
-                <button className="btn btn-success mr-2" onClick={handleDealRequest}>YES</button>
-                <button className="btn btn-danger" onClick={handleReset}>NO</button>
-              </div>
-            </div>
-          </div>
-        )}
+{showExecute && (
+  <div className="mt-3">
+    <div className="form-group row align-items-center">
+      <label className="col-sm-8 col-form-label text-right">Execute:</label>
+      <div className="col-sm-4">
+        <button 
+          className="btn btn-success mr-2" 
+          onClick={() => handleDealRequest({
+            amount,
+            toCurrency,
+            selectedDate,
+            fromCurrency,
+            fxRate: quoteData.fxRate,
+            secondaryAmount: quoteData.secondaryAmount,
+            symbol: quoteData.symbol,
+            quoteRequestID: quoteData.quoteRequestID,
+            quoteID: quoteData.quoteID
+          })}
+        >
+          YES
+        </button>
+        <button className="btn btn-danger" onClick={handleReset}>NO</button>
+      </div>
+    </div>
+  </div>
+)}
+
         {showReport && (
           console.log("showReport", showReport),
           console.log("executionMessage", executionMessage),

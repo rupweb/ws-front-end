@@ -64,6 +64,8 @@ const useCurrencyConversion = () => {
     fxRate: quoteData.fxRate,
     secondaryAmount: quoteData.secondaryAmount,
     symbol: quoteData.symbol,
+    quoteRequestID: quoteData.quoteRequestID,
+    quoteID: quoteData.quoteID,
     sendMessage,
     setShowReport
   });

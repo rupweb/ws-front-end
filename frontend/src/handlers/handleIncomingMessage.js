@@ -44,7 +44,9 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
                 setQuoteData({
                     fxRate: fxRate1,
                     secondaryAmount: secondaryAmount1,
-                    symbol: decodedData.symbol
+                    symbol: decodedData.symbol,
+                    quoteRequestID: decodedData.quoteRequestID,
+                    quoteID: decodedData.quoteID
                 });
 
                 break;
