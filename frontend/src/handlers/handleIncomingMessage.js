@@ -78,14 +78,14 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
                 console.log('Before setting deal data:', decodedData);
 
                 setDealData({
-                    dealRate: fxRate1,
-                    secondaryAmount: secondaryAmount1,
                     dealID: decodedData.dealID,
-                    salePrice: amount1,
-                    saleCurrency: decodedData.currency,
+                    amount: amount1,
+                    currency: decodedData.currency,
                     symbol: decodedData.symbol,
                     deliveryDate: decodedData.deliveryDate,
-                    currencyIHave: decodedData.secondaryCurrency
+                    secondaryCurrency: decodedData.secondaryCurrency,
+                    rate: fxRate1,
+                    secondaryAmount: secondaryAmount1
                 });
 
                 break;

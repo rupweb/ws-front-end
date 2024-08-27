@@ -18,9 +18,14 @@ export const WebSocketProvider = ({ url, children }) => {
 
     // local state variable for incoming deals
     const [dealData, setDealData] = useState({
-        fxRate: 0,
-        secondaryAmount: 0,
-        dealID: ''
+        dealID: '',
+        amount: 0,
+        currency: '',
+        symbol: '',
+        deliveryDate: '',
+        secondaryCurrency: '',
+        rate: 0,
+        secondaryAmount: 0
       });
 
     const socketRef = useWebSocketConnection(url, (data) => incomingMessage(data, setQuoteData, setDealData));

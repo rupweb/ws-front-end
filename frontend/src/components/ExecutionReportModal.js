@@ -9,20 +9,20 @@ const ExecutionReportModal = ({ show, message, onClose, dealData, handleReset })
     'Sale Currency:',
     'Symbol:',
     'Delivery Date:',
-    'Currency I Have:',
     'FX Rate:',
+    'Currency to Pay:',
     'Amount to Pay:'
   ];
 
   const values = dealData
     ? [
         dealData.dealID,
-        dealData.salePrice,
-        dealData.saleCurrency,
+        dealData.amount,
+        dealData.currency,
         dealData.symbol,
         dealData.deliveryDate,
-        dealData.currencyIHave,
-        dealData.dealRate,
+        dealData.rate,
+        dealData.secondaryCurrency,
         dealData.secondaryAmount
       ]
     : [];

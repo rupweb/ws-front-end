@@ -13,12 +13,12 @@ import org.apache.logging.log4j.Logger;
 
 public class AeronClient {
     private static final Logger log = LogManager.getLogger(AeronClient.class);
-    private static final String BACKEND_TO_FIX_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40135";
-    private static final String FIX_TO_BACKEND_CHANNEL = "aeron:udp?endpoint=224.0.1.3:40136";
+    private static final String BACKEND_TO_FIX_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40101";
+    private static final String FIX_TO_BACKEND_CHANNEL = "aeron:udp?endpoint=224.0.1.3:40102";
     public static final String ERROR_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40150";
-    private static final int STREAM_ID_BACKEND_FIX = 1002;
-    private static final int STREAM_ID_FIX_BACKEND = 1003;
-    public static final int STREAM_ID_ERROR = 1020;
+    private static final int BACKEND_TO_FIX_STREAM_ID = 1001;
+    private static final int FIX_TO_BACKEND_STREAM_ID = 1002;
+    public static final int ERROR_STREAM_ID = 1050;
 
     private final Aeron aeron;
     private final Subscription fixToBackendSubscription;
@@ -32,11 +32,11 @@ public class AeronClient {
         this.aeron = aeron;
 
                 // Create Publications
-        Publication backendToFixPublication = aeron.addPublication(BACKEND_TO_FIX_CHANNEL, STREAM_ID_BACKEND_FIX);
-        log.info("Backend to Fix Publication setup: channel={}, port={}, streamId={}", BACKEND_TO_FIX_CHANNEL, getPort(BACKEND_TO_FIX_CHANNEL), STREAM_ID_BACKEND_FIX);
+        Publication backendToFixPublication = aeron.addPublication(BACKEND_TO_FIX_CHANNEL, BACKEND_TO_FIX_STREAM_ID);
+        log.info("Backend to Fix Publication setup: channel={}, port={}, streamId={}", BACKEND_TO_FIX_CHANNEL, getPort(BACKEND_TO_FIX_CHANNEL), BACKEND_TO_FIX_STREAM_ID);
 
-        Publication errorPublication = aeron.addPublication(ERROR_CHANNEL, STREAM_ID_ERROR);
-        log.info("Error Publication setup: channel={}, port={}, streamId={}", ERROR_CHANNEL, getPort(ERROR_CHANNEL), STREAM_ID_ERROR);
+        Publication errorPublication = aeron.addPublication(ERROR_CHANNEL, ERROR_STREAM_ID);
+        log.info("Error Publication setup: channel={}, port={}, streamId={}", ERROR_CHANNEL, getPort(ERROR_CHANNEL), ERROR_STREAM_ID);
 
         // Create Errors instance
         this.errors = new Errors(errorPublication);
@@ -46,8 +46,8 @@ public class AeronClient {
 
         this.running = true;
 
-        fixToBackendSubscription = aeron.addSubscription(FIX_TO_BACKEND_CHANNEL, STREAM_ID_FIX_BACKEND);
-        log.info("Fix to Backend Subscription setup: channel={}, port={}, streamId={}", FIX_TO_BACKEND_CHANNEL, getPort(FIX_TO_BACKEND_CHANNEL), STREAM_ID_FIX_BACKEND);
+        fixToBackendSubscription = aeron.addSubscription(FIX_TO_BACKEND_CHANNEL, FIX_TO_BACKEND_STREAM_ID);
+        log.info("Fix to Backend Subscription setup: channel={}, port={}, streamId={}", FIX_TO_BACKEND_CHANNEL, getPort(FIX_TO_BACKEND_CHANNEL), FIX_TO_BACKEND_STREAM_ID);
     }
 
     // For testing
