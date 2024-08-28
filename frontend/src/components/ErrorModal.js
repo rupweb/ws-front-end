@@ -1,29 +1,39 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import '../css/ExecutionReportModal.css';
+import '../css/ErrorModal.css';
 
-const ExecutionReportModal = ({ show, message, onClose, executionReport, handleReset }) => {
+const ErrorModal = ({ show, message, onClose, error, handleReset }) => {
   const labels = [
-    'Deal ID:',
-    'Sale Price:',
-    'Sale Currency:',
+    'Amount:',
+    'Currency:',
+    'Side:',
     'Symbol:',
     'Delivery Date:',
-    'FX Rate:',
-    'Currency to Pay:',
-    'Amount to Pay:'
+    'Transact Time:',
+    'Quote Request ID:',
+    'Quote ID:',
+    'Deal Request ID:',
+    'DealID:',
+    'Rate:',
+    'Secondary Amount:',
+    'Message:'
   ];
 
-  const values = executionReport
+  const values = error
     ? [
-        executionReport.dealID,
-        executionReport.amount,
-        executionReport.currency,
-        executionReport.symbol,
-        executionReport.deliveryDate,
-        executionReport.rate,
-        executionReport.secondaryCurrency,
-        executionReport.secondaryAmount
+        error.amount,
+        error.currency,
+        error.side,
+        error.symbol,
+        error.deliveryDate,
+        error.transactTime,
+        error.quoteRequestID,
+        error.quoteID,
+        error.dealRequestID,
+        error.dealID,
+        error.rate,
+        error.secondaryAmount,
+        error.message
       ]
     : [];
 
@@ -35,11 +45,11 @@ const ExecutionReportModal = ({ show, message, onClose, executionReport, handleR
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header>
-        <Modal.Title>Execution Report</Modal.Title>
+        <Modal.Title>Error Received</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {executionReport ? (
-          <div className="execution-report-container">
+        {error ? (
+          <div className="error-container">
             {labels.map((label, index) => (
               <React.Fragment key={index}>
                 <div className="label">{label}</div>
@@ -60,5 +70,5 @@ const ExecutionReportModal = ({ show, message, onClose, executionReport, handleR
   );
 };
 
-export default ExecutionReportModal;
+export default ErrorModal;
 

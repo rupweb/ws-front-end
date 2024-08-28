@@ -12,8 +12,7 @@ const handleDealRequest = async ({
   symbol,
   quoteRequestID,
   quoteID,
-  sendMessage,
-  setShowReport
+  sendMessage
 }) => {
   const execution = {
     date: new Date().toLocaleDateString(),
@@ -58,9 +57,6 @@ const handleDealRequest = async ({
 
   // Send the encoded message via WebSocket
   sendMessage(encodedMessage);
-
-  // Show the report panel
-  setShowReport(true);
 };
 
 export default handleDealRequest;

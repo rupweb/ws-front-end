@@ -96,8 +96,8 @@ public class AeronClient {
         log.info("In listen");
         final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 1, 1);
         while (running) {
-            final int fragmentsFixToPricer = fixToBackendSubscription.poll(fragmentHandler, 10);
-            idleStrategy.idle(fragmentsFixToPricer);
+            final int fragmentsFixToBackend = fixToBackendSubscription.poll(fragmentHandler, 10);
+            idleStrategy.idle(fragmentsFixToBackend);
         }
         log.info("Out listen");
     }
@@ -106,7 +106,7 @@ public class AeronClient {
         log.info("In close");
 
         if (fixToBackendSubscription != null)
-        fixToBackendSubscription.close();
+            fixToBackendSubscription.close();
 
         if (aeron != null)
             aeron.close();

@@ -12,6 +12,9 @@ public class App {
     private static AeronClient aeronClient;
     public static AeronClient getAeronClient() { return aeronClient; }
 
+    private static AeronErrorClient aeronErrorClient;
+    public static AeronErrorClient getAeronErrorClient() { return aeronErrorClient; }
+
     static {
         System.out.println("Log4j2 initialized: " + LogManager.getContext(false).hasLogger(App.class.getName()));
         System.out.println("Working Directory: " + System.getProperty("user.dir"));
@@ -39,8 +42,20 @@ public class App {
         MediaDriver mediaDriver = config.createMediaDriver();
         Aeron aeron = config.createAeron(mediaDriver);
 
-        // Create the AeronMonitor instance with injected dependencies
+        // Create the AeronMonitor instances with injected dependencies
+        aeronErrorClient = new AeronErrorClient(aeron);
         aeronClient = new AeronClient(aeron);
+
+        // Start Error client in a new thread
+        new Thread(() -> {
+            try {
+                aeronErrorClient.start();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        // Start the main aeron client
         aeronClient.start();
 
         log.debug("Out App main");

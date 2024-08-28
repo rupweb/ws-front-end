@@ -3,7 +3,7 @@ import QuoteDecoder from '../aeron/js/QuoteDecoder.js';
 import ExecutionReportDecoder from '../aeron/js/ExecutionReportDecoder.js';
 import ErrorDecoder from '../aeron/js/ErrorDecoder.js';
 
-const handleIncomingMessage = (data, setQuoteData, setDealData) => {
+const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport, setShowExecutionReport, setError, setShowError) => {
     console.log('Incoming data: ', data);
 
     // Check if data is an ArrayBuffer
@@ -12,7 +12,7 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
         return;
     }
 
-    let decodedMessage;
+    let decodedData;
 
     try {
         const headerDecoder = new MessageHeaderDecoder();
@@ -26,7 +26,7 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 
                 // Decode the data
-                const decodedData = {
+                decodedData = {
                     amount: decoder.decodeamount(),
                     currency: decoder.currency(),
                     side: decoder.side().replace(/\0/g, ''),
@@ -41,7 +41,7 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
                 const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
                 const secondaryAmount1 = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
 
-                setQuoteData({
+                setQuote({
                     fxRate: fxRate1,
                     secondaryAmount: secondaryAmount1,
                     symbol: decodedData.symbol,
@@ -49,13 +49,16 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
                     quoteID: decodedData.quoteID
                 });
 
+                console.log('setShowQuote');
+                setShowQuote(true);
+
                 break;
             }
             case 2: { // Execution Report
                 const decoder = new ExecutionReportDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 
-                const decodedData = {
+                decodedData = {
                     amount: decoder.decodeamount(),
                     currency: decoder.currency(),
                     secondaryAmount: decoder.decodesecondaryAmount(),
@@ -75,9 +78,7 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
                 const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
                 const secondaryAmount1 = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
 
-                console.log('Before setting deal data:', decodedData);
-
-                setDealData({
+                setExecutionReport({
                     dealID: decodedData.dealID,
                     amount: amount1,
                     currency: decodedData.currency,
@@ -88,13 +89,15 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
                     secondaryAmount: secondaryAmount1
                 });
 
+                setShowExecutionReport(true);
+
                 break;
             }
             case 5: { // Error
                 const decoder = new ErrorDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 
-                const decodedData = {
+                decodedData = {
                     amount: decoder.decodeamount(),
                     currency: decoder.currency(),
                     side: decoder.side().replace(/\0/g, ''),
@@ -106,10 +109,31 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
                     dealRequestID: decoder.dealRequestID().replace(/\0/g, ''),
                     dealID: decoder.dealID().replace(/\0/g, ''),
                     fxRate: decoder.decodefxRate(),
+                    secondaryAmount: decoder.decodesecondaryAmount(),
                     message: decoder.message().replace(/\0/g, '')
                 };
 
-                console.log(decodedData);
+                const amount1 = decodedData.amount.mantissa * Math.pow(10, decodedData.amount.exponent);
+                const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
+                const secondaryAmount1 = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
+
+                setError({
+                    amount: amount1,
+                    currency: decodedData.currency,
+                    side: decodedData.side,
+                    symbol: decodedData.symbol,
+                    deliveryDate: decodedData.deliveryDate,
+                    transactTime: decodedData.transactTime,
+                    quoteRequestID: decodedData.quoteRequestID,
+                    quoteID: decodedData.quoteID,
+                    dealRequestID: decodedData.dealRequestID,
+                    dealID: decodedData.dealID,
+                    rate: fxRate1,
+                    secondaryAmount: secondaryAmount1,
+                    message: decodedData.message
+                });
+
+                setShowError(true);
 
                 break;
             }
@@ -121,7 +145,7 @@ const handleIncomingMessage = (data, setQuoteData, setDealData) => {
         console.error('Error processing message:', error);
     }
 
-    console.log('Decoded Message:', decodedMessage);
+    console.log('Decoded Message:', decodedData);
 };
 
 export default handleIncomingMessage;

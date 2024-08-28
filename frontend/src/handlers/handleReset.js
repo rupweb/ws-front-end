@@ -5,23 +5,25 @@ const handleReset = ({
   setToCurrency,
   setAmount,
   setSelectedDate,
-  setShowExecute,
   setKycStatus,
-  setQuoteData,
-  setShowQuote
+  setQuote,
+  setShowQuote,
+  setExecutionReport,
+  setShowExecutionReport,
+  setError,
+  setShowError
 }) => {
   setFromCurrency('EUR');
   setToCurrency('USD');
   setAmount('');
   setSelectedDate(addBusinessDays(new Date(), 2));
-  setShowExecute(false);
   setKycStatus('Not Started');
-  setQuoteData({
-    fxRate: null,
-    secondaryAmount: null,
-    symbol: ''
-  });
+  setQuote(null);
   setShowQuote(false);
+  setExecutionReport(null);
+  setShowExecutionReport(false);
+  setError(null);
+  setShowError(false);
 };
 
 export default handleReset;

@@ -9,9 +9,7 @@ const handleQuoteRequest = async ({
   toCurrency,
   fromCurrency,
   sendMessage,
-  handleKycCheck,
-  setShowQuote,
-  setShowExecute
+  handleKycCheck
 }) => {
   const kycCheckResult = handleKycCheck(kycStatus, amount);
   if (kycCheckResult) return;
@@ -37,9 +35,6 @@ const handleQuoteRequest = async ({
 
   // Send the encoded message via WebSocket
   sendMessage(encodedMessage);
-
-  setShowQuote(true);
-  setShowExecute(true);
 };
 
 export default handleQuoteRequest;

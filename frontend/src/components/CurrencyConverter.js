@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useCurrencyConversion from '../hooks/useCurrencyConversion.js';
 import KYCStatusModal from './KYCStatusModal.js';
 import ExecutionReportModal from './ExecutionReportModal.js';
+import ErrorModal from './ErrorModal.js';
 import SalePriceField from './SalePriceField.js';
 import SaleCurrencyField from './SaleCurrencyField.js';
 import DeliveryDateField from './DeliveryDateField.js';
@@ -20,27 +21,35 @@ const CurrencyConverter = () => {
     setAmount,
     selectedDate,
     setSelectedDate,
-    showQuote,
-    showExecute,
-    showReport,
     isFormValid,
     kycStatus,
     setKycStatus,
     kycMessage,
     showKyc,
     handleKycModalClose,
+    quote,
+    showQuote,
     handleQuoteRequest,
     handleDealRequest,
-    handleReset,
-    executionMessage,
+    executionReport,
+    showExecutionReport,
+    executionReportMessage,
     handleExecutionModalClose,
-    quoteData,
-    dealData
+    error,
+    showError,
+    errorMessage,
+    handleErrorModalClose,
+    handleReset
   } = useCurrencyConversion();
 
   const minDate = addBusinessDays(new Date(), 2);
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
+
+  useEffect(() => {
+    console.log('showQuote:', showQuote);
+    console.log('quote:', quote);
+  }, [showQuote, quote]);  
 
   return (
     <div className="converter-container">
@@ -70,12 +79,12 @@ const CurrencyConverter = () => {
 
         {showQuote && (
           <div className="mt-3">
-            <p>FX Rate: {(quoteData.fxRate ?? 0).toFixed(5)}</p>
-            <p>Amount to pay: {(quoteData.secondaryAmount ?? 0).toFixed(2)} {quoteData.fromCurrency}</p>
+            <p>FX Rate: {(quote.fxRate ?? 0).toFixed(5)}</p>
+            <p>Amount to pay: {(quote.secondaryAmount ?? 0).toFixed(2)} {quote.fromCurrency}</p>
           </div>
         )}
 
-        {showExecute && (
+        {showQuote && (
           <div className="mt-3">
             <div className="form-group row align-items-center">
               <label className="col-sm-8 col-form-label text-right">Execute:</label>
@@ -87,11 +96,11 @@ const CurrencyConverter = () => {
                     toCurrency,
                     selectedDate,
                     fromCurrency,
-                    fxRate: quoteData.fxRate,
-                    secondaryAmount: quoteData.secondaryAmount,
-                    symbol: quoteData.symbol,
-                    quoteRequestID: quoteData.quoteRequestID,
-                    quoteID: quoteData.quoteID
+                    fxRate: quote.fxRate,
+                    secondaryAmount: quote.secondaryAmount,
+                    symbol: quote.symbol,
+                    quoteRequestID: quote.quoteRequestID,
+                    quoteID: quote.quoteID
                   })}
                 >
                   YES
@@ -102,16 +111,25 @@ const CurrencyConverter = () => {
           </div>
         )}
 
-        {showReport && (
+        {showExecutionReport && (
           <>
-            {console.log("showReport", showReport)}
-            {console.log("executionMessage", executionMessage)}
-            {console.log("dealData", dealData)}
             <ExecutionReportModal 
-              show={showReport} 
-              message={executionMessage} 
+              show={showExecutionReport} 
+              message={executionReportMessage} 
               onClose={handleExecutionModalClose} 
-              dealData={dealData}
+              executionReport={executionReport}
+              handleReset={handleReset} 
+            />
+          </>
+        )}
+
+        {showError && (
+          <>
+            <ErrorModal 
+              show={showError} 
+              message={errorMessage} 
+              onClose={handleErrorModalClose} 
+              error={error}
               handleReset={handleReset} 
             />
           </>
