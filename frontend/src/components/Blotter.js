@@ -21,6 +21,7 @@ const Blotter = () => {
         <thead>
           <tr>
             <th>Date</th>
+            <th>Deal ID</th>
             <th>Sale Price</th>
             <th>Sale Currency</th>
             <th>Delivery Date</th>
@@ -30,15 +31,16 @@ const Blotter = () => {
           </tr>
         </thead>
         <tbody>
-          {executions.map((execution, index) => (
+          {executions.map((trade, index) => (
             <tr key={index}>
-              <td>{execution.date}</td>
-              <td>{execution.salePrice}</td>
-              <td>{execution.saleCurrency}</td>
-              <td>{execution.deliveryDate}</td>
-              <td>{execution.currencyIHave}</td>
-              <td>{formatFxRate(execution.fxRate)}</td>
-              <td>{execution.amountToPay}</td>
+              <td>{trade.date}</td>
+              <td>{trade.dealID}</td>
+              <td>{trade.salePrice}</td>
+              <td>{trade.saleCurrency}</td>
+              <td>{trade.deliveryDate}</td>
+              <td>{trade.currencyIHave}</td>
+              <td>{formatFxRate(trade.fxRate)}</td>
+              <td>{trade.amountToPay}</td>
             </tr>
           ))}
         </tbody>

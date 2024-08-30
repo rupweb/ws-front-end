@@ -95,7 +95,6 @@ const CurrencyConverter = () => {
                     amount,
                     toCurrency,
                     selectedDate,
-                    fromCurrency,
                     fxRate: quote.fxRate,
                     secondaryAmount: quote.secondaryAmount,
                     symbol: quote.symbol,

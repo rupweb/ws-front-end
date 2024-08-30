@@ -6,7 +6,6 @@ const handleDealRequest = async ({
   amount,
   toCurrency,
   selectedDate,
-  fromCurrency,
   fxRate,
   secondaryAmount,
   symbol,
@@ -14,21 +13,6 @@ const handleDealRequest = async ({
   quoteID,
   sendMessage
 }) => {
-  const execution = {
-    date: new Date().toLocaleDateString(),
-    salePrice: amount,
-    saleCurrency: toCurrency,
-    symbol: symbol,
-    deliveryDate: selectedDate.toLocaleDateString(),
-    currencyIHave: fromCurrency,
-    fxRate: fxRate,
-    amountToPay: secondaryAmount,
-  };
-
-  const executions = JSON.parse(localStorage.getItem('executions')) || [];
-  executions.push(execution);
-  localStorage.setItem('executions', JSON.stringify(executions));
-
   const dealRequest = {
     amount: {
       mantissa: Math.round(amount * Math.pow(10, 2)),

@@ -17,15 +17,31 @@ const ExecutionReportModal = ({ show, message, onClose, executionReport, handleR
   const values = executionReport
     ? [
         executionReport.dealID,
-        executionReport.amount,
+        executionReport.amount.toFixed(2),
         executionReport.currency,
         executionReport.symbol,
         executionReport.deliveryDate,
-        executionReport.rate,
+        executionReport.rate.toFixed(5),
         executionReport.secondaryCurrency,
-        executionReport.secondaryAmount
+        executionReport.secondaryAmount.toFixed(2)
       ]
     : [];
+
+    const trade = {
+      date: new Date().toLocaleDateString(),
+      dealID: executionReport.dealID,
+      salePrice: executionReport.amount.toFixed(2),
+      saleCurrency: executionReport.currency,
+      symbol: executionReport.symbol,
+      deliveryDate: executionReport.deliveryDate,
+      currencyIHave: executionReport.secondaryCurrency,
+      fxRate: executionReport.rate.toFixed(5),
+      amountToPay: executionReport.secondaryAmount.toFixed(2)
+    };
+  
+    const executions = JSON.parse(localStorage.getItem('executions')) || [];
+    executions.push(trade);
+    localStorage.setItem('executions', JSON.stringify(executions));
 
   const handleClose = () => {
     handleReset(); // Call the reset handler

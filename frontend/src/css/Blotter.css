@@ -1,25 +1,27 @@
-/* Blotter.css */
 .blotter-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 1800px;
   max-height: 800px;
   overflow-y: auto;
   font-size: 0.8rem;
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
-  padding: 10px;
+  padding: 20px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  margin: 20px auto;
+  margin: 40px auto; /* Ensures some margin at the top to separate from other elements */
 }
 
 .blotter-container table {
   width: 100%;
-  table-layout: fixed; /* respect width */
+  border-collapse: collapse; /* Ensure no gaps between cells */
 }
 
-.blotter-container th, .blotter-container td {
-  padding: 0.5rem;
+.blotter-container th,
+.blotter-container td {
+  padding: 0.75rem 1rem; /* Adjusted padding for better spacing */
+  text-align: left; /* Align text to the left for readability */
+  white-space: nowrap; /* Prevent text from wrapping */
 }
 
 .blotter-container th {
@@ -33,6 +35,16 @@
 
 .blotter-container tbody tr:nth-child(even) {
   background-color: #d7f3ff;
+}
+
+.blotter-container th:first-child,
+.blotter-container td:first-child {
+  padding-left: 20px; /* Extra padding on the left */
+}
+
+.blotter-container th:last-child,
+.blotter-container td:last-child {
+  padding-right: 20px; /* Extra padding on the right */
 }
 
 .blotter-title-row {

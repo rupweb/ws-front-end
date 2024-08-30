@@ -6,7 +6,6 @@ import agrona.messages.KycStatus;
 import agrona.messages.QuoteDecoder;
 import agrona.messages.QuoteRequestDecoder;
 import agrona.messages.ErrorDecoder;
-import agrona.messages.DecimalDecoder;
 import agrona.messages.MessageHeaderDecoder;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
@@ -84,11 +83,10 @@ public class SbeDecoder {
         QuoteRequestDecoder decoder = new QuoteRequestDecoder();
         decoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, QuoteRequestDecoder.BLOCK_LENGTH, QuoteRequestDecoder.SCHEMA_VERSION);
 
-        DecimalDecoder decimalDecoder = new DecimalDecoder();
-        decimalDecoder.wrap(buffer, decoder.amount().offset());
-        long mantissa = decimalDecoder.mantissa();
-        byte exponent = decimalDecoder.exponent();
+        long mantissa = decoder.amount().mantissa();
+        byte exponent = decoder.amount().exponent();
         double salePrice = mantissa * Math.pow(10, exponent);
+
         String saleCurrency = decoder.saleCurrency();
         String side = decoder.side();
         String symbol = decoder.symbol();
@@ -106,12 +104,8 @@ public class SbeDecoder {
         QuoteDecoder decoder = new QuoteDecoder();
         decoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, QuoteDecoder.BLOCK_LENGTH, QuoteDecoder.SCHEMA_VERSION);
 
-        DecimalDecoder decimalDecoder = new DecimalDecoder();
-
-        // Decode Amount
-        decimalDecoder.wrap(buffer, decoder.amount().offset());
-        long mantissa = decimalDecoder.mantissa();
-        byte exponent = decimalDecoder.exponent();
+        long mantissa = decoder.amount().mantissa();
+        byte exponent = decoder.amount().exponent();
         double amount = mantissa * Math.pow(10, exponent);
 
         // Decode Currency
@@ -123,17 +117,14 @@ public class SbeDecoder {
         String quoteID = decoder.quoteID();
         String quoteRequestID = decoder.quoteRequestID();
 
-        // Decode FX Rate
-        decimalDecoder.wrap(buffer, decoder.fxRate().offset());
-        mantissa = decimalDecoder.mantissa();
-        exponent = decimalDecoder.exponent();
-        double fxRate = mantissa * Math.pow(10, exponent);
+        long fxMantissa = decoder.fxRate().mantissa();
+        byte fxExponent = decoder.fxRate().exponent();
+        double fxRate = fxMantissa * Math.pow(10, fxExponent);
 
         // Decode Secondary Amount
-        decimalDecoder.wrap(buffer, decoder.secondaryAmount().offset());
-        mantissa = decimalDecoder.mantissa();
-        exponent = decimalDecoder.exponent();
-        double secondaryAmount = mantissa * Math.pow(10, exponent);
+        long saMantissa = decoder.secondaryAmount().mantissa();
+        byte saExponent = decoder.secondaryAmount().exponent();
+        double secondaryAmount = saMantissa * Math.pow(10, saExponent);
 
         logger.info("Amount: {}, Currency: {}, Side: {}, Symbol: {}, TransactTime: {}, QuoteID: {}, QuoteRequestID: {}, FxRate: {}, SecondaryAmount: {}",
                 amount, currency, side, symbol, transactTime, quoteID, quoteRequestID, fxRate, secondaryAmount);
@@ -143,18 +134,16 @@ public class SbeDecoder {
         ExecutionReportDecoder decoder = new ExecutionReportDecoder();
         decoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, ExecutionReportDecoder.BLOCK_LENGTH, ExecutionReportDecoder.SCHEMA_VERSION);
 
-        DecimalDecoder decimalDecoder = new DecimalDecoder();
-        decimalDecoder.wrap(buffer, decoder.amount().offset());
-        long mantissa = decimalDecoder.mantissa();
-        byte exponent = decimalDecoder.exponent();
+        long mantissa = decoder.amount().mantissa();
+        byte exponent = decoder.amount().exponent();
         double amount = mantissa * Math.pow(10, exponent);
 
         String currency = decoder.currency();
 
-        decimalDecoder.wrap(buffer, decoder.secondaryAmount().offset());
-        mantissa = decimalDecoder.mantissa();
-        exponent = decimalDecoder.exponent();
-        double secondaryAmount = mantissa * Math.pow(10, exponent);
+        // Decode Secondary Amount
+        long saMantissa = decoder.secondaryAmount().mantissa();
+        byte saExponent = decoder.secondaryAmount().exponent();
+        double secondaryAmount = saMantissa * Math.pow(10, saExponent);
 
         String secondaryCurrency = decoder.secondaryCurrency();
         String side = decoder.side();
@@ -166,10 +155,9 @@ public class SbeDecoder {
         String dealRequestID = decoder.dealRequestID();
         String dealID = decoder.dealID();
 
-        decimalDecoder.wrap(buffer, decoder.fxRate().offset());
-        mantissa = decimalDecoder.mantissa();
-        exponent = decimalDecoder.exponent();
-        double fxRate = mantissa * Math.pow(10, exponent);
+        long fxMantissa = decoder.fxRate().mantissa();
+        byte fxExponent = decoder.fxRate().exponent();
+        double fxRate = fxMantissa * Math.pow(10, fxExponent);
 
         logger.info("Amount: {}, Currency: {}, SecondaryAmount: {}, SecondaryCurrency: {}, Side: {}, Symbol: {}, DeliveryDate: {}, TransactTime: {}, QuoteRequestID: {}, QuoteID: {}, DealRequestID: {}, DealID: {}, FxRate: {}",
                 amount, currency, secondaryAmount, secondaryCurrency, side, symbol, deliveryDate, transactTime, quoteRequestID, quoteID, dealRequestID, dealID, fxRate);
@@ -179,18 +167,15 @@ public class SbeDecoder {
         ErrorDecoder decoder = new ErrorDecoder();
         decoder.wrap(buffer, MessageHeaderDecoder.ENCODED_LENGTH, ErrorDecoder.BLOCK_LENGTH, ErrorDecoder.SCHEMA_VERSION);
 
-        DecimalDecoder decimalDecoder = new DecimalDecoder();
-        decimalDecoder.wrap(buffer, decoder.amount().offset());
-        long mantissa = decimalDecoder.mantissa();
-        byte exponent = decimalDecoder.exponent();
+        long mantissa = decoder.amount().mantissa();
+        byte exponent = decoder.amount().exponent();
         double amount = mantissa * Math.pow(10, exponent);
 
         String currency = decoder.currency();
 
-        decimalDecoder.wrap(buffer, decoder.fxRate().offset());
-        mantissa = decimalDecoder.mantissa();
-        exponent = decimalDecoder.exponent();
-        double fxRate = mantissa * Math.pow(10, exponent);
+        long fxMantissa = decoder.fxRate().mantissa();
+        byte fxExponent = decoder.fxRate().exponent();
+        double fxRate = fxMantissa * Math.pow(10, fxExponent);
 
         String transactTime = decoder.transactTime();
         String side = decoder.side();
@@ -202,10 +187,9 @@ public class SbeDecoder {
         String dealID = decoder.dealID();
 
         // Decode Secondary Amount
-        decimalDecoder.wrap(buffer, decoder.secondaryAmount().offset());
-        mantissa = decimalDecoder.mantissa();
-        exponent = decimalDecoder.exponent();
-        double secondaryAmount = mantissa * Math.pow(10, exponent);
+        long saMantissa = decoder.secondaryAmount().mantissa();
+        byte saExponent = decoder.secondaryAmount().exponent();
+        double secondaryAmount = saMantissa * Math.pow(10, saExponent);
 
         String message = decoder.message();
 

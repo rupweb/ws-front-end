@@ -58,10 +58,17 @@
   flex-grow: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Align items at the start (top) */
-  padding: 20px;
+  align-items: flex-start;
+  padding: 40px 20px; /* Increased top padding to give space below the header */
   width: 100%;
-  max-width: 1200px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.content-container {
+  padding-top: 30px; /* Additional padding to ensure the content clears the header */
+  width: 100%;
+  max-width: 1800px;
   margin: 0 auto;
 }
 
