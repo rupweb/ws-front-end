@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './css/App.css';
 import CurrencyConverter from './components/CurrencyConverter.js';
 import Blotter from './components/Blotter.js';
+import Onboarding from './components/Onboarding.js';
 import { Authenticator } from '@aws-amplify/ui-react';
 import CookieConsent from 'react-cookie-consent';
 import { WebSocketProvider } from './contexts/WebSocketContext.js';
@@ -27,6 +28,7 @@ function App() {
                     <Routes>
                       <Route path="/" element={<CurrencyConverter />} />
                       <Route path="/blotter" element={<Blotter />} />
+                      <Route path="/onboarding" element={<Onboarding />} />
                     </Routes>
                   </div>
                   <Footer />
@@ -51,7 +53,7 @@ const Header = ({ user, signOut }) => (
       <nav className="nav-links">
         <Link to="/">Home</Link>
         <Link to="/blotter">Blotter</Link>
-        {user && <Link to="/account">Account</Link>}
+        {user && <Link to="/onboarding">Account</Link>}
         {user && <button className="sign-out-button" onClick={signOut}>Sign Out</button>}
       </nav>
     </div>
