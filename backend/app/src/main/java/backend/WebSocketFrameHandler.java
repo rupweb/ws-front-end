@@ -6,6 +6,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import persistence.PersistenceQueue;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +41,12 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         } else if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
             String request = textFrame.text();
-            logger.debug("Received message: {}", request);
+            logger.info("Received message: {}", request);
+
+            // Don't persist ping messages
+            if (!request.contains("\"type\":\"ping\""))
+                PersistenceQueue.getInstance().getQueue().offer(request);        
+
             ctx.channel().writeAndFlush(new TextWebSocketFrame("Echo: " + request));
         } else {
             String message = "unsupported frame type: " + frame.getClass().getName();

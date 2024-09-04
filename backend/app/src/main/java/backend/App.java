@@ -4,8 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
+import com.fasterxml.jackson.databind.ser.std.SqlDateSerializer;
+
 import io.aeron.Aeron;
 import io.aeron.driver.MediaDriver;
+import persistence.SqLiteInitializer;
+import persistence.SqlPersistor;
 
 public class App {
     private static final Logger log = LogManager.getLogger(App.class);
@@ -54,6 +58,10 @@ public class App {
                 e.printStackTrace();
             }
         }).start();
+
+        // Start database persistence
+        SqLiteInitializer.initializeDatabase();
+        new SqlPersistor().start();
 
         // Start the main aeron client
         aeronClient.start();

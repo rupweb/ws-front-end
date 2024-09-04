@@ -6,3 +6,6 @@ build
 logs
 
 backend/logs
+
+# Ignore DB persistence
+*.db

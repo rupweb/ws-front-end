@@ -1,0 +1,137 @@
+package messages;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import persistence.SqlMessage;
+
+public class Client implements SqlMessage {
+    public String fullName;
+    public String dateOfBirth;
+    public String nationality;
+    public String governmentID;
+    public String socialSecurityNumber;
+    public String emailAddress;
+    public String phoneNumber;
+    public String residentialAddress;
+    public String bankAccount;
+    public String employmentInformation;
+    public String incomeAndTaxInformation;
+    public String verificationDocument;
+    public String riskAssessmentData;
+
+    // Default constructor (needed by Jackson)
+    public Client() {
+    }
+
+    public Client(String fullName, String dateOfBirth, String nationality, String governmentID,
+            String socialSecurityNumber, String emailAddress, String phoneNumber, String residentialAddress,
+            String bankAccount, String employmentInformation, String incomeAndTaxInformation,
+            String verificationDocument, String riskAssessmentData) {
+        this.fullName = fullName;
+        this.dateOfBirth = dateOfBirth;
+        this.nationality = nationality;
+        this.governmentID = governmentID;
+        this.socialSecurityNumber = socialSecurityNumber;
+        this.emailAddress = emailAddress;
+        this.phoneNumber = phoneNumber;
+        this.residentialAddress = residentialAddress;
+        this.bankAccount = bankAccount;
+        this.employmentInformation = employmentInformation;
+        this.incomeAndTaxInformation = incomeAndTaxInformation;
+        this.verificationDocument = verificationDocument;
+        this.riskAssessmentData = riskAssessmentData;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public String getGovernmentID() {
+        return governmentID;
+    }
+
+    public String getSocialSecurityNumber() {
+        return socialSecurityNumber;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getResidentialAddress() {
+        return residentialAddress;
+    }
+
+    public String getBankAccount() {
+        return bankAccount;
+    }
+
+    public String getEmploymentInformation() {
+        return employmentInformation;
+    }
+
+    public String getIncomeAndTaxInformation() {
+        return incomeAndTaxInformation;
+    }
+
+    public String getVerificationDocument() {
+        return verificationDocument;
+    }
+
+    public String getRiskAssessmentData() {
+        return riskAssessmentData;
+    }
+
+    // Method to persist Client data to SQLite database
+    public void persistToSQLite() {
+        String sql = "INSERT INTO Client(fullName, dateOfBirth, nationality, governmentID, socialSecurityNumber, emailAddress, phoneNumber, residentialAddress, bankAccount, employmentInformation, incomeAndTaxInformation, verificationDocument, riskAssessmentData) " +
+                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:client.db");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, fullName);
+            pstmt.setString(2, dateOfBirth);
+            pstmt.setString(3, nationality);
+            pstmt.setString(4, governmentID);
+            pstmt.setString(5, socialSecurityNumber);
+            pstmt.setString(6, emailAddress);
+            pstmt.setString(7, phoneNumber);
+            pstmt.setString(8, residentialAddress);
+            pstmt.setString(9, bankAccount);
+            pstmt.setString(10, employmentInformation);
+            pstmt.setString(11, incomeAndTaxInformation);
+            pstmt.setString(12, verificationDocument);
+            pstmt.setString(13, riskAssessmentData);
+            
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Client [fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", nationality=" + nationality
+                + ", governmentID=" + governmentID + ", socialSecurityNumber=" + socialSecurityNumber
+                + ", emailAddress=" + emailAddress + ", phoneNumber=" + phoneNumber + ", residentialAddress="
+                + residentialAddress + ", bankAccount=" + bankAccount + ", employmentInformation="
+                + employmentInformation + ", incomeAndTaxInformation=" + incomeAndTaxInformation
+                + ", verificationDocument=" + verificationDocument + ", riskAssessmentData=" + riskAssessmentData + "]";
+    }
+}
