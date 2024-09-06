@@ -8,25 +8,27 @@ import java.sql.SQLException;
 import persistence.SqlMessage;
 
 public class Client implements SqlMessage {
-    public String fullName;
-    public String dateOfBirth;
-    public String nationality;
-    public String governmentID;
-    public String socialSecurityNumber;
-    public String emailAddress;
-    public String phoneNumber;
-    public String residentialAddress;
-    public String bankAccount;
-    public String employmentInformation;
-    public String incomeAndTaxInformation;
-    public String verificationDocument;
-    public String riskAssessmentData;
+
+    private int clientID;
+    private String fullName;
+    private String dateOfBirth;
+    private String nationality;
+    private String governmentID;
+    private String socialSecurityNumber;
+    private String emailAddress;
+    private String phoneNumber;
+    private String residentialAddress;
+    private String bankAccount;
+    private String employmentInformation;
+    private String incomeAndTaxInformation;
+    private String verificationDocument;
+    private String riskAssessmentData;
 
     // Default constructor (needed by Jackson)
     public Client() {
     }
 
-    public Client(String fullName, String dateOfBirth, String nationality, String governmentID,
+    public Client(int clientID, String fullName, String dateOfBirth, String nationality, String governmentID,
             String socialSecurityNumber, String emailAddress, String phoneNumber, String residentialAddress,
             String bankAccount, String employmentInformation, String incomeAndTaxInformation,
             String verificationDocument, String riskAssessmentData) {
@@ -43,6 +45,10 @@ public class Client implements SqlMessage {
         this.incomeAndTaxInformation = incomeAndTaxInformation;
         this.verificationDocument = verificationDocument;
         this.riskAssessmentData = riskAssessmentData;
+    }
+
+    public int getClientID() {
+        return clientID;
     }
 
     public String getFullName() {
@@ -99,25 +105,26 @@ public class Client implements SqlMessage {
 
     // Method to persist Client data to SQLite database
     public void persistToSQLite() {
-        String sql = "INSERT INTO Client(fullName, dateOfBirth, nationality, governmentID, socialSecurityNumber, emailAddress, phoneNumber, residentialAddress, bankAccount, employmentInformation, incomeAndTaxInformation, verificationDocument, riskAssessmentData) " +
-                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Client(clientID, fullName, dateOfBirth, nationality, governmentID, socialSecurityNumber, emailAddress, phoneNumber, residentialAddress, bankAccount, employmentInformation, incomeAndTaxInformation, verificationDocument, riskAssessmentData) " +
+                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:client.db");
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, fullName);
-            pstmt.setString(2, dateOfBirth);
-            pstmt.setString(3, nationality);
-            pstmt.setString(4, governmentID);
-            pstmt.setString(5, socialSecurityNumber);
-            pstmt.setString(6, emailAddress);
-            pstmt.setString(7, phoneNumber);
-            pstmt.setString(8, residentialAddress);
-            pstmt.setString(9, bankAccount);
-            pstmt.setString(10, employmentInformation);
-            pstmt.setString(11, incomeAndTaxInformation);
-            pstmt.setString(12, verificationDocument);
-            pstmt.setString(13, riskAssessmentData);
+            pstmt.setInt(1, clientID);
+            pstmt.setString(2, fullName);
+            pstmt.setString(3, dateOfBirth);
+            pstmt.setString(4, nationality);
+            pstmt.setString(5, governmentID);
+            pstmt.setString(6, socialSecurityNumber);
+            pstmt.setString(7, emailAddress);
+            pstmt.setString(8, phoneNumber);
+            pstmt.setString(9, residentialAddress);
+            pstmt.setString(10, bankAccount);
+            pstmt.setString(11, employmentInformation);
+            pstmt.setString(12, incomeAndTaxInformation);
+            pstmt.setString(13, verificationDocument);
+            pstmt.setString(14, riskAssessmentData);
             
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -127,7 +134,7 @@ public class Client implements SqlMessage {
 
     @Override
     public String toString() {
-        return "Client [fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", nationality=" + nationality
+        return "Client [clientID= " + clientID + ", fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", nationality=" + nationality
                 + ", governmentID=" + governmentID + ", socialSecurityNumber=" + socialSecurityNumber
                 + ", emailAddress=" + emailAddress + ", phoneNumber=" + phoneNumber + ", residentialAddress="
                 + residentialAddress + ", bankAccount=" + bankAccount + ", employmentInformation="

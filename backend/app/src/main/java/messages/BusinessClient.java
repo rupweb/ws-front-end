@@ -5,30 +5,34 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class BusinessClient {
-    public String registeredBusinessName;
-    public String legalEntityIdentifier;
-    public String registrationNumber;
-    public String certificateOfIncorporation;
-    public String taxIdentificationNumber;
-    public String businessLicense;
-    public String boardOfDirectors;
-    public String shareholders;
-    public String articlesOfAssociation;
-    public String registeredAddress;
-    public String contactDetails;
-    public String bankAccountDetails;
-    public String financialStatements;
-    public String creditHistory;
-    public String beneficialOwnershipInformation;
-    public String riskAssessmentData;
-    public String amlPoliciesAndProcedures;  
+import persistence.SqlMessage;
+
+public class BusinessClient implements SqlMessage {
+
+    private int clientID;
+    private String registeredBusinessName;
+    private String legalEntityIdentifier;
+    private String registrationNumber;
+    private String certificateOfIncorporation;
+    private String taxIdentificationNumber;
+    private String businessLicense;
+    private String boardOfDirectors;
+    private String shareholders;
+    private String articlesOfAssociation;
+    private String registeredAddress;
+    private String contactDetails;
+    private String bankAccountDetails;
+    private String financialStatements;
+    private String creditHistory;
+    private String beneficialOwnershipInformation;
+    private String riskAssessmentData;
+    private String amlPoliciesAndProcedures;  
 
     // Default constructor (needed by Jackson)
     public BusinessClient() {
     }
 
-    public BusinessClient(String registeredBusinessName, String legalEntityIdentifier, String registrationNumber,
+    public BusinessClient(int clientID, String registeredBusinessName, String legalEntityIdentifier, String registrationNumber,
             String certificateOfIncorporation, String taxIdentificationNumber, String businessLicense,
             String boardOfDirectors, String shareholders, String articlesOfAssociation, String registeredAddress,
             String contactDetails, String bankAccountDetails, String financialStatements, String creditHistory,
@@ -50,6 +54,10 @@ public class BusinessClient {
         this.beneficialOwnershipInformation = beneficialOwnershipInformation;
         this.riskAssessmentData = riskAssessmentData;
         this.amlPoliciesAndProcedures = amlPoliciesAndProcedures;
+    }
+
+    public int getClientID() {
+        return clientID;
     }
 
     public String getRegisteredBusinessName() {
@@ -122,29 +130,30 @@ public class BusinessClient {
 
     // Method to persist BusinessClient data to SQLite database
     public void persistToSQLite() {
-        String sql = "INSERT INTO BusinessClient(registeredBusinessName, legalEntityIdentifier, registrationNumber, certificateOfIncorporation, taxIdentificationNumber, businessLicense, boardOfDirectors, shareholders, articlesOfAssociation, registeredAddress, contactDetails, bankAccountDetails, financialStatements, creditHistory, beneficialOwnershipInformation, riskAssessmentData, amlPoliciesAndProcedures) " +
-                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO BusinessClient(clientID, registeredBusinessName, legalEntityIdentifier, registrationNumber, certificateOfIncorporation, taxIdentificationNumber, businessLicense, boardOfDirectors, shareholders, articlesOfAssociation, registeredAddress, contactDetails, bankAccountDetails, financialStatements, creditHistory, beneficialOwnershipInformation, riskAssessmentData, amlPoliciesAndProcedures) " +
+                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:client.db");
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, registeredBusinessName);
-            pstmt.setString(2, legalEntityIdentifier);
-            pstmt.setString(3, registrationNumber);
-            pstmt.setString(4, certificateOfIncorporation);
-            pstmt.setString(5, taxIdentificationNumber);
-            pstmt.setString(6, businessLicense);
-            pstmt.setString(7, boardOfDirectors);
-            pstmt.setString(8, shareholders);
-            pstmt.setString(9, articlesOfAssociation);
-            pstmt.setString(10, registeredAddress);
-            pstmt.setString(11, contactDetails);
-            pstmt.setString(12, bankAccountDetails);
-            pstmt.setString(13, financialStatements);
-            pstmt.setString(14, creditHistory);
-            pstmt.setString(15, beneficialOwnershipInformation);
-            pstmt.setString(16, riskAssessmentData);
-            pstmt.setString(17, amlPoliciesAndProcedures);
+            pstmt.setInt(1, clientID);
+            pstmt.setString(2, registeredBusinessName);
+            pstmt.setString(3, legalEntityIdentifier);
+            pstmt.setString(4, registrationNumber);
+            pstmt.setString(5, certificateOfIncorporation);
+            pstmt.setString(6, taxIdentificationNumber);
+            pstmt.setString(7, businessLicense);
+            pstmt.setString(8, boardOfDirectors);
+            pstmt.setString(9, shareholders);
+            pstmt.setString(10, articlesOfAssociation);
+            pstmt.setString(11, registeredAddress);
+            pstmt.setString(12, contactDetails);
+            pstmt.setString(13, bankAccountDetails);
+            pstmt.setString(14, financialStatements);
+            pstmt.setString(15, creditHistory);
+            pstmt.setString(16, beneficialOwnershipInformation);
+            pstmt.setString(17, riskAssessmentData);
+            pstmt.setString(18, amlPoliciesAndProcedures);
             
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -154,7 +163,7 @@ public class BusinessClient {
 
     @Override
     public String toString() {
-        return "BusinessClient [registeredBusinessName=" + registeredBusinessName + ", legalEntityIdentifier="
+        return "BusinessClient [clientID=" + clientID + ", registeredBusinessName=" + registeredBusinessName + ", legalEntityIdentifier="
                 + legalEntityIdentifier + ", registrationNumber=" + registrationNumber + ", certificateOfIncorporation="
                 + certificateOfIncorporation + ", taxIdentificationNumber=" + taxIdentificationNumber
                 + ", businessLicense=" + businessLicense + ", boardOfDirectors=" + boardOfDirectors + ", shareholders="
