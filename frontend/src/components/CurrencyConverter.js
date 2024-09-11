@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import useCurrencyConversion from '../hooks/useCurrencyConversion.js';
-import KYCStatusModal from './KYCStatusModal.js';
+import ClientIDModal from './ClientIDModal.js';
 import ExecutionReportModal from './ExecutionReportModal.js';
 import ErrorModal from './ErrorModal.js';
 import SalePriceField from './SalePriceField.js';
 import SaleCurrencyField from './SaleCurrencyField.js';
 import DeliveryDateField from './DeliveryDateField.js';
 import FromCurrencyField from './FromCurrencyField.js';
-import KYCStatusField from './KYCStatusField.js';
+import ClientIDField from './ClientIDField.js';
 import { addBusinessDays, isWeekday } from '../utils/utils.js';
 import '../css/CurrencyConverter.css';
 
@@ -22,11 +22,11 @@ const CurrencyConverter = () => {
     selectedDate,
     setSelectedDate,
     isFormValid,
-    kycStatus,
-    setKycStatus,
-    kycMessage,
-    showKyc,
-    handleKycModalClose,
+    clientID,
+    setClientID,
+    clientIDMessage,
+    showClientID,
+    handleClientIDModalClose,
     quote,
     showQuote,
     handleQuoteRequest,
@@ -53,7 +53,7 @@ const CurrencyConverter = () => {
 
   return (
     <div className="converter-container">
-      <KYCStatusModal show={showKyc} message={kycMessage} onClose={handleKycModalClose} />
+      <ClientIDModal show={showClientID} message={clientIDMessage} onClose={handleClientIDModalClose} />
       <div className="card rounded p-4">
         <SalePriceField amount={amount} setAmount={setAmount} />
         <SaleCurrencyField toCurrency={toCurrency} setToCurrency={setToCurrency} />
@@ -65,7 +65,7 @@ const CurrencyConverter = () => {
           isWeekday={isWeekday} 
         />
         <FromCurrencyField fromCurrency={fromCurrency} setFromCurrency={setFromCurrency} toCurrency={toCurrency} />
-        <KYCStatusField kycStatus={kycStatus} setKycStatus={setKycStatus} />
+        <ClientIDField clientID={clientID} setClientID={setClientID} />
         <div>
           <button
             className="btn btn-primary btn-block"

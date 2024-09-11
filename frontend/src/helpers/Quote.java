@@ -10,6 +10,7 @@ public class Quote {
     private String symbol;
     private String quoteID;
     private String quoteRequestID;
+    private String clientID;
 
     public double getAmount() {
         return amount;
@@ -59,4 +60,10 @@ public class Quote {
     public void setQuoteRequestID(String quoteRequestID) {
         this.quoteRequestID = quoteRequestID;
     }  
+    public String getClientID() {
+        return clientID;
+    }
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
+    }
 }

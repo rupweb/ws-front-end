@@ -4,8 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
-import com.fasterxml.jackson.databind.ser.std.SqlDateSerializer;
-
 import io.aeron.Aeron;
 import io.aeron.driver.MediaDriver;
 import persistence.SqLiteInitializer;
@@ -37,7 +35,7 @@ public class App {
             try {
                 webSocketServer.start();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.warn("Interrupted", e);
             }
         }).start();
 
@@ -55,7 +53,7 @@ public class App {
             try {
                 aeronErrorClient.start();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.warn("Interrupted", e);
             }
         }).start();
 

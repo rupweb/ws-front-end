@@ -30,7 +30,7 @@ describe('WebSocket integration test', () => {
                     side: 'BUY',
                     symbol: 'EURUSD',
                     currencyOwned: 'EUR',
-                    kycStatus: 2
+                    clientID: 'TEST'
                 };
 
                 const encodedMessage = encodeQuoteRequest(quoteRequestData);

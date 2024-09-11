@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { addBusinessDays } from '../utils/utils.js';
 import useFormValidation from './useFormValidation.js';
-import useKycStatus from './useKycStatus.js';
-import useKycHandling from './useKycHandling.js';
+import useClientID from './useClientID.js';
+import useClientIDHandling from './useClientIDHandling.js';
 import useQuoteHandling from './useQuoteHandling.js';
 import useDealHandling from './useDealHandling.js';
 import useErrorHandling from './useErrorHandling.js';
@@ -37,11 +37,11 @@ const useCurrencyConversion = () => {
   const [amount, setAmount] = useState('');
   const [selectedDate, setSelectedDate] = useState(addBusinessDays(new Date(), 2));
 
-  // KYC status
-  const { kycStatus, setKycStatus } = useKycStatus();
+  // ClientID status
+  const { clientID, setClientID } = useClientID();
   const isFormValid = useFormValidation(fromCurrency, toCurrency, amount);
-  const [kycMessage, setKycMessage] = useState('');
-  const [showKyc, setShowKyc] = useState(false);
+  const [clientIDMessage, setClientIDMessage] = useState('');
+  const [showClientID, setShowClientID] = useState(false);
 
   // Execution message
   const [executionReportMessage, setExecutionReportMessage] = useState('');
@@ -49,10 +49,10 @@ const useCurrencyConversion = () => {
   // Error message
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { handleKycCheck, handleKycModalClose } = useKycHandling(
-    setKycStatus,
-    setKycMessage,
-    setShowKyc
+  const { handleClientIDCheck, handleClientIDModalClose } = useClientIDHandling(
+    setClientID,
+    setClientIDMessage,
+    setShowClientID
   );
 
   const { handleQuoteMessage } = useQuoteHandling(setQuote);
@@ -62,13 +62,13 @@ const useCurrencyConversion = () => {
   const { handleErrorModalClose } = useErrorModal(setShowError);
 
   const handleQuoteRequest = () => prepareQuoteRequest({
-    kycStatus,
+    clientID,
     amount,
     selectedDate,
     toCurrency,
     fromCurrency,
     sendMessage,
-    handleKycCheck
+    handleClientIDCheck
   });
 
   const handleDealRequest = () => prepareDealRequest({
@@ -89,7 +89,7 @@ const useCurrencyConversion = () => {
     setToCurrency,
     setAmount,
     setSelectedDate,
-    setKycStatus,
+    setClientID,
     setQuote,
     setShowQuote,
     setExecutionReport,
@@ -108,11 +108,11 @@ const useCurrencyConversion = () => {
     selectedDate,
     setSelectedDate,
     isFormValid,
-    kycStatus,
-    setKycStatus,
-    kycMessage,
-    showKyc,
-    handleKycModalClose,
+    clientID,
+    setClientID,
+    clientIDMessage,
+    showClientID,
+    handleClientIDModalClose,
     quote, 
     showQuote,
     setShowQuote,

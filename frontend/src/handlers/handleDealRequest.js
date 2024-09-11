@@ -33,7 +33,8 @@ const handleDealRequest = async ({
     secondaryAmount: {
       mantissa: Math.round(secondaryAmount * Math.pow(10, 2)),
       exponent: -2
-    }
+    },
+    clientID: 'TEST'
   };
 
   // Encode the data using the JavaScript encoder

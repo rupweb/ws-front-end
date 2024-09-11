@@ -1,5 +1,12 @@
 package backend;
 
+import java.util.concurrent.CopyOnWriteArraySet;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -7,14 +14,6 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import persistence.PersistenceQueue;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.concurrent.CopyOnWriteArraySet;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     private static final Logger logger = LogManager.getLogger(WebSocketFrameHandler.class);
@@ -38,8 +37,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             byte[] data = new byte[byteBuf.readableBytes()];
             byteBuf.readBytes(data);
             App.getAeronClient().getBackendToFix().sendMessage(data);  // Publish binary data to Aeron multicast
-        } else if (frame instanceof TextWebSocketFrame) {
-            TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
+        } else if (frame instanceof TextWebSocketFrame textFrame) {
             String request = textFrame.text();
             logger.info("Received message: {}", request);
 

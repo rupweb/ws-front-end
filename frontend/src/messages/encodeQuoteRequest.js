@@ -16,7 +16,7 @@ const encodeQuoteRequest = (data) => {
     encoder.transactTime(data.transactTime);
     encoder.quoteRequestID(data.quoteRequestID);
     encoder.currencyOwned(data.currencyOwned);
-    encoder.kycStatus(data.kycStatus);
+    encoder.clientID(data.clientID);
 
     return buffer;
 };

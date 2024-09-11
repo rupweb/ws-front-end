@@ -57,19 +57,9 @@ class QuoteRequestDecoder {
         return this.getString(this.offset + 67, 3);
     }
 
-    // Decode kycStatus
-    kycStatus() {
-        const value = this.buffer.getUint8(this.offset + 70);
-        const valueMap = {
-            3: 'OTHER',
-            0: 'NOT_STARTED',
-            1: 'PENDING',
-            2: 'VERIFIED',
-        };
-        if (!(value in valueMap)) {
-            throw new Error('Invalid enum value: ' + value);
-        }
-        return valueMap[value];
+    // Decode clientID
+    clientID() {
+        return this.getString(this.offset + 70, 4);
     }
 
     toString() {
@@ -82,7 +72,7 @@ class QuoteRequestDecoder {
             transactTime: this.transactTime().replace(/\0/g, ''),
             quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
             currencyOwned: this.currencyOwned().replace(/\0/g, ''),
-            kycStatus: this.kycStatus().replace(/\0/g, ''),
+            clientID: this.clientID().replace(/\0/g, ''),
         };
     }
 

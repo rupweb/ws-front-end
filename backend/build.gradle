@@ -36,9 +36,12 @@ dependencies {
     implementation 'io.aeron:aeron-driver:1.44.1'
     implementation 'org.agrona:agrona:1.21.2'
 
+    // SBE helpers
+    implementation files('../../libs/ws-shared-1.0.1.jar')    
+
     // Database persistence
     implementation 'org.xerial:sqlite-jdbc:3.46.1.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
 
     implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.23.1'

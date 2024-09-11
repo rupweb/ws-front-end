@@ -1,11 +1,11 @@
-// KYCStatusModal.js
+// ClientIDModal.js
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const KYCStatusModal = ({ show, message, onClose }) => (
+const ClientIDModal = ({ show, message, onClose }) => (
   <Modal show={show} onHide={onClose}>
     <Modal.Header>
-      <Modal.Title>KYC Status</Modal.Title>
+      <Modal.Title>Client ID</Modal.Title>
     </Modal.Header>
     <Modal.Body>
       <pre>{message}</pre>
@@ -18,4 +18,4 @@ const KYCStatusModal = ({ show, message, onClose }) => (
   </Modal>
 );
 
-export default KYCStatusModal;
+export default ClientIDModal;

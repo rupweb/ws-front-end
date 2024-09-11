@@ -1,16 +1,14 @@
 package messages;
 
 import org.agrona.DirectBuffer;
-import org.junit.jupiter.api.Test;
-
-import aeron.SbeEncoder;
-import agrona.messages.MessageHeaderDecoder;
-import agrona.messages.ExecutionReportDecoder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import agrona.messages.ExecutionReportDecoder;
+import agrona.messages.MessageHeaderDecoder;
+import sbe.SbeEncoder;
 
 public class ExecutionReportTest {
     private static final Logger log = LogManager.getLogger(ExecutionReportTest.class);
@@ -27,30 +25,31 @@ public class ExecutionReportTest {
         DirectBuffer dataBuffer = sbeEncoder.encodeExecutionReport(
                 1000.00, "USD", 2000, "EUR", "BUY", "EURUSD",
                 "20240101", "20240101-00:00:00.000",
-                "QR123456", "Q12345", "DR123456", "D12345", 1.2345
+                "QR123456", "Q12345", "DR123456", "D12345", "TEST", 1.2345
         );
 
         // Decode the message
-        ExecutionReportDecoder executionReportDecoder = new ExecutionReportDecoder();
-        executionReportDecoder.wrap(dataBuffer, MessageHeaderDecoder.ENCODED_LENGTH, ExecutionReportDecoder.BLOCK_LENGTH, ExecutionReportDecoder.SCHEMA_VERSION);
+        ExecutionReportDecoder decoder = new ExecutionReportDecoder();
+        decoder.wrap(dataBuffer, MessageHeaderDecoder.ENCODED_LENGTH, ExecutionReportDecoder.BLOCK_LENGTH, ExecutionReportDecoder.SCHEMA_VERSION);
 
         // Verify the decoded message
-        assertEquals(100000, executionReportDecoder.amount().mantissa());
-        assertEquals(-2, executionReportDecoder.amount().exponent());
-        assertEquals("USD", executionReportDecoder.currency());
-        assertEquals(200000, executionReportDecoder.secondaryAmount().mantissa());
-        assertEquals(-2, executionReportDecoder.secondaryAmount().exponent());
-        assertEquals("EUR", executionReportDecoder.secondaryCurrency());
-        assertEquals("BUY", executionReportDecoder.side());
-        assertEquals("EURUSD", executionReportDecoder.symbol());
-        assertEquals("20240101", executionReportDecoder.deliveryDate());
-        assertEquals("20240101-00:00:00.000", executionReportDecoder.transactTime());
-        assertEquals("QR123456", executionReportDecoder.quoteRequestID());
-        assertEquals("Q12345", executionReportDecoder.quoteID());
-        assertEquals("DR123456", executionReportDecoder.dealRequestID());
-        assertEquals("D12345", executionReportDecoder.dealID());
-        assertEquals(123450, executionReportDecoder.fxRate().mantissa());
-        assertEquals(-5, executionReportDecoder.fxRate().exponent());
+        assertEquals(100000, decoder.amount().mantissa());
+        assertEquals(-2, decoder.amount().exponent());
+        assertEquals("USD", decoder.currency());
+        assertEquals(200000, decoder.secondaryAmount().mantissa());
+        assertEquals(-2, decoder.secondaryAmount().exponent());
+        assertEquals("EUR", decoder.secondaryCurrency());
+        assertEquals("BUY", decoder.side());
+        assertEquals("EURUSD", decoder.symbol());
+        assertEquals("20240101", decoder.deliveryDate());
+        assertEquals("20240101-00:00:00.000", decoder.transactTime());
+        assertEquals("QR123456", decoder.quoteRequestID());
+        assertEquals("Q12345", decoder.quoteID());
+        assertEquals("DR123456", decoder.dealRequestID());
+        assertEquals("D12345", decoder.dealID());
+        assertEquals("TEST", decoder.clientID());
+        assertEquals(123450, decoder.fxRate().mantissa());
+        assertEquals(-5, decoder.fxRate().exponent());
 
         log.info("Out testSbeExecutionReport");
     }

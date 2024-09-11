@@ -9,7 +9,7 @@ public class QuoteRequest {
     private String side;
     private String symbol;
     private String currencyOwned;
-    private KycStatus kycStatus;
+    private String clientID;
 
     public double getSalePrice() {
         return salePrice;
@@ -59,10 +59,10 @@ public class QuoteRequest {
     public void setCurrencyOwned(String currencyOwned) {
         this.currencyOwned = currencyOwned;
     }
-    public KycStatus getKycStatus() {
-        return kycStatus;
+    public String getClientID() {
+        return clientID;
     }
-    public void setKycStatus(KycStatus kycStatus) {
-        this.kycStatus = kycStatus;
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
     }
 }

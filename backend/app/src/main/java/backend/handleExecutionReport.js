@@ -28,6 +28,7 @@ const initializeDatabase = async (db) => {
       quoteID TEXT,
       dealRequestID TEXT,
       dealID TEXT,
+      clientID TEXT,
       rate REAL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -49,8 +50,8 @@ const handleExecutionReport = async (dealData) => {
       INSERT INTO trade (
         amount, currency, secondaryAmount, secondaryCurrency, side,
         symbol, deliveryDate, transactTime, quoteRequestID, quoteID,
-        dealRequestID, dealID, rate
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        dealRequestID, dealID, clientID, rate
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       dealData.amount,
       dealData.currency,
@@ -64,6 +65,7 @@ const handleExecutionReport = async (dealData) => {
       dealData.quoteID,
       dealData.dealRequestID,
       dealData.dealID,
+      dealData.clientID,
       dealData.rate
     );
 

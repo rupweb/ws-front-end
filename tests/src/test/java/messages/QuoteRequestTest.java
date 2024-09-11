@@ -1,20 +1,20 @@
 package messages;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Value;
-import org.junit.jupiter.api.Test;
-
-import agrona.messages.MessageHeaderDecoder;
-import agrona.messages.QuoteRequestDecoder;
-import utils.Utils;
-
 import java.io.IOException;
 
 import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import agrona.messages.MessageHeaderDecoder;
+import agrona.messages.QuoteRequestDecoder;
+import utils.Utils;
 
 public class QuoteRequestTest {
     private static final Logger log = LogManager.getLogger(QuoteRequestTest.class);
@@ -57,7 +57,7 @@ public class QuoteRequestTest {
                 "side: 'BUY'," +
                 "symbol: 'EURUSD'," +
                 "currencyOwned: 'EUR'," +
-                "kycStatus: 2" +
+                "clientID: 'TEST'" +
                 "};";
         context.eval("js", dataScript);
 
@@ -80,22 +80,23 @@ public class QuoteRequestTest {
 
         // Use the Java decoder to decode the message
         UnsafeBuffer buffer = new UnsafeBuffer(encodedMessage);
-        QuoteRequestDecoder quoteRequestDecoder = new QuoteRequestDecoder();
+        QuoteRequestDecoder decoder = new QuoteRequestDecoder();
         MessageHeaderDecoder headerDecoder = new MessageHeaderDecoder();
 
         headerDecoder.wrap(buffer, 0);
-        quoteRequestDecoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
+        decoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
 
         // Verify the decoded message
-        assertEquals(100000, quoteRequestDecoder.amount().mantissa());
-        assertEquals(-2, quoteRequestDecoder.amount().exponent());
-        assertEquals("USD", quoteRequestDecoder.saleCurrency());
-        assertEquals("BUY", quoteRequestDecoder.side());
-        assertEquals("EURUSD", quoteRequestDecoder.symbol());
-        assertEquals("20240101", quoteRequestDecoder.deliveryDate());
-        assertEquals("20240101-00:00:00.000", quoteRequestDecoder.transactTime());
-        assertEquals("QR123456", quoteRequestDecoder.quoteRequestID());
-        assertEquals("EUR", quoteRequestDecoder.currencyOwned());
+        assertEquals(100000, decoder.amount().mantissa());
+        assertEquals(-2, decoder.amount().exponent());
+        assertEquals("USD", decoder.saleCurrency());
+        assertEquals("BUY", decoder.side());
+        assertEquals("EURUSD", decoder.symbol());
+        assertEquals("20240101", decoder.deliveryDate());
+        assertEquals("20240101-00:00:00.000", decoder.transactTime());
+        assertEquals("QR123456", decoder.quoteRequestID());
+        assertEquals("EUR", decoder.currencyOwned());
+        assertEquals("TEST", decoder.clientID());
 
         context.close();
         log.info("Out testQuoteRequest");

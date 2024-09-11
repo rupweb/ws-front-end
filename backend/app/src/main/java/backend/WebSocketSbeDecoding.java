@@ -3,7 +3,7 @@ package backend;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import messaging.SbeDecoder;
+import sbe.SbeDecoder;
 
 public class WebSocketSbeDecoding extends SimpleChannelInboundHandler<BinaryWebSocketFrame> {
 

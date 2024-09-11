@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class QuoteEncoder {
-    static BLOCK_LENGTH = 101;
+    static BLOCK_LENGTH = 105;
     static TEMPLATE_ID = 4;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -83,6 +83,12 @@ class QuoteEncoder {
         this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 84);
         this.secondaryAmountEncoder.mantissa(value.mantissa);
         this.secondaryAmountEncoder.exponent(value.exponent);
+    }
+
+    // Encode clientID
+    clientID(value) {
+        this.putString(this.offset + 93, value, 4);
+        return this;
     }
 
     putString(offset, value, length) {

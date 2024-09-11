@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class ExecutionReportEncoder {
-    static BLOCK_LENGTH = 146;
+    static BLOCK_LENGTH = 148;
     static TEMPLATE_ID = 2;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -103,8 +103,14 @@ class ExecutionReportEncoder {
         return this;
     }
 
+    // Encode clientID
+    clientID(value) {
+        this.putString(this.offset + 127, value, 4);
+        return this;
+    }
+
     encodefxRate(value) {
-        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 127);
+        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 131);
         this.fxRateEncoder.mantissa(value.mantissa);
         this.fxRateEncoder.exponent(value.exponent);
     }

@@ -42,6 +42,7 @@ export const WebSocketProvider = ({ url, children }) => {
         dealID: '',
         rate: 0,
         secondaryAmount: 0,
+        clientID: '',
         message: ''
       });
 

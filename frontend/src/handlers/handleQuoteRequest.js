@@ -3,16 +3,16 @@ import encodeQuoteRequest from '../messages/encodeQuoteRequest.js';
 import { format } from 'date-fns';
 
 const handleQuoteRequest = async ({
-  kycStatus,
+  clientID,
   amount,
   selectedDate,
   toCurrency,
   fromCurrency,
   sendMessage,
-  handleKycCheck
+  handleClientIDCheck
 }) => {
-  const kycCheckResult = handleKycCheck(kycStatus, amount);
-  if (kycCheckResult) return;
+  const clientIDCheckResult = handleClientIDCheck(clientID, amount);
+  if (clientIDCheckResult) return;
 
   // Prepare the data to encode
   const requestData = {
@@ -27,7 +27,7 @@ const handleQuoteRequest = async ({
     transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
     quoteRequestID: generateUUID(),
     currencyOwned: fromCurrency,
-    kycStatus: kycStatus
+    clientID: 'TEST'
   };
 
   // Encode the data using the JavaScript encoder

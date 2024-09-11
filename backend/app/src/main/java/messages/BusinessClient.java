@@ -129,12 +129,13 @@ public class BusinessClient implements SqlMessage {
     }
 
     // Method to persist BusinessClient data to SQLite database
-    public void persistToSQLite() {
+    @Override
+    public void persistToSQLite(String DB_STRING) {
         String sql = "INSERT INTO BusinessClient(clientID, registeredBusinessName, legalEntityIdentifier, registrationNumber, certificateOfIncorporation, taxIdentificationNumber, businessLicense, boardOfDirectors, shareholders, articlesOfAssociation, registeredAddress, contactDetails, bankAccountDetails, financialStatements, creditHistory, beneficialOwnershipInformation, riskAssessmentData, amlPoliciesAndProcedures) " +
                      "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:client.db");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DriverManager.getConnection(DB_STRING);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setInt(1, clientID);
             pstmt.setString(2, registeredBusinessName);

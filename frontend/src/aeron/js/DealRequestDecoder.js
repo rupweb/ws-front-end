@@ -78,6 +78,11 @@ class DealRequestDecoder {
         return { mantissa, exponent };
     }
 
+    // Decode clientID
+    clientID() {
+        return this.getString(this.offset + 117, 4);
+    }
+
     toString() {
         return {
             amount: this.decodeamount(),
@@ -91,6 +96,7 @@ class DealRequestDecoder {
             dealRequestID: this.dealRequestID().replace(/\0/g, ''),
             fxRate: this.decodefxRate(),
             secondaryAmount: this.decodesecondaryAmount(),
+            clientID: this.clientID().replace(/\0/g, ''),
         };
     }
 

@@ -20,7 +20,7 @@ describe('Quote Request Message Encoding/Decoding', () => {
             transactTime: '20230101-00:00:00.000',
             quoteRequestID: '12345678',
             currencyOwned: 'EUR',
-            kycStatus: 'VERIFIED'
+            clientID: 'TEST'
         };
 
         try {

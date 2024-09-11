@@ -1,21 +1,20 @@
 package messages;
 
+import java.io.IOException;
+
 import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import agrona.messages.DealRequestDecoder;
 import agrona.messages.MessageHeaderDecoder;
 import utils.Utils;
-
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DealRequestTest {
     private static final Logger log = LogManager.getLogger(DealRequestTest.class);
@@ -33,10 +32,10 @@ public class DealRequestTest {
 
         // Load and prepare scripts
         String textEncoderScript = Utils.loadScript("tests/src/test/java/aeron/TextEncoder.js");
-        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DecimalEncoder.js"));
-        String MessageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/MessageHeaderEncoder.js"));
-        String dealRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DealRequestEncoder.js"));
-        String encodeDealRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/encodeDealRequest.js"));
+        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/DecimalEncoder.js"));
+        String MessageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/MessageHeaderEncoder.js"));
+        String dealRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/DealRequestEncoder.js"));
+        String encodeDealRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/encodeDealRequest.js"));
 
         // Concatenate scripts in the correct order
         String combinedScript = textEncoderScript + "\n" +
@@ -59,7 +58,8 @@ public class DealRequestTest {
                     "quoteRequestID: 'QR123456', " +
                     "quoteID: 'Q123456', " +
                     "dealRequestID: 'DR123456', " +
-                    "fxRate: { mantissa: 100, exponent: -2 }" +
+                    "fxRate: { mantissa: 100, exponent: -2 }, " +
+                    "clientID: 'TEST'" +
                     "};";
         context.eval("js", dataScript);
 
@@ -82,25 +82,26 @@ public class DealRequestTest {
 
         // Use the Java decoder to decode the message
         UnsafeBuffer buffer = new UnsafeBuffer(encodedMessage);
-        DealRequestDecoder dealRequestDecoder = new DealRequestDecoder();
+        DealRequestDecoder decoder = new DealRequestDecoder();
         MessageHeaderDecoder headerDecoder = new MessageHeaderDecoder();
 
         headerDecoder.wrap(buffer, 0);
-        dealRequestDecoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
+        decoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
 
         // Verify the decoded message
-        assertEquals(1000, dealRequestDecoder.amount().mantissa());
-        assertEquals(2, dealRequestDecoder.amount().exponent());
-        assertEquals("USD", dealRequestDecoder.currency());
-        assertEquals("BUY", dealRequestDecoder.side());
-        assertEquals("EURUSD", dealRequestDecoder.symbol());
-        assertEquals("20240201", dealRequestDecoder.deliveryDate());
-        assertEquals("20240101-00:00:00.000", dealRequestDecoder.transactTime());
-        assertEquals("QR123456", dealRequestDecoder.quoteRequestID());
-        assertEquals("Q123456", dealRequestDecoder.quoteID());
-        assertEquals("DR123456", dealRequestDecoder.dealRequestID());
-        assertEquals(100, dealRequestDecoder.fxRate().mantissa());
-        assertEquals(-2, dealRequestDecoder.fxRate().exponent());
+        assertEquals(1000, decoder.amount().mantissa());
+        assertEquals(2, decoder.amount().exponent());
+        assertEquals("USD", decoder.currency());
+        assertEquals("BUY", decoder.side());
+        assertEquals("EURUSD", decoder.symbol());
+        assertEquals("20240201", decoder.deliveryDate());
+        assertEquals("20240101-00:00:00.000", decoder.transactTime());
+        assertEquals("QR123456", decoder.quoteRequestID());
+        assertEquals("Q123456", decoder.quoteID());
+        assertEquals("DR123456", decoder.dealRequestID());
+        assertEquals(100, decoder.fxRate().mantissa());
+        assertEquals(-2, decoder.fxRate().exponent());
+        assertEquals("TEST", decoder.clientID());
 
         context.close();
         log.info("Out testDealRequest");

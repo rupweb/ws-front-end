@@ -1,28 +1,24 @@
 package websockets;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Value;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import utils.Utils;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import utils.Utils;
 
 public class DealRequestWebSocketTest {
     private static final Logger log = LogManager.getLogger(DealRequestWebSocketTest.class);
@@ -134,6 +130,7 @@ public class DealRequestWebSocketTest {
                     "quoteID: 'Q123456', " +
                     "dealRequestID: 'DR123456', " +
                     "fxRate: { mantissa: 100, exponent: -2 }" +
+                    "clientID: 'TEST'" +
                     "};";
         context.eval("js", dataScript);
 

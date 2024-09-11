@@ -83,9 +83,14 @@ class ErrorDecoder {
         return { mantissa, exponent };
     }
 
+    // Decode clientID
+    clientID() {
+        return this.getString(this.offset + 133, 4);
+    }
+
     // Decode message
     message() {
-        return this.getString(this.offset + 133, 256);
+        return this.getString(this.offset + 137, 256);
     }
 
     toString() {
@@ -102,6 +107,7 @@ class ErrorDecoder {
             dealID: this.dealID().replace(/\0/g, ''),
             fxRate: this.decodefxRate(),
             secondaryAmount: this.decodesecondaryAmount(),
+            clientID: this.clientID().replace(/\0/g, ''),
             message: this.message().replace(/\0/g, ''),
         };
     }

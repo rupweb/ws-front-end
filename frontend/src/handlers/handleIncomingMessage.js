@@ -35,7 +35,8 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     quoteID: decoder.quoteID().replace(/\0/g, ''),
                     quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
                     fxRate: decoder.decodefxRate(),
-                    secondaryAmount: decoder.decodesecondaryAmount()
+                    secondaryAmount: decoder.decodesecondaryAmount(),
+                    clientID: decoder.clientID().replace(/\0/g, '')
                 };
 
                 const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
@@ -71,6 +72,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     quoteID: decoder.quoteID().replace(/\0/g, ''),
                     dealRequestID: decoder.dealRequestID().replace(/\0/g, ''),
                     dealID: decoder.dealID().replace(/\0/g, ''),
+                    clientID: decoder.clientID().replace(/\0/g, ''),
                     fxRate: decoder.decodefxRate()
                 };
 
@@ -110,6 +112,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     dealID: decoder.dealID().replace(/\0/g, ''),
                     fxRate: decoder.decodefxRate(),
                     secondaryAmount: decoder.decodesecondaryAmount(),
+                    clientID: decoder.clientID().replace(/\0/g, ''),
                     message: decoder.message().replace(/\0/g, '')
                 };
 
@@ -130,6 +133,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     dealID: decodedData.dealID,
                     rate: fxRate1,
                     secondaryAmount: secondaryAmount1,
+                    clientID: decodedData.clientID,
                     message: decodedData.message
                 });
 

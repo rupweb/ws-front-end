@@ -19,6 +19,7 @@ const encodeDealRequest = (data) => {
     encoder.dealRequestID(data.dealRequestID);
     encoder.encodefxRate(data.fxRate);
     encoder.encodesecondaryAmount(data.secondaryAmount);
+    encoder.clientID(data.clientID);
 
     return buffer;
 };

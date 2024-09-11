@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class ErrorEncoder {
-    static BLOCK_LENGTH = 399;
+    static BLOCK_LENGTH = 401;
     static TEMPLATE_ID = 5;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -103,9 +103,15 @@ class ErrorEncoder {
         this.secondaryAmountEncoder.exponent(value.exponent);
     }
 
+    // Encode clientID
+    clientID(value) {
+        this.putString(this.offset + 133, value, 4);
+        return this;
+    }
+
     // Encode message
     message(value) {
-        this.putString(this.offset + 133, value, 256);
+        this.putString(this.offset + 137, value, 256);
         return this;
     }
 

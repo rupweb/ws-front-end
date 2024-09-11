@@ -14,6 +14,7 @@ public class ExecutionReport {
     private String quoteID;
     private String dealRequestID;
     private String dealID;
+    private String clientID;
     private double fxRate;
     
     public double getAmount() {
@@ -87,6 +88,12 @@ public class ExecutionReport {
     }
     public void setDealID(String dealID) {
         this.dealID = dealID;
+    }
+    public String getClientID() {
+        return clientID;
+    }
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
     }
     public double getFxRate() {
         return fxRate;

@@ -16,6 +16,7 @@ const ErrorModal = ({ show, message, onClose, error, handleReset }) => {
     'DealID:',
     'Rate:',
     'Secondary Amount:',
+    'Client ID:',    
     'Message:'
   ];
 
@@ -33,6 +34,7 @@ const ErrorModal = ({ show, message, onClose, error, handleReset }) => {
         error.dealID,
         error.rate,
         error.secondaryAmount,
+        error.clientID,
         error.message
       ]
     : [];

@@ -81,8 +81,13 @@ class ExecutionReportDecoder {
         return this.getString(this.offset + 111, 16);
     }
 
+    // Decode clientID
+    clientID() {
+        return this.getString(this.offset + 127, 4);
+    }
+
     decodefxRate() {
-        this.fxRateDecoder.wrap(this.buffer.buffer, this.offset + 127);
+        this.fxRateDecoder.wrap(this.buffer.buffer, this.offset + 131);
         const mantissa = Number(this.fxRateDecoder.mantissa());
         const exponent = this.fxRateDecoder.exponent();
         return { mantissa, exponent };
@@ -102,6 +107,7 @@ class ExecutionReportDecoder {
             quoteID: this.quoteID().replace(/\0/g, ''),
             dealRequestID: this.dealRequestID().replace(/\0/g, ''),
             dealID: this.dealID().replace(/\0/g, ''),
+            clientID: this.clientID().replace(/\0/g, ''),
             fxRate: this.decodefxRate(),
         };
     }

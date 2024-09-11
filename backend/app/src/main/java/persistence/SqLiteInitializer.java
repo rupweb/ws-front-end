@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 public class SqLiteInitializer {
 
-    private static final String URL = "jdbc:sqlite:client.db";
+    public static final String URL = "jdbc:sqlite:client.db";
 
     // Establish the connection to the SQLite database
     private static Connection connect() throws SQLException {

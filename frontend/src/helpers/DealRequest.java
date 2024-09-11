@@ -13,6 +13,7 @@ public class DealRequest {
     private String dealRequestID;
     private String ticketRef;
     private double fxRate;
+    private String clientID;
 
     public double getAmount() {
         return amount;
@@ -79,5 +80,11 @@ public class DealRequest {
     }
     public void setFxRate(double fxRate) {
         this.fxRate = fxRate;
+    }
+    public String getClientID() {
+        return clientID;
+    }
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
     }
 }

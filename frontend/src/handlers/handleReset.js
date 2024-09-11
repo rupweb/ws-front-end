@@ -5,7 +5,7 @@ const handleReset = ({
   setToCurrency,
   setAmount,
   setSelectedDate,
-  setKycStatus,
+  setClientID,
   setQuote,
   setShowQuote,
   setExecutionReport,
@@ -17,7 +17,7 @@ const handleReset = ({
   setToCurrency('USD');
   setAmount('');
   setSelectedDate(addBusinessDays(new Date(), 2));
-  setKycStatus('Not Started');
+  setClientID('');
   setQuote(null);
   setShowQuote(false);
   setExecutionReport(null);

@@ -104,12 +104,12 @@ public class Client implements SqlMessage {
     }
 
     // Method to persist Client data to SQLite database
-    public void persistToSQLite() {
+    public void persistToSQLite(String DB_STRING) {
         String sql = "INSERT INTO Client(clientID, fullName, dateOfBirth, nationality, governmentID, socialSecurityNumber, emailAddress, phoneNumber, residentialAddress, bankAccount, employmentInformation, incomeAndTaxInformation, verificationDocument, riskAssessmentData) " +
                      "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:client.db");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DriverManager.getConnection(DB_STRING);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setInt(1, clientID);
             pstmt.setString(2, fullName);

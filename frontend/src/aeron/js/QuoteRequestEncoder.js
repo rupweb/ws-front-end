@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class QuoteRequestEncoder {
-    static BLOCK_LENGTH = 81;
+    static BLOCK_LENGTH = 82;
     static TEMPLATE_ID = 3;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -77,18 +77,9 @@ class QuoteRequestEncoder {
         return this;
     }
 
-    // Encode kycStatus
-    kycStatus(value) {
-        const valueMap = {
-            OTHER: 3,
-            NOT_STARTED: 0,
-            PENDING: 1,
-            VERIFIED: 2,
-        };
-        if (!(value in valueMap)) {
-            throw new Error('Invalid enum value: ' + value);
-        }
-        this.buffer.setUint8(this.offset + 70, valueMap[value]);
+    // Encode clientID
+    clientID(value) {
+        this.putString(this.offset + 70, value, 4);
         return this;
     }
 

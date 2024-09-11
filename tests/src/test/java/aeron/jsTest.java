@@ -1,17 +1,17 @@
 package aeron;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Value;
-import org.junit.jupiter.api.Test;
-
-import utils.Utils;
-
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import utils.Utils;
 
 public class jsTest {
     private static final Logger log = LogManager.getLogger(jsTest.class);
@@ -82,7 +82,6 @@ public class jsTest {
 
             } catch (Exception e) {
                 System.out.println("JavaScript evaluation error: " + e.getMessage());
-                e.printStackTrace();
             }
         }
 

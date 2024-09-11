@@ -68,6 +68,11 @@ class QuoteDecoder {
         return { mantissa, exponent };
     }
 
+    // Decode clientID
+    clientID() {
+        return this.getString(this.offset + 93, 4);
+    }
+
     toString() {
         return {
             amount: this.decodeamount(),
@@ -79,6 +84,7 @@ class QuoteDecoder {
             quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
             fxRate: this.decodefxRate(),
             secondaryAmount: this.decodesecondaryAmount(),
+            clientID: this.clientID().replace(/\0/g, ''),
         };
     }
 
