@@ -1,15 +1,15 @@
 package backend;
 
-import io.aeron.Aeron;
-import io.aeron.Publication;
-import io.aeron.Subscription;
-import io.aeron.logbuffer.FragmentHandler;
-
 import org.agrona.concurrent.BackoffIdleStrategy;
 import org.agrona.concurrent.IdleStrategy;
 import org.agrona.concurrent.SigInt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import io.aeron.Aeron;
+import io.aeron.Publication;
+import io.aeron.Subscription;
+import io.aeron.logbuffer.FragmentHandler;
 
 public class AeronClient {
     private static final Logger log = LogManager.getLogger(AeronClient.class);
@@ -31,7 +31,7 @@ public class AeronClient {
 
         this.aeron = aeron;
 
-                // Create Publications
+        // Create Publications
         Publication backendToFixPublication = aeron.addPublication(BACKEND_TO_FIX_CHANNEL, BACKEND_TO_FIX_STREAM_ID);
         log.info("Backend to Fix Publication setup: channel={}, port={}, streamId={}", BACKEND_TO_FIX_CHANNEL, getPort(BACKEND_TO_FIX_CHANNEL), BACKEND_TO_FIX_STREAM_ID);
 
@@ -96,8 +96,8 @@ public class AeronClient {
         log.info("In listen");
         final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 1, 1);
         while (running) {
-            final int fragmentsFixToBackend = fixToBackendSubscription.poll(fragmentHandler, 10);
-            idleStrategy.idle(fragmentsFixToBackend);
+            final int fragments = fixToBackendSubscription.poll(fragmentHandler, 10);
+            idleStrategy.idle(fragments);
         }
         log.info("Out listen");
     }
