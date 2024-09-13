@@ -11,6 +11,28 @@ import CookieConsent from 'react-cookie-consent';
 import { WebSocketProvider } from './contexts/WebSocketContext.js';
 
 function App() {
+  const [clientID, setClientID] = useState(null);
+  const [kycComplete, setKycComplete] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserAttributes = async () => {
+      try {
+        const user = await Auth.currentAuthenticatedUser();
+        const { attributes } = user;
+
+        setClientID(attributes['custom:clientID2']);
+        setKycComplete(attributes['custom:kycComplete'] === 'true');  // Parse the boolean
+
+      } catch (error) {
+        console.log('Error fetching user attributes:', error);
+        navigate('/login');  // Redirect to login if there’s an error
+      }
+    };
+
+    fetchUserAttributes();
+  }, [navigate]);
+
   return (
     <>
       <CookieConsent>
@@ -26,7 +48,7 @@ function App() {
                   <Header user={user} signOut={signOut} />
                   <div className="content-container">
                     <Routes>
-                      <Route path="/" element={<CurrencyConverter />} />
+                      <Route path="/" element={<CurrencyConverter clientID={clientID} kycComplete={kycComplete} />} />
                       <Route path="/blotter" element={<Blotter />} />
                       <Route path="/onboarding" element={<Onboarding />} />
                     </Routes>

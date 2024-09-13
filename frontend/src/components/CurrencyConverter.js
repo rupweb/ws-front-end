@@ -10,8 +10,9 @@ import FromCurrencyField from './FromCurrencyField.js';
 import ClientIDField from './ClientIDField.js';
 import { addBusinessDays, isWeekday } from '../utils/utils.js';
 import '../css/CurrencyConverter.css';
+import { useNavigate } from 'react-router-dom';
 
-const CurrencyConverter = () => {
+const CurrencyConverter = ({ clientID, kycComplete }) => {
   const {
     fromCurrency,
     setFromCurrency,
@@ -42,6 +43,7 @@ const CurrencyConverter = () => {
     handleReset
   } = useCurrencyConversion();
 
+  const navigate = useNavigate();
   const minDate = addBusinessDays(new Date(), 2);
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
@@ -50,6 +52,15 @@ const CurrencyConverter = () => {
     console.log('showQuote:', showQuote);
     console.log('quote:', quote);
   }, [showQuote, quote]);  
+
+  const checkDealRequest = (dealData) => {
+    if (!kycComplete) {
+      navigate('/onboarding');
+    } else {
+      dealData.clientID = clientID; // Set clientID for deal request
+      handleDealRequest(dealData);
+    }
+  };
 
   return (
     <div className="converter-container">
@@ -91,7 +102,7 @@ const CurrencyConverter = () => {
               <div className="col-sm-4">
                 <button 
                   className="btn btn-success mr-2" 
-                  onClick={() => handleDealRequest({
+                  onClick={() => checkDealRequest({
                     amount,
                     toCurrency,
                     selectedDate,
