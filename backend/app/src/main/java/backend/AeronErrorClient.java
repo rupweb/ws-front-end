@@ -1,7 +1,6 @@
 package backend;
 
 import io.aeron.Aeron;
-import io.aeron.Publication;
 import io.aeron.Subscription;
 import io.aeron.logbuffer.FragmentHandler;
 
