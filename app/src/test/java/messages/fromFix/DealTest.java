@@ -61,6 +61,9 @@ public class DealTest {
         // Setup Websocket receiver
         WebSocketClient webSocketClient = setupWebSocket();
 
+        // Give the websocket a second to connect
+        Setup.sleepSeconds(1);
+
         // Get AeronClient
         AeronClient aeronClient = App.getAeronClient();
 
@@ -83,9 +86,6 @@ public class DealTest {
         dealID = guid + ".1";
         clientID = "TEST";
         fxRate = 109.45;
-
-        // Give the websocket a second to connect
-        Setup.sleepSeconds(1);
 
         // Initialize the encoder
         SbeEncoder sbeEncoder = new SbeEncoder();

@@ -76,7 +76,7 @@ public class ClientDbInitializer {
                 "creditHistory TEXT," +
                 "beneficialOwnershipInformation TEXT," +
                 "riskAssessmentData TEXT," +
-                "amlPoliciesAndProcedures TEXT," +  
+                "amlPoliciesAndProcedures TEXT" +  
                 ");";
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(sql);

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
-import aeron.AeronClient;
+import aeron.AeronErrorClient;
 import aeron.AeronSender;
 import app.App;
 import io.aeron.Publication;
@@ -60,8 +60,11 @@ public class ErrorTest {
         // Setup Websocket receiver
         WebSocketClient webSocketClient = setupWebSocket();
 
-        // Get AeronClient
-        AeronClient aeronClient = App.getAeronClient();
+        // Give the websocket a second to connect
+        Setup.sleepSeconds(1);
+
+        // Get AeronErrorClient
+        AeronErrorClient aeronClient = App.getAeronErrorClient();
 
         // Create a random GUID
         UUID uuid = UUID.randomUUID();
@@ -91,7 +94,7 @@ public class ErrorTest {
             transactTime, quoteID, quoteRequestID, dealRequestID, dealID, fxRate, secondaryAmount, clientID, message);
 
         // Publish the error
-        Publication testErrorPublication = aeronClient.getAeron().addPublication(AeronClient.FIX_TO_BACKEND_CHANNEL, AeronClient.FIX_TO_BACKEND_STREAM_ID);
+        Publication testErrorPublication = aeronClient.getAeron().addPublication(AeronErrorClient.ERROR_CHANNEL, AeronErrorClient.ERROR_STREAM_ID);
 
         // Sender
         log.info("Publish message");
@@ -100,7 +103,7 @@ public class ErrorTest {
         sender.send(encodedMessageBuffer, "error");
 
         // Give the thing time
-        Setup.sleepSeconds(1);
+        Setup.sleepSeconds(2);
 
         log.info("Completed testSbeErrorFromFix");
 

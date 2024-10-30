@@ -35,7 +35,7 @@ public class AeronErrorClient {
         this.running = true;
 
         errorSubscription = aeron.addSubscription(ERROR_CHANNEL, ERROR_STREAM_ID);
-        log.info("Fix to Backend Subscription setup: channel={}, port={}, streamId={}", ERROR_CHANNEL, getPort(ERROR_CHANNEL), ERROR_STREAM_ID);
+        log.info("Error channel subscription setup: channel={}, port={}, streamId={}", ERROR_CHANNEL, getPort(ERROR_CHANNEL), ERROR_STREAM_ID);
 
         // Start the listener thread
         Thread.startVirtualThread(this::start);

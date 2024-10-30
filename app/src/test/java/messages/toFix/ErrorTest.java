@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import aeron.AeronErrorClient;
+import aeron.AeronClient;
 import agrona.messages.ErrorDecoder;
 import agrona.messages.MessageHeaderDecoder;
 import app.App;
@@ -51,15 +51,15 @@ public class ErrorTest {
 
         /*
          * 1. Start the app and all the aeron subscriptions
-         * 2. Setup a deal request subscription
+         * 2. Setup an error subscription
          * 3. Setup a deal request websocket
          * 4. Create a deal request
          * 5. Encode & send the deal request on the websocket
          * 6. Check the subscription receives the request
          */
 
-        // Get AeronErrorClient
-        AeronErrorClient aeronClient = App.getAeronErrorClient();
+        // Get AeronClient
+        AeronClient aeronClient = App.getAeronClient();
 
         // Create a random GUID
         UUID uuid = UUID.randomUUID();
@@ -81,8 +81,8 @@ public class ErrorTest {
         secondaryAmount = 810.01;
         message = "TEST";
 
-        // Prepare listener
-        Subscription subscription = aeronClient.getAeron().addSubscription(AeronErrorClient.ERROR_CHANNEL, AeronErrorClient.ERROR_STREAM_ID);
+        // Prepare listener on the main channel because everything is published there
+        Subscription subscription = aeronClient.getAeron().addSubscription(AeronClient.BACKEND_TO_FIX_CHANNEL, AeronClient.BACKEND_TO_FIX_STREAM_ID);
 
         FragmentHandler fragmentHandler = (buffer, offset, length, header) -> {
             // Decode the message

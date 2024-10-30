@@ -57,6 +57,9 @@ public class QuoteTest {
         // Setup Websocket receiver
         WebSocketClient webSocketClient = setupWebSocket();
 
+        // Give the websocket a second to connect
+        Setup.sleepSeconds(1);
+
         // Get AeronClient
         AeronClient aeronClient = App.getAeronClient();
 
@@ -75,9 +78,6 @@ public class QuoteTest {
         fxRate = 1.23456;
         secondaryAmount = 810.01;
         clientID = "TEST";
-
-        // Give the websocket a second to connect
-        Setup.sleepSeconds(1);
 
         // Initialize the encoder
         SbeEncoder sbeEncoder = new SbeEncoder();
