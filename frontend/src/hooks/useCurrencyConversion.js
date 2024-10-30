@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { addBusinessDays } from '../utils/utils.js';
 import useFormValidation from './useFormValidation.js';
-import useClientID from './useClientID.js';
 import useClientIDHandling from './useClientIDHandling.js';
 import useQuoteHandling from './useQuoteHandling.js';
 import useDealHandling from './useDealHandling.js';
@@ -13,7 +12,7 @@ import prepareQuoteRequest from '../handlers/handleQuoteRequest.js';
 import prepareDealRequest from '../handlers/handleDealRequest.js';
 import prepareReset from '../handlers/handleReset.js';
 
-const useCurrencyConversion = () => {
+const useCurrencyConversion = (amplifyUsername) => {
   // Align with websocket
   const { 
     quote, 
@@ -37,9 +36,11 @@ const useCurrencyConversion = () => {
   const [amount, setAmount] = useState('');
   const [selectedDate, setSelectedDate] = useState(addBusinessDays(new Date(), 2));
 
-  // ClientID status
-  const { clientID, setClientID } = useClientID();
+  // Form validation
   const isFormValid = useFormValidation(fromCurrency, toCurrency, amount);
+
+  // ClientID status
+  const [clientID, setClientID] = useState(amplifyUsername || '');
   const [clientIDMessage, setClientIDMessage] = useState('');
   const [showClientID, setShowClientID] = useState(false);
 
@@ -50,6 +51,7 @@ const useCurrencyConversion = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const { handleClientIDCheck, handleClientIDModalClose } = useClientIDHandling(
+    amplifyUsername,
     setClientID,
     setClientIDMessage,
     setShowClientID

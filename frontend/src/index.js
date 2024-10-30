@@ -8,12 +8,15 @@ import reportWebVitals from './reportWebVitals.js';
 
 import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports.js';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 Amplify.configure(awsconfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+    <Router>
     <App />
+  </Router>
 );
 
 reportWebVitals();

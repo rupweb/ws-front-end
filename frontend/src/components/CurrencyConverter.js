@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useCurrencyConversion from '../hooks/useCurrencyConversion.js';
 import ClientIDModal from './ClientIDModal.js';
 import ExecutionReportModal from './ExecutionReportModal.js';
@@ -12,7 +12,9 @@ import { addBusinessDays, isWeekday } from '../utils/utils.js';
 import '../css/CurrencyConverter.css';
 import { useNavigate } from 'react-router-dom';
 
-const CurrencyConverter = ({ clientID, kycComplete }) => {
+const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
+  const [clientID, setClientID] = useState(amplifyUsername || '');
+
   const {
     fromCurrency,
     setFromCurrency,
@@ -23,8 +25,6 @@ const CurrencyConverter = ({ clientID, kycComplete }) => {
     selectedDate,
     setSelectedDate,
     isFormValid,
-    clientID,
-    setClientID,
     clientIDMessage,
     showClientID,
     handleClientIDModalClose,
@@ -41,7 +41,7 @@ const CurrencyConverter = ({ clientID, kycComplete }) => {
     errorMessage,
     handleErrorModalClose,
     handleReset
-  } = useCurrencyConversion();
+  } = useCurrencyConversion(amplifyUsername);
 
   const navigate = useNavigate();
   const minDate = addBusinessDays(new Date(), 2);
@@ -57,7 +57,7 @@ const CurrencyConverter = ({ clientID, kycComplete }) => {
     if (!kycComplete) {
       navigate('/onboarding');
     } else {
-      dealData.clientID = clientID; // Set clientID for deal request
+      dealData.amplifyUsername = amplifyUsername; // Set client for deal request
       handleDealRequest(dealData);
     }
   };
@@ -76,7 +76,7 @@ const CurrencyConverter = ({ clientID, kycComplete }) => {
           isWeekday={isWeekday} 
         />
         <FromCurrencyField fromCurrency={fromCurrency} setFromCurrency={setFromCurrency} toCurrency={toCurrency} />
-        <ClientIDField clientID={clientID} setClientID={setClientID} />
+        <ClientIDField clientID={clientID} setClientID={setClientID} amplifyUsername={amplifyUsername} />
         <div>
           <button
             className="btn btn-primary btn-block"
@@ -122,7 +122,6 @@ const CurrencyConverter = ({ clientID, kycComplete }) => {
         )}
 
         {showExecutionReport && (
-          <>
             <ExecutionReportModal 
               show={showExecutionReport} 
               message={executionReportMessage} 
@@ -130,11 +129,9 @@ const CurrencyConverter = ({ clientID, kycComplete }) => {
               executionReport={executionReport}
               handleReset={handleReset} 
             />
-          </>
         )}
 
         {showError && (
-          <>
             <ErrorModal 
               show={showError} 
               message={errorMessage} 
@@ -142,7 +139,6 @@ const CurrencyConverter = ({ clientID, kycComplete }) => {
               error={error}
               handleReset={handleReset} 
             />
-          </>
         )}
       </div>
     </div>

@@ -1,7 +1,13 @@
-const useClientIDHandling = (clientID, setClientIDModalMessageParent, setShowClientIDModalParent) => {
-
+const useClientIDHandling = (amplifyUsername, clientID, setClientIDModalMessageParent, setShowClientIDModalParent) => {
   const handleClientIDCheck = (clientID, amount) => {
-    if (clientID === 'OTHER') {
+    console.log('Hook amplifyUsername:', amplifyUsername);
+    console.log('Hook clientID:', clientID);
+
+    if (clientID === amplifyUsername) {
+      return false;
+    }
+
+    if (clientID === 'Other') {
       setClientIDModalMessageParent('Please complete the Client Onboarding form.');
       setShowClientIDModalParent(true);
       return true;
@@ -37,3 +43,4 @@ const useClientIDHandling = (clientID, setClientIDModalMessageParent, setShowCli
 };
 
 export default useClientIDHandling;
+

@@ -1,37 +1,45 @@
 // App.js
 
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Route, Routes, Link, useNavigate } from 'react-router-dom';
 import './css/App.css';
 import CurrencyConverter from './components/CurrencyConverter.js';
 import Blotter from './components/Blotter.js';
 import Onboarding from './components/Onboarding.js';
+import Login from './components/Login.js';
 import { Authenticator } from '@aws-amplify/ui-react';
 import CookieConsent from 'react-cookie-consent';
 import { WebSocketProvider } from './contexts/WebSocketContext.js';
+import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
+
 
 function App() {
-  const [clientID, setClientID] = useState(null);
+  const websocketUrl = process.env.REACT_APP_WS_URL;
+
+  const [amplifyUsername, setAmplifyUsername] = useState('');
   const [kycComplete, setKycComplete] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserAttributes = async () => {
+    const myFetchUserAttributes = async () => {
       try {
-        const user = await Auth.currentAuthenticatedUser();
-        const { attributes } = user;
+        const session = await fetchAuthSession();
+        const idToken = session.tokens.idToken;
+        const username = idToken.payload['cognito:username'];
+        setAmplifyUsername(username);
 
-        setClientID(attributes['custom:clientID2']);
-        setKycComplete(attributes['custom:kycComplete'] === 'true');  // Parse the boolean
-
+        const attributes = await fetchUserAttributes();
+        console.log('Fetched Attributes:', attributes);
+        setKycComplete(attributes['custom:kycComplete'] === 'true');
+  
       } catch (error) {
         console.log('Error fetching user attributes:', error);
         navigate('/login');  // Redirect to login if there’s an error
       }
     };
-
-    fetchUserAttributes();
-  }, [navigate]);
+  
+    myFetchUserAttributes();
+  }, [navigate]);  
 
   return (
     <>
@@ -41,21 +49,28 @@ function App() {
       <div className="auth-container">
         <Authenticator signUpAttributes={['email']}>
           {({ signOut, user }) => (
-            <WebSocketProvider url="ws://localhost:8090/ws">
-              {/* <WebSocketProvider url="ws://ec2-13-42-7-2.eu-west-2.compute.amazonaws.com:8081/ws"> */}
-              <Router>
+            <WebSocketProvider url={websocketUrl}>
                 <div className="App">
                   <Header user={user} signOut={signOut} />
                   <div className="content-container">
-                    <Routes>
-                      <Route path="/" element={<CurrencyConverter clientID={clientID} kycComplete={kycComplete} />} />
-                      <Route path="/blotter" element={<Blotter />} />
-                      <Route path="/onboarding" element={<Onboarding />} />
-                    </Routes>
+                  <Routes>
+                    <Route
+                      path="/"
+                      element={
+                        amplifyUsername ? (
+                          <CurrencyConverter amplifyUsername={amplifyUsername} kycComplete={kycComplete} />
+                        ) : (
+                          <>Loading...</>
+                        )
+                      }
+                    />
+                    <Route path="/blotter" element={<Blotter />} />
+                    <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/login" element={<Login />} />
+                  </Routes>
                   </div>
                   <Footer />
                 </div>
-              </Router>
             </WebSocketProvider>
           )}
         </Authenticator>
