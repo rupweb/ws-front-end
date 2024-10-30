@@ -35,7 +35,7 @@ public class DealRequestTest {
         String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/DecimalEncoder.js"));
         String MessageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/MessageHeaderEncoder.js"));
         String dealRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/DealRequestEncoder.js"));
-        String encodeDealRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/encodeDealRequest.js"));
+        String encodeDealRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/encodeDealRequest.js"));
 
         // Concatenate scripts in the correct order
         String combinedScript = textEncoderScript + "\n" +

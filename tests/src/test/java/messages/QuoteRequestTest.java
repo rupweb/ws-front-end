@@ -32,9 +32,9 @@ public class QuoteRequestTest {
 
         // Load and prepare scripts
         String textEncoderScript = Utils.loadScript("tests/src/test/java/aeron/TextEncoder.js");
-        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DecimalEncoder.js"));
-        String MessageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/MessageHeaderEncoder.js"));
-        String quoteRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/QuoteRequestEncoder.js"));
+        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/DecimalEncoder.js"));
+        String MessageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/MessageHeaderEncoder.js"));
+        String quoteRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/QuoteRequestEncoder.js"));
         String encodeQuoteRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/encodeQuoteRequest.js"));
 
         // Concatenate scripts in the correct order
