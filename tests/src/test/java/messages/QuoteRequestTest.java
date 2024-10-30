@@ -1,6 +1,9 @@
 package messages;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.logging.log4j.LogManager;
@@ -12,12 +15,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import agrona.messages.MessageHeaderDecoder;
 import agrona.messages.QuoteRequestDecoder;
 import utils.Utils;
 
 public class QuoteRequestTest {
     private static final Logger log = LogManager.getLogger(QuoteRequestTest.class);
+
+    // Define quote request data
+    double amount;
+    String saleCurrency;
+    String currencyOwned; 
+    String side;
+    String symbol;
+    String deliveryDate;
+    String transactTime; 
+    String quoteRequestID;
+    String clientID;
 
     @Test
     public void testQuoteRequest() throws IOException {
@@ -33,32 +49,51 @@ public class QuoteRequestTest {
         // Load and prepare scripts
         String textEncoderScript = Utils.loadScript("tests/src/test/java/aeron/TextEncoder.js");
         String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/DecimalEncoder.js"));
-        String MessageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/MessageHeaderEncoder.js"));
+        String messageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/MessageHeaderEncoder.js"));
         String quoteRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/QuoteRequestEncoder.js"));
-        String encodeQuoteRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/encodeQuoteRequest.js"));
+        String encodeQuoteRequestScript = Utils.removeJSImportExport(Utils.loadScript("frontend/src/messages/encodeQuoteRequest.js"));
 
         // Concatenate scripts in the correct order
         String combinedScript = textEncoderScript + "\n" +
                                 decimalEncoderScript + "\n" +
-                                MessageHeaderEncoderScript + "\n" +
+                                messageHeaderEncoderScript + "\n" +
                                 quoteRequestEncoderScript + "\n" +
                                 encodeQuoteRequestScript;
 
         // Evaluate the combined script
         context.eval("js", combinedScript);
 
-        // Test data
-        String dataScript = "const data = {" +
-                "amount: { mantissa: 100000, exponent: -2 }, " + 
-                "saleCurrency: 'USD'," +
-                "deliveryDate: '20240101'," +
-                "transactTime: '20240101-00:00:00.000'," +
-                "quoteRequestID: 'QR123456'," +
-                "side: 'BUY'," +
-                "symbol: 'EURUSD'," +
-                "currencyOwned: 'EUR'," +
-                "clientID: 'TEST'" +
-                "};";
+        // Create a random GUID
+        UUID uuid = UUID.randomUUID();
+        String guid = uuid.toString().substring(0, 8).toUpperCase();
+
+        // Populate quote request data
+        amount = 1000;
+        saleCurrency = "USD";
+        currencyOwned = "EUR";
+        side = "BUY";
+        symbol = "EURUSD";
+        deliveryDate = "20250101";
+        transactTime = "20240101-00:00:00.000";   
+        quoteRequestID = guid;
+        clientID = "TEST";
+
+        // Use Jackson JSON mapping
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> data = new HashMap<>();
+        data.put("amount", Map.of("mantissa", (int) (amount * 100), "exponent", -2));
+        data.put("saleCurrency", saleCurrency);
+        data.put("currencyOwned", currencyOwned);
+        data.put("side", side);
+        data.put("symbol", symbol);
+        data.put("deliveryDate", deliveryDate);
+        data.put("transactTime", transactTime);
+        data.put("quoteRequestID", quoteRequestID);
+        data.put("clientID", clientID);
+
+        // Convert map to JSON string
+        String dataScript = "const data = " + mapper.writeValueAsString(data) + ";";
+
         context.eval("js", dataScript);
 
         log.info("Encode quote request");
@@ -87,16 +122,18 @@ public class QuoteRequestTest {
         decoder.wrapAndApplyHeader(buffer, 0, headerDecoder);
 
         // Verify the decoded message
-        assertEquals(100000, decoder.amount().mantissa());
+        assertEquals((long) (amount * 100), decoder.amount().mantissa());
         assertEquals(-2, decoder.amount().exponent());
-        assertEquals("USD", decoder.saleCurrency());
-        assertEquals("BUY", decoder.side());
-        assertEquals("EURUSD", decoder.symbol());
-        assertEquals("20240101", decoder.deliveryDate());
-        assertEquals("20240101-00:00:00.000", decoder.transactTime());
-        assertEquals("QR123456", decoder.quoteRequestID());
-        assertEquals("EUR", decoder.currencyOwned());
-        assertEquals("TEST", decoder.clientID());
+        assertEquals(saleCurrency, decoder.saleCurrency());
+        assertEquals(currencyOwned, decoder.currencyOwned());
+        assertEquals(side, decoder.side());
+        assertEquals(symbol, decoder.symbol());
+        assertEquals(deliveryDate, decoder.deliveryDate());
+        assertEquals(transactTime, decoder.transactTime());
+        assertEquals(quoteRequestID, decoder.quoteRequestID());
+        assertEquals(clientID, decoder.clientID());
+
+        log.info("Received and verified quote request message");
 
         context.close();
         log.info("Out testQuoteRequest");

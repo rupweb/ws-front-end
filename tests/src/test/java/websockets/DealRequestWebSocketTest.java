@@ -3,6 +3,9 @@ package websockets;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import utils.Utils;
 
 public class DealRequestWebSocketTest {
@@ -27,8 +33,22 @@ public class DealRequestWebSocketTest {
     private CountDownLatch latch;
     private Context context;
 
+    // Define deal request variables
+    double amount;
+    String currency;
+    String side;
+    String symbol;
+    String deliveryDate;
+    String transactTime;
+    String quoteID;     
+    String quoteRequestID; 
+    String dealRequestID;
+    String clientID;
+    double fxRate;
+    double secondaryAmount;
+
     @BeforeEach
-    public void setUp() throws URISyntaxException, IOException {
+    public void setUp() throws IOException {
         log.info("In setUp");
 
         // Initialize a new CountDownLatch for each test
@@ -44,15 +64,15 @@ public class DealRequestWebSocketTest {
 
         // Load and prepare scripts
         String textEncoderScript = Utils.loadScript("tests/src/test/java/aeron/TextEncoder.js");
-        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DecimalEncoder.js"));
-        String MessageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/MessageHeaderEncoder.js"));
-        String dealRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/DealRequestEncoder.js"));
-        String encodeDealRequestScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/messages/encodeDealRequest.js"));
+        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/DecimalEncoder.js"));
+        String messageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/MessageHeaderEncoder.js"));
+        String dealRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/js/DealRequestEncoder.js"));
+        String encodeDealRequestScript = Utils.removeJSImportExport(Utils.loadScript("frontend/src/messages/encodeDealRequest.js"));
 
         // Concatenate scripts in the correct order
         String combinedScript = textEncoderScript + "\n" +
                                 decimalEncoderScript + "\n" +
-                                MessageHeaderEncoderScript + "\n" +
+                                messageHeaderEncoderScript + "\n" +
                                 dealRequestEncoderScript + "\n" +
                                 encodeDealRequestScript;
 
@@ -110,7 +130,7 @@ public class DealRequestWebSocketTest {
     }
 
     @Test
-    public void testDealRequest() throws InterruptedException {
+    public void testDealRequest() throws InterruptedException, JsonProcessingException {
         log.info("In testDealRequest");
 
         if (!client.isOpen()) {
@@ -118,20 +138,43 @@ public class DealRequestWebSocketTest {
             return;
         }
         
-        // Test data
-        String dataScript = "const data = {" +
-                    "amount: { mantissa: 1000, exponent: 2 }, " +
-                    "currency: 'USD', " +
-                    "side: 'BUY', " +
-                    "symbol: 'EURUSD', " +
-                    "deliveryDate: '20240201', " +
-                    "transactTime: '20240101-00:00:00.000', " +
-                    "quoteRequestID: 'QR123456', " +
-                    "quoteID: 'Q123456', " +
-                    "dealRequestID: 'DR123456', " +
-                    "fxRate: { mantissa: 100, exponent: -2 }" +
-                    "clientID: 'TEST'" +
-                    "};";
+        // Create a random GUID
+        UUID uuid = UUID.randomUUID();
+        String guid = uuid.toString().substring(0, 8).toUpperCase();
+
+        // Define deal request data
+        amount = 1000;
+        currency = "USD";
+        side = "BUY";
+        symbol = "EURUSD";
+        deliveryDate = "20250101";
+        transactTime = "20240101-00:00:00.000";
+        quoteID = guid;     
+        quoteRequestID = guid;   
+        dealRequestID = guid;
+        clientID = "TEST";
+        fxRate = 1.23456;
+        secondaryAmount = 810.01;
+
+        // Use Jackson JSON mapping
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> data = new HashMap<>();
+        data.put("amount", Map.of("mantissa", (int) (amount * 100), "exponent", -2));
+        data.put("currency", currency);
+        data.put("side", side);
+        data.put("symbol", symbol);
+        data.put("deliveryDate", deliveryDate);
+        data.put("transactTime", transactTime);
+        data.put("quoteRequestID", quoteRequestID);
+        data.put("quoteID", quoteID);
+        data.put("dealRequestID", dealRequestID);
+        data.put("fxRate", Map.of("mantissa", (int) (fxRate * 100000), "exponent", -5));
+        data.put("clientID", clientID);
+        data.put("secondaryAmount", Map.of("mantissa", (int) (secondaryAmount * 100), "exponent", -2));
+
+        // Convert map to JSON string
+        String dataScript = "const data = " + mapper.writeValueAsString(data) + ";";
+
         context.eval("js", dataScript);
 
         log.info("Encode deal request");

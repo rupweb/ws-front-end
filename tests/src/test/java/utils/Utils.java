@@ -35,4 +35,23 @@ public class Utils {
             .replaceAll("import\\s+.*?;", "")
             .replaceAll("export\\s+default\\s+", "");
     }
+
+    /**
+     * Converts an script.
+     * 
+     * @param script The JS script content as a string.
+     * @return The modified script with import and export lines removed.
+     */    
+    public static String removeJSImportExport(String script) {
+        StringBuilder result = new StringBuilder();
+        String[] lines = script.split("\\R");
+    
+        for (String line : lines) {
+            if (!line.trim().startsWith("import") && !line.trim().startsWith("export")) {
+                result.append(line).append(System.lineSeparator());
+            }
+        }
+        
+        return result.toString();
+    }   
 }
