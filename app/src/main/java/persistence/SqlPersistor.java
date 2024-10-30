@@ -94,7 +94,7 @@ public class SqlPersistor implements Runnable {
                                     LOGGER.log(Level.INFO, "Persisted individual client: {0}", client.toString());
                                 }
                                 case "corporate" -> {
-                                    BusinessClient businessClient = objectMapper.treeToValue(dataNode, BusinessClient.class);
+                                    BusinessClientX businessClient = objectMapper.treeToValue(dataNode, BusinessClientX.class);
                                     businessClient.persistToSQLite(App.getClientDbURL());
                                     LOGGER.log(Level.INFO, "Persisted corporate client: {0}", businessClient.toString());
                                 }

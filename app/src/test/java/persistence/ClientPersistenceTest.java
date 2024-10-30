@@ -70,7 +70,7 @@ class ClientTest {
 
         // Arrange
         // Create a client insert
-        Client client = new Client(clientID, fullName, dateOfBirth, nationality, governmentID, 
+        ClientX client = new ClientX(clientID, fullName, dateOfBirth, nationality, governmentID, 
             socialSecurityNumber, emailAddress, phoneNumber, residentialAddress, bankAccount, 
             employmentInformation, incomeAndTaxInformation, verificationDocument, riskAssessmentData);
 
