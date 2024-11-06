@@ -30,6 +30,7 @@ public class ExecutionReportTest {
     String dealID;
     String clientID;
     double fxRate;
+    short processed;
 
     @Test
     public void testSbeExecutionReport() {
@@ -55,6 +56,7 @@ public class ExecutionReportTest {
         dealID = guid + ".1";
         clientID = "TEST";
         fxRate = 1.23456;
+        processed = 0;
 
         // Initialize the encoder
         SbeEncoder sbeEncoder = new SbeEncoder();
@@ -62,7 +64,7 @@ public class ExecutionReportTest {
         // Define the data to encode
         DirectBuffer dataBuffer = sbeEncoder.encodeExecutionReport(amount, currency, secondaryAmount, 
             secondaryCurrency, side, symbol, deliveryDate, transactTime, quoteID, quoteRequestID, 
-            dealRequestID, dealID, clientID, fxRate);
+            dealRequestID, dealID, clientID, fxRate, processed);
 
         // Decode the message
         ExecutionReportDecoder decoder = new ExecutionReportDecoder();

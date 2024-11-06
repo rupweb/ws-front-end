@@ -1,11 +1,5 @@
 package websockets;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.CountDownLatch;
@@ -13,9 +7,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class WebSocketTest {
     private static final Logger log = LogManager.getLogger(WebSocketTest.class);
@@ -45,7 +42,7 @@ public class WebSocketTest {
 
     private void connectToWebSocket() {
         try {
-            client = new WebSocketClient(new URI("ws://localhost:8090/ws")) {
+            client = new WebSocketClient(new URI("ws://localhost:8092/ws")) {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
                     log.info("WebSocket connection opened");

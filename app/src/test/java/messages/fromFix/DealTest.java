@@ -41,6 +41,7 @@ public class DealTest {
     double fxRate;
     double secondaryAmount; 
     String secondaryCurrency; 
+    short processed;
 
     @Test
     public void testSbeDeal() throws Exception {
@@ -86,6 +87,7 @@ public class DealTest {
         dealID = guid + ".1";
         clientID = "TEST";
         fxRate = 109.45;
+        processed = 0;
 
         // Initialize the encoder
         SbeEncoder sbeEncoder = new SbeEncoder();
@@ -93,7 +95,7 @@ public class DealTest {
         // Define the data to encode
         DirectBuffer encodedMessageBuffer = sbeEncoder.encodeExecutionReport(amount, currency, secondaryAmount, 
             secondaryCurrency, side, symbol, deliveryDate, transactTime, quoteRequestID, quoteID, 
-            dealRequestID, dealID, clientID, fxRate);
+            dealRequestID, dealID, clientID, fxRate, processed);
 
         // Publish the deal
         Publication testDealPublication = aeronClient.getAeron().addPublication(AeronClient.FIX_TO_BACKEND_CHANNEL, AeronClient.FIX_TO_BACKEND_STREAM_ID);

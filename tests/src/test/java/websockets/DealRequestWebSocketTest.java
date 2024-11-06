@@ -96,7 +96,7 @@ public class DealRequestWebSocketTest {
 
     private void connectToWebSocket() {
         try {
-            client = new WebSocketClient(new URI("ws://localhost:8090/ws")) {
+            client = new WebSocketClient(new URI("ws://localhost:8092/ws")) {
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
                     System.out.println("WebSocket connection opened");

@@ -40,7 +40,7 @@ describe('WebSocket integration test', () => {
     let server;
 
     beforeEach(() => {
-        server = new WebSocketServer('ws://localhost:8090');
+        server = new WebSocketServer('ws://localhost:8092');
     });
 
     afterEach(() => {
@@ -49,7 +49,7 @@ describe('WebSocket integration test', () => {
 
     it.only('sends a DealRequest message via WebSocket', async () => {
         const { getByText } = render(
-            <WebSocketProvider url="ws://localhost:8090">
+            <WebSocketProvider url="ws://localhost:8092">
                 <TestComponent />
             </WebSocketProvider>
         );

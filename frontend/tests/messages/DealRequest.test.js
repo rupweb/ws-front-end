@@ -5,7 +5,7 @@ import React from 'react';
 import { render, act } from '@testing-library/react';
 
 // Mock WebSocket server setup
-const mockServer = new WebSocketServer({ port: 8090 });
+const mockServer = new WebSocketServer({ port: 8092 });
 
 mockServer.on('connection', socket => {
     socket.on('message', message => {
@@ -44,7 +44,7 @@ describe('WebSocket integration test', () => {
         };
 
         const { getByText } = render(
-            <WebSocketProvider url="ws://localhost:8090">
+            <WebSocketProvider url="ws://localhost:8092">
                 <TestComponent />
             </WebSocketProvider>
         );
