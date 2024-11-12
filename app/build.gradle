@@ -116,7 +116,7 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Main-Class': application.mainClass.get()
     }
-    archiveBaseName = 'ws-front-end-app'
+    archiveBaseName = 'ws-front-end'
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
@@ -129,7 +129,7 @@ task fatJar(type: Jar) {
 task copyJar(type: Copy) {
     dependsOn fatJar
     from "$buildDir/libs"  // Source
-    into "../libs/fatjar" // Destination
+    into "../../libs/fatjar" // Destination
     include '**/*.jar'
 }
 
@@ -143,7 +143,7 @@ task copyConfig(type: Copy) {
         }
     }
     from "$projectDir/config"  // Source
-    into "../libs/fatjar/config/${fatJar.archiveBaseName.get()}" // Destination
+    into "../../libs/fatjar/config/${fatJar.archiveBaseName.get()}" // Destination
 }
 
 // Ensure copyJar runs after fatJar
