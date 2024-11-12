@@ -1,5 +1,11 @@
 package app;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import aeron.AeronClient;
+import aeron.AeronErrorClient;
+import backend.WebSocketServer;
 import config.AeronConfiguration;
 import config.MeterConfiguration;
 import io.aeron.Aeron;
@@ -7,13 +13,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import persistence.ClientDbInitializer;
 import persistence.SqlPersistor;
 import utils.ProcessUtil;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import aeron.AeronClient;
-import aeron.AeronErrorClient;
-import backend.WebSocketServer;
 
 public class App {
     private static final Logger log = LogManager.getLogger(App.class);
@@ -54,7 +53,7 @@ public class App {
         }
 
         webSocketPort = Integer.parseInt(appConfig.getProperty("websocket.port"));
-        log.info("Websocket port: " + webSocketPort);
+        log.info("Websocket port: {}", webSocketPort);
 
         // Start Aeron environment
 	    StartWebsocket(webSocketPort);
@@ -88,6 +87,9 @@ public class App {
 		// Create Aeron client instances with injected dependencies
 		aeronClient = new AeronClient();
         aeronClient.start(aeron, registry);
+
+		aeronErrorClient = new AeronErrorClient();
+        aeronErrorClient.start(aeron, registry);
 	}
 
     private void startDBEnvironment(String URL) {
@@ -100,6 +102,10 @@ public class App {
 	public void stopAeronEnvironment() {
         if (aeronClient != null) {
             aeronClient.stop();
+        }
+
+        if (aeronErrorClient != null) {
+            aeronErrorClient.stop();
         }
 
 		// The aeron media driver works independently of aeron pub sub

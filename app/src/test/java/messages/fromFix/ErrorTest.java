@@ -64,7 +64,7 @@ public class ErrorTest {
         Setup.sleepSeconds(1);
 
         // Get AeronErrorClient
-        AeronErrorClient aeronClient = App.getAeronErrorClient();
+        AeronErrorClient aeronErrorClient = App.getAeronErrorClient();
 
         // Create a random GUID
         UUID uuid = UUID.randomUUID();
@@ -94,7 +94,7 @@ public class ErrorTest {
             transactTime, quoteID, quoteRequestID, dealRequestID, dealID, fxRate, secondaryAmount, clientID, message);
 
         // Publish the error
-        Publication testErrorPublication = aeronClient.getAeron().addPublication(AeronErrorClient.ERROR_CHANNEL, AeronErrorClient.ERROR_STREAM_ID);
+        Publication testErrorPublication = aeronErrorClient.getAeron().addPublication(AeronErrorClient.ERROR_CHANNEL, AeronErrorClient.ERROR_STREAM_ID);
 
         // Sender
         log.info("Publish message");
