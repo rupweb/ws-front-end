@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import config.TestMediaDriver;
+import app.WsFrontEnd;
 import app.App;
 
 public class SharedTestResources {
@@ -30,7 +31,7 @@ public class SharedTestResources {
 
             // Start the aeron pubsub and the FIX engine in a virtual thread
             Thread.startVirtualThread(() -> {
-                App.main(null);
+                WsFrontEnd.main(null);
             });
 
             initialized = true;

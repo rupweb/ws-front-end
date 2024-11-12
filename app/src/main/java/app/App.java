@@ -1,22 +1,23 @@
 package app;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
-
-import aeron.AeronClient;
-import aeron.AeronErrorClient;
-import backend.ProcessUtil;
-import backend.WebSocketServer;
 import config.AeronConfiguration;
 import config.MeterConfiguration;
 import io.aeron.Aeron;
 import io.micrometer.core.instrument.MeterRegistry;
 import persistence.ClientDbInitializer;
 import persistence.SqlPersistor;
+import utils.ProcessUtil;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import aeron.AeronClient;
+import aeron.AeronErrorClient;
+import backend.WebSocketServer;
 
 public class App {
     private static final Logger log = LogManager.getLogger(App.class);
+
     private static AeronClient aeronClient;
     public static AeronClient getAeronClient() { return aeronClient; }
 
@@ -28,39 +29,15 @@ public class App {
 
     private AeronConfiguration aeronConfiguration = new AeronConfiguration();
     private MeterConfiguration meterConfiguration = new MeterConfiguration();
-    private static AppConfig appConfig;
-
-    private static String clientDbURL;
-    public static String getClientDbURL() {return clientDbURL; }
 
     private static volatile boolean running;
     private void setRunning(boolean b) { running = b; }
     public static boolean getRunning() { return running; }
 
-    private static void initializeLogging() {
-        // Uses system out as logger may not be initialised
-        System.out.println("Working Directory: " + System.getProperty("user.dir"));
-        System.out.println("Log4j2 initialized: " + LogManager.getContext(false).hasLogger(App.class.getName()));
+    private static String clientDbURL;
+    public static String getClientDbURL() {return clientDbURL; }
 
-        String configFilePath = System.getProperty("log4j.configurationFile");
-        if (configFilePath == null) {
-            configFilePath = "src/main/resources/log4j2.xml";
-            System.setProperty("log4j.configurationFile", configFilePath);
-        }
-        Configurator.initialize(null, configFilePath);
-        log.info("Log4j2 initialized with configuration file: {}", configFilePath);
-    }
-
-    public static void main(String[] args) {
-        // Initialize configuration
-        appConfig = new AppConfig();
-
-        initializeLogging();
-
-        startApp();
-    }
-
-    public static void startApp() {
+    public void startApp(AppConfig appConfig) {
         log.info("Application PID: {}", ProcessUtil.getProcessId());
 
         // Get the properties
@@ -79,12 +56,11 @@ public class App {
         webSocketPort = Integer.parseInt(appConfig.getProperty("websocket.port"));
         log.info("Websocket port: " + webSocketPort);
 
-        // Start environment
-        App appInstance = new App();
-	    appInstance.StartWebsocket(webSocketPort);
-        appInstance.startAeronEnvironment(aeronDirectory);
-        appInstance.startDBEnvironment(clientDbURL);
-        appInstance.setRunning(true);
+        // Start Aeron environment
+	    StartWebsocket(webSocketPort);
+        startAeronEnvironment(aeronDirectory);
+        startDBEnvironment(clientDbURL);
+        setRunning(true);
 
         log.info("Application started up");
     }
@@ -112,9 +88,6 @@ public class App {
 		// Create Aeron client instances with injected dependencies
 		aeronClient = new AeronClient();
         aeronClient.start(aeron, registry);
-
-        aeronErrorClient = new AeronErrorClient();
-        aeronErrorClient.start(aeron, registry);
 	}
 
     private void startDBEnvironment(String URL) {
@@ -126,10 +99,11 @@ public class App {
 
 	public void stopAeronEnvironment() {
         if (aeronClient != null) {
-            aeronClient.close();
+            aeronClient.stop();
         }
 
 		// The aeron media driver works independently of aeron pub sub
 		aeronConfiguration.closeAeron();
 	}
+    
 }

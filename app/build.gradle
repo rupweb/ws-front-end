@@ -8,25 +8,6 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-        resources {
-            srcDirs = ['src/main/resources']
-        }
-    }
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
-    }
-}
-
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
 
@@ -60,7 +41,7 @@ java {
 }
 
 application {
-    mainClass = 'app.App'
+    mainClass = 'app.WsFrontEnd'
 }
 
 jacoco {
@@ -75,6 +56,7 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+// Required for aeron unsafe access
 run {
     jvmArgs = [
         '--add-opens', 'java.base/sun.nio.ch=ALL-UNNAMED',
@@ -126,4 +108,56 @@ jacocoTestReport {
 task wrapper(type: Wrapper) {
     gradleVersion = '8.8'
     distributionType = Wrapper.DistributionType.ALL
+}
+
+task fatJar(type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+    archiveBaseName = 'ws-front-end-app'
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    exclude '**/log4j2.xml' // Ensure logging is configurable externally
+
+    with jar
+}
+
+task copyJar(type: Copy) {
+    dependsOn fatJar
+    from "$buildDir/libs"  // Source
+    into "../libs/fatjar" // Destination
+    include '**/*.jar'
+}
+
+task copyConfig(type: Copy) {
+    doFirst {
+        if (file("$projectDir/config").exists()) {
+            println "Copying config directory..."
+        } else {
+            println "Config directory not found. Skip copyConfig."
+            throw new StopExecutionException()
+        }
+    }
+    from "$projectDir/config"  // Source
+    into "../libs/fatjar/config/${fatJar.archiveBaseName.get()}" // Destination
+}
+
+// Ensure copyJar runs after fatJar
+tasks.named('jar') {
+    finalizedBy(copyJar)
+}
+
+tasks.named('copyJar') {
+    finalizedBy(copyConfig)
+}
+
+// Ensure copyJar runs first
+['distZip', 'distTar', 'startScripts', 'compileTestJava'].each { taskName ->
+    tasks.named(taskName) {
+        dependsOn copyJar, copyConfig
+    }
 }

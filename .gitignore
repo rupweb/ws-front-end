@@ -15,6 +15,7 @@ tests/coverage
 
 # production
 build
+libs
 frontend/build
 backend/build
 backend/logs
