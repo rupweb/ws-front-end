@@ -104,7 +104,7 @@ public class AeronClient {
 
     private void listen(FragmentHandler fragmentHandler) {
         log.info("In listen");
-        final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 1, 1);
+        final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 100000, 1000000);
         while (running) {
             final int fragments = fixToBackendSubscription.poll(fragmentHandler, 10);
             idleStrategy.idle(fragments);
