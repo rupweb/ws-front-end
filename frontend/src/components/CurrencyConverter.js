@@ -54,12 +54,19 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
   }, [showQuote, quote]);  
 
   const checkDealRequest = (dealData) => {
-    if (!kycComplete) {
-      navigate('/onboarding');
-    } else {
-      dealData.amplifyUsername = amplifyUsername; // Set client for deal request
-      handleDealRequest(dealData);
-    }
+    console.log('amplifyUsername:', amplifyUsername);
+
+    /*
+        if (!kycComplete) {
+          navigate('/onboarding');
+        } else {
+          dealData.amplifyUsername = amplifyUsername; // Set client for deal request
+          handleDealRequest(dealData);
+        }
+    */
+   
+    dealData.amplifyUsername = amplifyUsername; // Set client for deal request
+    handleDealRequest(dealData);
   };
 
   return (
