@@ -6,6 +6,7 @@ import org.agrona.concurrent.SigInt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import app.AppConfig;
 import backend.WebSocketFrameHandler;
 import io.aeron.Aeron;
 import io.aeron.Subscription;
@@ -14,8 +15,40 @@ import io.micrometer.core.instrument.MeterRegistry;
 
 public class AeronErrorClient {
     private static final Logger log = LogManager.getLogger(AeronErrorClient.class);
-    public static final String ERROR_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40150";
-    public static final int ERROR_STREAM_ID = 1050;
+    public static String ADMIN_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40150";
+    public static int ADMIN_STREAM_ID = 1050;
+    public static int TIMEOUT_IN_SECONDS = 5;
+
+    private final int fragmentLimit;
+    private final IdleStrategy idleStrategy;
+
+    public AeronErrorClient(AppConfig config) {
+
+        if (config.getProperty("aeron.admin.channel") != null) {
+            this.ADMIN_CHANNEL = config.getProperty("aeron.admin.channel");
+        }
+    
+        if (config.getIntProperty("aeron.admin.streamId") != null) {
+            this.ADMIN_STREAM_ID = config.getIntProperty("aeron.admin.streamId");
+        }
+    
+        if (config.getIntProperty("publish.timeout") != null) {
+            this.TIMEOUT_IN_SECONDS = config.getIntProperty("publish.timeout");
+        }
+    
+        if (config.getIntProperty("aeron.fragmentLimit") != null) {
+            this.fragmentLimit = config.getIntProperty("aeron.fragmentLimit");
+        } else {
+            this.fragmentLimit = 10; // Default value
+        }
+    
+        this.idleStrategy = new BackoffIdleStrategy(
+            config.getIntProperty("aeron.idleStrategy.maxSpins") != null ? config.getIntProperty("aeron.idleStrategy.maxSpins") : 100,
+            config.getIntProperty("aeron.idleStrategy.maxYields") != null ? config.getIntProperty("aeron.idleStrategy.maxYields") : 1000,
+            config.getIntProperty("aeron.idleStrategy.minParkNanos") != null ? config.getIntProperty("aeron.idleStrategy.minParkNanos") : 100000,
+            config.getIntProperty("aeron.idleStrategy.maxParkNanos") != null ? config.getIntProperty("aeron.idleStrategy.maxParkNanos") : 1000000
+        );
+    }
 
     private Aeron aeron;
     private Subscription errorSubscription;
@@ -34,8 +67,8 @@ public class AeronErrorClient {
 
         this.running = true;
 
-        errorSubscription = aeron.addSubscription(ERROR_CHANNEL, ERROR_STREAM_ID);
-        log.info("Error channel subscription setup: channel={}, port={}, streamId={}", ERROR_CHANNEL, getPort(ERROR_CHANNEL), ERROR_STREAM_ID);
+        errorSubscription = aeron.addSubscription(ADMIN_CHANNEL, ADMIN_STREAM_ID);
+        log.info("Admin Subscription setup: channel={}, port={}, streamId={}", ADMIN_CHANNEL, getPort(ADMIN_CHANNEL), ADMIN_STREAM_ID);
 
         // Start the listener thread
         Thread.startVirtualThread(this::start);
@@ -81,9 +114,9 @@ public class AeronErrorClient {
 
     private void listen(FragmentHandler fragmentHandler) {
         log.info("In listen");
-        final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 100000, 1000000);
+
         while (running) {
-            final int fragmentsError = errorSubscription.poll(fragmentHandler, 10);
+            final int fragmentsError = errorSubscription.poll(fragmentHandler, fragmentLimit);
             idleStrategy.idle(fragmentsError);
         }
         log.info("Out listen");

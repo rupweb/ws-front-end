@@ -14,24 +14,19 @@ import org.apache.logging.log4j.Logger;
 
 public class AppConfig {
     private static final Logger log = LogManager.getLogger(AppConfig.class);
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
     private String propertiesFile;
-
-    public AppConfig() {
-        System.out.println("Loading properties");
-        this.propertiesFile = "application.properties";
-        loadProperties();
-        logProperties();
-    }
     
     public AppConfig(String propertiesFile) {
+        System.out.println("Loading AppConfig properties file: " + propertiesFile);
         this.propertiesFile = propertiesFile;
         loadProperties();
         logProperties();
     }
 
     private void loadProperties() {
-        System.out.println("Writing the first log message");
+        System.out.println("About to write the first log message");
+		log.info("Working Directory: {}", System.getProperty("user.dir"));
         log.info("Loading properties from {}", propertiesFile);
 
         try {
@@ -42,7 +37,13 @@ public class AppConfig {
             // Check for config.import directive
             String importFilePath = properties.getProperty("config.import");
             if (importFilePath != null && !importFilePath.isEmpty()) {
-                Properties importProperties = loadPropertiesFile(importFilePath);
+
+                // Use relative path
+                Path basePath = Paths.get(propertiesFile).getParent();
+                if (basePath == null) { basePath = Paths.get(""); }
+                Path importPath = basePath.resolve(importFilePath).normalize();
+
+                Properties importProperties = loadPropertiesFile(importPath.toString());
                 properties.putAll(importProperties);
             }
         } catch (IOException e) {
@@ -60,13 +61,34 @@ public class AppConfig {
 
     private Properties loadPropertiesFile(String filePath) throws IOException {
         Properties prop = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(filePath)) {
-            if (input == null) {
-                throw new IOException("Property file '" + filePath + "' not found in the classpath");
+    
+        File file = new File(filePath);
+        if (file.exists() && file.isFile()) {
+            // Load properties from an absolute file path
+            log.info("Load properties from absolute path: {}", file.getAbsolutePath());
+            try (InputStream input = new FileInputStream(file)) {
+                prop.load(input);
             }
-            prop.load(input);
+        } else {
+            // Fallback to loading from classpath
+            log.info("Load properties from classpath: {}", filePath);
+            try (InputStream input = getClass().getClassLoader().getResourceAsStream(filePath)) {
+                if (input == null) {
+                    throw new IOException("Property file '" + filePath + "' not found in the classpath");
+                }
+                prop.load(input);
+            }
         }
         return prop;
+    }    
+
+    public void loadTestProperties(String filePath) {
+        try (InputStream input = new FileInputStream(filePath)) {
+            properties.load(input);
+            log.info("Loaded test-specific properties from: {}", filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load test properties", e);
+        }
     }
 
     private void loadExternalProperties(String importFilePath) {
@@ -111,6 +133,14 @@ public class AppConfig {
     public String getProperty(String key) {
         return properties.getProperty(key);
     }
+
+    public Integer getIntProperty(String key) {
+        String value = getProperty(key);
+        if (value == null) {
+            return null;
+        }
+        return Integer.valueOf(value);
+    }    
 
     public Properties getProperties() {
         return properties;

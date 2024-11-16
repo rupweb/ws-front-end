@@ -6,7 +6,7 @@ import org.agrona.concurrent.SigInt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import backend.Errors;
+import app.AppConfig;
 import backend.WebSocketFrameHandler;
 import io.aeron.Aeron;
 import io.aeron.Publication;
@@ -16,25 +16,74 @@ import io.micrometer.core.instrument.MeterRegistry;
 
 public class AeronClient {
     private static final Logger log = LogManager.getLogger(AeronClient.class);
-    public static final String BACKEND_TO_FIX_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40101";
-    public static final String FIX_TO_BACKEND_CHANNEL = "aeron:udp?endpoint=224.0.1.3:40102";
-    public static final String ERROR_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40150";
-    public static final int BACKEND_TO_FIX_STREAM_ID = 1001;
-    public static final int FIX_TO_BACKEND_STREAM_ID = 1002;
-    public static final int ERROR_STREAM_ID = 1050;
+    public static String BACKEND_TO_FIX_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40101";
+    public static String FIX_TO_BACKEND_CHANNEL = "aeron:udp?endpoint=224.0.1.3:40102";
+    public static String ADMIN_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40150";
+    public static int BACKEND_TO_FIX_STREAM_ID = 1001;
+    public static int FIX_TO_BACKEND_STREAM_ID = 1002;
+    public static int ADMIN_STREAM_ID = 1050;
+
+    public static int TIMEOUT_IN_SECONDS = 5;
+
+    private final int fragmentLimit;
+    private final IdleStrategy idleStrategy;
+
+    public AeronClient(AppConfig config) {
+        if (config.getProperty("aeron.backendToFix.channel") != null) {
+            this.BACKEND_TO_FIX_CHANNEL = config.getProperty("aeron.backendToFix.channel");
+        }
+    
+        if (config.getIntProperty("aeron.backendToFix.streamId") != null) {
+            this.BACKEND_TO_FIX_STREAM_ID = config.getIntProperty("aeron.backendToFix.streamId");
+        }
+    
+        if (config.getProperty("aeron.fixToBackend.channel") != null) {
+            this.FIX_TO_BACKEND_CHANNEL = config.getProperty("aeron.fixToBackend.channel");
+        }
+    
+        if (config.getIntProperty("aeron.fixToBackend.streamId") != null) {
+            this.FIX_TO_BACKEND_STREAM_ID= config.getIntProperty("aeron.fixToBackend.streamId");
+        }
+    
+        if (config.getProperty("aeron.admin.channel") != null) {
+            this.ADMIN_CHANNEL = config.getProperty("aeron.admin.channel");
+        }
+    
+        if (config.getIntProperty("aeron.admin.streamId") != null) {
+            this.ADMIN_STREAM_ID = config.getIntProperty("aeron.admin.streamId");
+        }
+    
+        if (config.getIntProperty("publish.timeout") != null) {
+            this.TIMEOUT_IN_SECONDS = config.getIntProperty("publish.timeout");
+        }
+    
+        if (config.getIntProperty("aeron.fragmentLimit") != null) {
+            this.fragmentLimit = config.getIntProperty("aeron.fragmentLimit");
+        } else {
+            this.fragmentLimit = 10; // Default value
+        }
+    
+        this.idleStrategy = new BackoffIdleStrategy(
+            config.getIntProperty("aeron.idleStrategy.maxSpins") != null ? config.getIntProperty("aeron.idleStrategy.maxSpins") : 100,
+            config.getIntProperty("aeron.idleStrategy.maxYields") != null ? config.getIntProperty("aeron.idleStrategy.maxYields") : 1000,
+            config.getIntProperty("aeron.idleStrategy.minParkNanos") != null ? config.getIntProperty("aeron.idleStrategy.minParkNanos") : 100000,
+            config.getIntProperty("aeron.idleStrategy.maxParkNanos") != null ? config.getIntProperty("aeron.idleStrategy.maxParkNanos") : 1000000
+        );
+    }
 
     private Aeron aeron;
     private Subscription fixToBackendSubscription;
     private MeterRegistry registry;
-    private Errors errors;
     private volatile boolean running;
 
+    private final AdminSender adminSender = new AdminSender();  
+    public AdminSender getAdminSender() { return adminSender; }
+
     private final AeronSender aeronSender = new AeronSender();
+    public AeronSender getSender() { return aeronSender; }
 
 	// Guided by tests
     public Aeron getAeron() { return aeron; }
-    public Errors getErrors() { return errors; }
-    public AeronSender getSender() { return aeronSender; }
 
     public void start(Aeron aeron, MeterRegistry registry) {
         log.info("In AeronClient");
@@ -46,15 +95,14 @@ public class AeronClient {
         Publication backendToFixPublication = aeron.addPublication(BACKEND_TO_FIX_CHANNEL, BACKEND_TO_FIX_STREAM_ID);
         log.info("Backend to Fix Publication setup: channel={}, port={}, streamId={}", BACKEND_TO_FIX_CHANNEL, getPort(BACKEND_TO_FIX_CHANNEL), BACKEND_TO_FIX_STREAM_ID);
 
-        Publication errorPublication = aeron.addPublication(ERROR_CHANNEL, ERROR_STREAM_ID);
-        log.info("Error Publication setup: channel={}, port={}, streamId={}", ERROR_CHANNEL, getPort(ERROR_CHANNEL), ERROR_STREAM_ID);
+        Publication adminPublication = aeron.addPublication(ADMIN_CHANNEL, ADMIN_STREAM_ID);
+        log.info("Admin Publication setup: channel={}, port={}, streamId={}", ADMIN_CHANNEL, getPort(ADMIN_CHANNEL), ADMIN_STREAM_ID);
 
-        // Create Errors instance
-        errors = new Errors();
-        this.errors.setSender(errorPublication);
+        // Create admin instance
+        this.adminSender.setSender(adminPublication, TIMEOUT_IN_SECONDS);
 
         // Create Sender instance
-        this.aeronSender.setPublication(backendToFixPublication);
+        this.aeronSender.setPublication(backendToFixPublication, TIMEOUT_IN_SECONDS);
 
         this.running = true;
 
@@ -104,9 +152,9 @@ public class AeronClient {
 
     private void listen(FragmentHandler fragmentHandler) {
         log.info("In listen");
-        final IdleStrategy idleStrategy = new BackoffIdleStrategy(100, 1000, 100000, 1000000);
+
         while (running) {
-            final int fragments = fixToBackendSubscription.poll(fragmentHandler, 10);
+            final int fragments = fixToBackendSubscription.poll(fragmentHandler, fragmentLimit);
             idleStrategy.idle(fragments);
         }
         log.info("Out listen");

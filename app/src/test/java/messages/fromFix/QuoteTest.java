@@ -92,7 +92,7 @@ public class QuoteTest {
         // Sender
         log.info("Publish message");
         AeronSender sender = new AeronSender();
-        sender.setPublication(testQuotePublication);
+        sender.setPublication(testQuotePublication, 2);
         sender.send(encodedMessageBuffer, "quote");
 
         // Give the thing time

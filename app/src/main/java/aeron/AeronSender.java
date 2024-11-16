@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 import org.agrona.DirectBuffer;
-import org.agrona.concurrent.UnsafeBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,20 +12,15 @@ import io.aeron.Publication;
 public class AeronSender {
     private static final Logger log = LogManager.getLogger(AeronSender.class);
     private Publication publisher;
-    private static final long TIMEOUT_IN_SECONDS = 10;
+    private long TIMEOUT_IN_SECONDS = 5;
 
-    public void setPublication(Publication publisher) {
+    public void setPublication(Publication publisher, int timeout) {
         this.publisher = publisher;
+        this.TIMEOUT_IN_SECONDS = timeout;
     }
 
     public void send(DirectBuffer message, String type) {
         publishWithTimeout(publisher, message, type);
-    }
-
-    public void sendTestMessage(String message) {
-        UnsafeBuffer buffer = new UnsafeBuffer(message.getBytes());
-        log.info("Sending test message: {}", message);
-        send(buffer, "test");
     }
 
     private void publishWithTimeout(Publication publication, DirectBuffer message, String type) {
@@ -37,9 +31,15 @@ public class AeronSender {
         do {
             result = publication.offer(message);
             if (result < 0L) {
+                if (result == Publication.NOT_CONNECTED) {
+                    log.warn("Publication [channel: {}, streamId: {}] not connected. Aborting publish.", 
+                        publication.channel(), publication.streamId());
+                    return;
+                }
+
                 if (report) {
-                    reportPublicationFailure((int) result);
-                    report = false;
+                    reportPublicationFailure(publication, (int) result);
+                    report = false; // Only log once
                 }
             }
             
@@ -53,12 +53,17 @@ public class AeronSender {
         log.info("Published {}", type);
     }
 
-    private void reportPublicationFailure(int result) {
+    private void reportPublicationFailure(Publication publication, int result) {
+        String channel = publication.channel();
+        int streamId = publication.streamId();
+
         switch (result) {
-            case (int) Publication.NOT_CONNECTED -> log.error("Publication is not connected.");
-            case (int) Publication.BACK_PRESSURED -> log.warn("Publication is back-pressured.");
-            case (int) Publication.ADMIN_ACTION -> log.warn("Publication has an admin action pending.");
-            default -> log.error("Unknown publication error: {}", result);
+            case (int) Publication.ADMIN_ACTION -> log.warn("Publication [channel: {}, streamId: {}] has an admin action pending.", channel, streamId);
+            case (int) Publication.BACK_PRESSURED -> log.warn("Publication [channel: {}, streamId: {}] is back-pressured.", channel, streamId);
+            case (int) Publication.CLOSED -> log.error("Publication [channel: {}, streamId: {}] is closed.", channel, streamId);
+            case (int) Publication.MAX_POSITION_EXCEEDED -> log.error("Publication [channel: {}, streamId: {}] has reached max position.", channel, streamId);
+            case (int) Publication.NOT_CONNECTED -> log.error("Publication [channel: {}, streamId: {}] is not connected.", channel, streamId);
+            default -> log.error("Unknown publication error [{}]: [channel: {}, streamId: {}]", result, channel, streamId);
         }
     }
 }

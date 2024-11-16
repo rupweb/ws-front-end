@@ -39,29 +39,28 @@ public class App {
     public void startApp(AppConfig appConfig) {
         log.info("Application PID: {}", ProcessUtil.getProcessId());
 
-        // Get the properties
-        String aeronDirectory = appConfig.getProperty("aeron.directory");
-        if (aeronDirectory == null || aeronDirectory.isEmpty()) {
-            log.error("Property 'aeron.directory' not set");
-            throw new RuntimeException("Property 'aeron.directory' required");
-        }
-
-        clientDbURL = appConfig.getProperty("sqlite.client.url");
-        if (clientDbURL == null || clientDbURL.isEmpty()) {
-            log.error("Property 'sqlite.client.url' not set");
-            throw new RuntimeException("Property 'sqlite.client.url' required");
-        }
-
+        // Check required properties
+        String aeronDirectory = getRequiredProperty(appConfig, "aeron.directory");
+        clientDbURL = getRequiredProperty(appConfig, "sqlite.client.url");
         webSocketPort = Integer.parseInt(appConfig.getProperty("websocket.port"));
         log.info("Websocket port: {}", webSocketPort);
 
         // Start Aeron environment
 	    StartWebsocket(webSocketPort);
-        startAeronEnvironment(aeronDirectory);
+        startAeronEnvironment(aeronDirectory, appConfig);
         startDBEnvironment(clientDbURL);
         setRunning(true);
 
         log.info("Application started up");
+    }
+
+    private String getRequiredProperty(AppConfig appConfig, String propertyName) {
+        String value = appConfig.getProperty(propertyName);
+        if (value == null || value.isEmpty()) {
+            log.error("Property '{}' not set", propertyName);
+            throw new RuntimeException("Property '" + propertyName + "' required");
+        }
+        return value;
     }
 
     private void StartWebsocket(int webSocketPort) {
@@ -77,7 +76,7 @@ public class App {
         }).start();   
     }
 
-	public void startAeronEnvironment(String dirName) {
+	public void startAeronEnvironment(String dirName, AppConfig config) {
 		// Use AeronConfiguration to create dependencies
 		log.info("Start Aeron client");
 
@@ -85,11 +84,14 @@ public class App {
 		MeterRegistry registry = meterConfiguration.createMeterRegistry();
 
 		// Create Aeron client instances with injected dependencies
-		aeronClient = new AeronClient();
+		aeronClient = new AeronClient(config);
         aeronClient.start(aeron, registry);
 
-		aeronErrorClient = new AeronErrorClient();
+		aeronErrorClient = new AeronErrorClient(config);
         aeronErrorClient.start(aeron, registry);
+
+        messages.Admin admin = ProcessUtil.getAdminMessage("START", "");
+        App.getAeronClient().getAdminSender().sendAdmin(admin);
 	}
 
     private void startDBEnvironment(String URL) {
@@ -100,6 +102,10 @@ public class App {
     }
 
 	public void stopAeronEnvironment() {
+
+        messages.Admin admin = ProcessUtil.getAdminMessage("STOP", "");
+        App.getAeronClient().getAdminSender().sendAdmin(admin);
+
         if (aeronClient != null) {
             aeronClient.stop();
         }
@@ -110,6 +116,5 @@ public class App {
 
 		// The aeron media driver works independently of aeron pub sub
 		aeronConfiguration.closeAeron();
-	}
-    
+	}  
 }

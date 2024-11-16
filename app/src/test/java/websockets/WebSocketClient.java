@@ -35,7 +35,7 @@ public class WebSocketClient {
     public void start() throws URISyntaxException {
         log.info("Init WebSocketClient");
 
-        appConfig = new AppConfig();
+        appConfig = new AppConfig("application.properties");
         webSocketPort = Integer.parseInt(appConfig.getProperty("websocket.port"));
         log.info("Websocket port: " + webSocketPort);
 

@@ -94,12 +94,12 @@ public class ErrorTest {
             transactTime, quoteID, quoteRequestID, dealRequestID, dealID, fxRate, secondaryAmount, clientID, message);
 
         // Publish the error
-        Publication testErrorPublication = aeronErrorClient.getAeron().addPublication(AeronErrorClient.ERROR_CHANNEL, AeronErrorClient.ERROR_STREAM_ID);
+        Publication testErrorPublication = aeronErrorClient.getAeron().addPublication(AeronErrorClient.ADMIN_CHANNEL, AeronErrorClient.ADMIN_STREAM_ID);
 
         // Sender
         log.info("Publish message");
         AeronSender sender = new AeronSender();
-        sender.setPublication(testErrorPublication);
+        sender.setPublication(testErrorPublication, 2);
         sender.send(encodedMessageBuffer, "error");
 
         // Give the thing time

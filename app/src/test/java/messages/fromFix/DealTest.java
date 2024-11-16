@@ -103,7 +103,7 @@ public class DealTest {
         // Sender
         log.info("Publish message");
         AeronSender sender = new AeronSender();
-        sender.setPublication(testDealPublication);
+        sender.setPublication(testDealPublication, 2);
         sender.send(encodedMessageBuffer, "deal");
 
         // Give the thing time
