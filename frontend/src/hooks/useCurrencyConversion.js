@@ -83,6 +83,7 @@ const useCurrencyConversion = (amplifyUsername) => {
     symbol: quote.symbol,
     quoteRequestID: quote.quoteRequestID,
     quoteID: quote.quoteID,
+    clientID,
     sendMessage
   });
 

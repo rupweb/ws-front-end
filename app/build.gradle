@@ -117,7 +117,10 @@ task fatJar(type: Jar) {
         attributes 'Main-Class': application.mainClass.get()
     }
     archiveBaseName = 'ws-front-end'
+
+    // Ensure local classes and resources are included first
     from {
+        sourceSets.main.output
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 

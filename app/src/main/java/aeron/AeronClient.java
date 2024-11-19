@@ -6,13 +6,13 @@ import org.agrona.concurrent.SigInt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import app.AppConfig;
 import backend.WebSocketFrameHandler;
 import io.aeron.Aeron;
 import io.aeron.Publication;
 import io.aeron.Subscription;
 import io.aeron.logbuffer.FragmentHandler;
 import io.micrometer.core.instrument.MeterRegistry;
+import sharedJava.AppConfig;
 
 public class AeronClient {
     private static final Logger log = LogManager.getLogger(AeronClient.class);

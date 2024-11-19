@@ -10,7 +10,7 @@ import FromCurrencyField from './FromCurrencyField.js';
 import ClientIDField from './ClientIDField.js';
 import { addBusinessDays, isWeekday } from '../utils/utils.js';
 import '../css/CurrencyConverter.css';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
   const [clientID, setClientID] = useState(amplifyUsername || '');
@@ -43,7 +43,7 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
     handleReset
   } = useCurrencyConversion(amplifyUsername);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const minDate = addBusinessDays(new Date(), 2);
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
@@ -56,6 +56,10 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
   const checkDealRequest = (dealData) => {
     console.log('amplifyUsername:', amplifyUsername);
 
+    if (!kycComplete) {
+      console.log('kycComplete:', kycComplete);
+    }
+
     /*
         if (!kycComplete) {
           navigate('/onboarding');
@@ -65,7 +69,8 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
         }
     */
    
-    dealData.amplifyUsername = amplifyUsername; // Set client for deal request
+    dealData.clientID = amplifyUsername; // Set client for deal request
+    console.log('dealData:', dealData);
     handleDealRequest(dealData);
   };
 

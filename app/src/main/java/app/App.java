@@ -14,6 +14,8 @@ import persistence.ClientDbInitializer;
 import persistence.SqlPersistor;
 import utils.ProcessUtil;
 
+import sharedJava.AppConfig;
+
 public class App {
     private static final Logger log = LogManager.getLogger(App.class);
 

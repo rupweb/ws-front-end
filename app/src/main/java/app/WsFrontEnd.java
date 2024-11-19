@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import sharedJava.AppConfig;
+import sharedJava.LogConfig;
+
 public class WsFrontEnd {
     public static void main(String[] args) {
         System.out.println("In main");
