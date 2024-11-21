@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class DebitNoticeEncoder {
-    static BLOCK_LENGTH = 408;
+    static BLOCK_LENGTH = 409;
     static TEMPLATE_ID = 2;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -92,6 +92,12 @@ class DebitNoticeEncoder {
     // Encode regulatoryReporting
     regulatoryReporting(value) {
         this.putString(this.offset + 300, value, 100);
+        return this;
+    }
+
+    // Encode processed
+    processed(value) {
+        this.buffer.setUint8(this.offset + 400, value, true);
         return this;
     }
 

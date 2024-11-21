@@ -115,6 +115,11 @@ class CreditTransferDecoder {
         return this.getString(this.offset + 679, 100);
     }
 
+    // Decode processed
+    processed() {
+        return this.buffer.getUint8(this.offset + 779, true);
+    }
+
     toString() {
         return {
             transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
@@ -136,6 +141,7 @@ class CreditTransferDecoder {
             receiversCharges: this.receiversCharges().replace(/\0/g, ''),
             senderToReceiverInformation: this.senderToReceiverInformation().replace(/\0/g, ''),
             regulatoryReporting: this.regulatoryReporting().replace(/\0/g, ''),
+            processed: this.processed(),
         };
     }
 

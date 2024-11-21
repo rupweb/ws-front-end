@@ -6,6 +6,13 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven {
+        url = "https://maven.pkg.github.com/rupweb/ws-packages"
+        credentials {
+            username = findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+            password = findProperty("gpr.token") ?: System.getenv("MY_TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -17,7 +24,7 @@ dependencies {
     implementation 'org.agrona:agrona:1.23.1'
 
     // SBE helpers
-    implementation files('../../libs/ws-shared-1.0.1.jar')     
+    implementation 'rupweb:ws-shared:1.0.3'
 
     // Websockets implementation 
     implementation 'io.netty:netty-all:4.1.114.Final'
@@ -162,5 +169,18 @@ tasks.named('copyJar') {
 ['distZip', 'distTar', 'startScripts', 'compileTestJava'].each { taskName ->
     tasks.named(taskName) {
         dependsOn copyJar, copyConfig
+    }
+}
+
+tasks.withType(Test) {
+    doFirst {
+        def isGithubActions = System.getenv('GITHUB_ACTIONS') != null
+
+        def propertiesFile = isGithubActions
+            ? file("app/src/test/resources/application-build.properties").absolutePath
+            : file("src/test/resources/application.properties").absolutePath
+
+        systemProperty "app.config.file", propertiesFile
+        println "Using app.config.file: " + propertiesFile
     }
 }

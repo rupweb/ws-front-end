@@ -12,9 +12,9 @@ import io.aeron.Aeron;
 import io.micrometer.core.instrument.MeterRegistry;
 import persistence.ClientDbInitializer;
 import persistence.SqlPersistor;
-import utils.ProcessUtil;
-
 import sharedJava.AppConfig;
+import sharedJava.utils.ProcessUtil;
+
 
 public class App {
     private static final Logger log = LogManager.getLogger(App.class);
@@ -91,6 +91,8 @@ public class App {
 
 		aeronErrorClient = new AeronErrorClient(config);
         aeronErrorClient.start(aeron, registry);
+
+        System.setProperty("application.name", config.getProperty("application.name"));
 
         messages.Admin admin = ProcessUtil.getAdminMessage("START", "");
         App.getAeronClient().getAdminSender().sendAdmin(admin);

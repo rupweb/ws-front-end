@@ -93,6 +93,11 @@ class ExecutionReportDecoder {
         return { mantissa, exponent };
     }
 
+    // Decode processed
+    processed() {
+        return this.buffer.getUint8(this.offset + 140, true);
+    }
+
     toString() {
         return {
             amount: this.decodeamount(),
@@ -109,6 +114,7 @@ class ExecutionReportDecoder {
             dealID: this.dealID().replace(/\0/g, ''),
             clientID: this.clientID().replace(/\0/g, ''),
             fxRate: this.decodefxRate(),
+            processed: this.processed(),
         };
     }
 

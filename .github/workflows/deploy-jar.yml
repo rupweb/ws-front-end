@@ -1,0 +1,26 @@
+name: Build and Deploy ws-front-end
+
+on:
+    workflow_dispatch:
+      inputs:
+        skip_build:
+          description: 'Skip the build job (true/false)'
+          required: false
+          default: 'true'
+  
+jobs:
+  build:
+    if: ${{ inputs.skip_build != 'true' }}
+    uses: rupweb/ws-shared/.github/workflows/common.yml@main
+    secrets:
+      MY_TOKEN: ${{ secrets.MY_TOKEN }}
+    with:
+      project: # Pass local build.gradle directory, if required
+
+  deploy:
+    uses: rupweb/ws-shared/.github/workflows/artifact.yml@main
+    secrets:
+      MY_TOKEN: ${{ secrets.MY_TOKEN }}
+    with:
+      project: ws-front-end
+      destination_repo: rupweb/ws-deploy

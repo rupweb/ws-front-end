@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 import aeron.AeronErrorClient;
-import aeron.AeronSender;
 import app.App;
 import io.aeron.Publication;
 import persistence.SqlMessage;
@@ -19,6 +18,7 @@ import sbe.SbeDecoder;
 import sbe.SbeEncoder;
 import setup.Setup;
 import setup.SetupSingleton;
+import sharedJava.aeron.AeronSender;
 import websockets.WebSocketClient;
 import websockets.WebSocketClientHandler;
 

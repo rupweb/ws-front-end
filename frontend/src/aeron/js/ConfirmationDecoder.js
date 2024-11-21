@@ -97,6 +97,11 @@ class ConfirmationDecoder {
         return this.getString(this.offset + 449, 100);
     }
 
+    // Decode processed
+    processed() {
+        return this.buffer.getUint8(this.offset + 549, true);
+    }
+
     toString() {
         return {
             confirmID: this.confirmID(),
@@ -115,6 +120,7 @@ class ConfirmationDecoder {
             branchNo: this.branchNo().replace(/\0/g, ''),
             beneficiary: this.beneficiary().replace(/\0/g, ''),
             additionalInformation: this.additionalInformation().replace(/\0/g, ''),
+            processed: this.processed(),
         };
     }
 

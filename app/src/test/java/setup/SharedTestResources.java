@@ -1,11 +1,13 @@
 package setup;
 
+import java.nio.file.Paths;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import config.TestMediaDriver;
-import app.WsFrontEnd;
 import app.App;
+import app.WsFrontEnd;
+import config.TestMediaDriver;
 
 public class SharedTestResources {
     private static final Logger log = LogManager.getLogger(SharedTestResources.class);
@@ -27,6 +29,16 @@ public class SharedTestResources {
                 testMediaDriver.start();
             } else {
                 log.error("TestMediaDriver is null");
+            }
+
+            // Respect existing app.config.file property
+            String existingConfigFile = System.getProperty("app.config.file");
+            if (existingConfigFile == null || existingConfigFile.isEmpty()) {
+                String testConfigPath = Paths.get("app", "src", "test", "resources", "application.properties").toAbsolutePath().toString();
+                System.setProperty("app.config.file", testConfigPath);
+                log.info("app.config.file: {}", testConfigPath);
+            } else {
+                log.info("app.config.file: {}", existingConfigFile);
             }
 
             // Start the aeron pubsub and the FIX engine in a virtual thread

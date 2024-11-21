@@ -2,7 +2,7 @@ import DecimalEncoder from './DecimalEncoder.js';
 import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 
 class CreditTransferEncoder {
-    static BLOCK_LENGTH = 787;
+    static BLOCK_LENGTH = 788;
     static TEMPLATE_ID = 4;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
@@ -141,6 +141,12 @@ class CreditTransferEncoder {
     // Encode regulatoryReporting
     regulatoryReporting(value) {
         this.putString(this.offset + 679, value, 100);
+        return this;
+    }
+
+    // Encode processed
+    processed(value) {
+        this.buffer.setUint8(this.offset + 779, value, true);
         return this;
     }
 
