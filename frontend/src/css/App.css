@@ -112,12 +112,21 @@
   padding: 10px;
 }
 
+.amplify-button {
+  border-radius: 8px; /* Rounded buttons */
+  padding: 0.8rem 1.2rem; /* Adjust button padding */
+}
+
 .amplify-tabs__item {
-  margin: 5px;
+  margin: 0.5rem;
 }
 
 .amplify-field__show-password {
   display: none; /* Hide the "Password is hidden" message */
+}
+
+.amplify-field-group__control {
+  margin-bottom: 1rem; /* Space between input fields */
 }
 
 /* Ensuring the tabs and other elements are also wider */

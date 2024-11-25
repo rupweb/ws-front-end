@@ -1,0 +1,9 @@
+.login-card {
+    max-width: 600px;
+    margin: 20px auto; /* Center the card */
+    padding: 20px;
+    background-color: #ffffff; /* White background for contrast */
+    border-radius: 25px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+  

@@ -6,12 +6,10 @@ import './css/App.css';
 import CurrencyConverter from './components/CurrencyConverter.js';
 import Blotter from './components/Blotter.js';
 import Onboarding from './components/Onboarding.js';
-import Login from './components/Login.js';
 import { Authenticator } from '@aws-amplify/ui-react';
 import CookieConsent from 'react-cookie-consent';
 import { WebSocketProvider } from './contexts/WebSocketContext.js';
 import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
-
 
 function App() {
   const websocketUrl = process.env.REACT_APP_WS_URL;
@@ -24,6 +22,11 @@ function App() {
     const myFetchUserAttributes = async () => {
       try {
         const session = await fetchAuthSession();
+        if (!session || !session.tokens || !session.tokens.idToken) {
+          console.warn('No session or ID token found');
+          return <Navigate to="/login" replace />;
+        }
+
         const idToken = session.tokens.idToken;
         const username = idToken.payload['cognito:username'];
         setAmplifyUsername(username);
@@ -39,7 +42,7 @@ function App() {
     };
   
     myFetchUserAttributes();
-  }, [navigate]);  
+  }, [navigate]);
 
   return (
     <>
@@ -54,19 +57,9 @@ function App() {
                   <Header user={user} signOut={signOut} />
                   <div className="content-container">
                   <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        amplifyUsername ? (
-                          <CurrencyConverter amplifyUsername={amplifyUsername} kycComplete={kycComplete} />
-                        ) : (
-                          <>Loading...</>
-                        )
-                      }
-                    />
+                    <Route path="/" element={<CurrencyConverter amplifyUsername={amplifyUsername} kycComplete={kycComplete} />} />
                     <Route path="/blotter" element={<Blotter />} />
                     <Route path="/onboarding" element={<Onboarding />} />
-                    <Route path="/login" element={<Login />} />
                   </Routes>
                   </div>
                   <Footer />
@@ -74,7 +67,7 @@ function App() {
             </WebSocketProvider>
           )}
         </Authenticator>
-      </div>
+        </div>
     </>
   );
 }
