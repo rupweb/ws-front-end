@@ -14,6 +14,8 @@ const handleDealRequest = async ({
   clientID,
   sendMessage
 }) => {
+  console.log('Received clientID in handleDealRequest:', clientID);
+
   const dealRequest = {
     amount: {
       mantissa: Math.round(amount * Math.pow(10, 2)),
@@ -35,8 +37,10 @@ const handleDealRequest = async ({
       mantissa: Math.round(secondaryAmount * Math.pow(10, 2)),
       exponent: -2
     },
-    clientID: clientID
+    clientID: 'test'
   };
+
+  console.log('dealRequest:', dealRequest);
 
   // Encode the data using the JavaScript encoder
   const encodedMessage = encodeDealRequest(dealRequest);

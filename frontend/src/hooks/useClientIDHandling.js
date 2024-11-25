@@ -13,7 +13,7 @@ const useClientIDHandling = (amplifyUsername, clientID, setClientIDModalMessageP
       return true;
     }
 
-    if (clientID !== 'TEST') {
+    if (clientID === 'TEST') {
       setClientIDModalMessageParent('ClientID check in process');
       setShowClientIDModalParent(true);
 

@@ -1,0 +1,24 @@
+plugins {
+    id 'base'
+}
+
+def frontendDir = file('frontend')
+def outputDir = file("../../ws-deploy/artifacts/frontends/${rootProject.name}")
+
+task npmRunBuild(type: Exec) {
+    description = "Runs npm build in the frontend directory"
+    workingDir = frontendDir
+    commandLine 'npm', 'run', 'build'
+}
+
+task copyBuildResults(type: Copy) {
+    description = "Copies build results to the deployment directory"
+    dependsOn npmRunBuild
+    from "${frontendDir}/build"
+    into outputDir
+}
+
+task frontendBuild {
+    description = "Builds the frontend and copies results"
+    dependsOn copyBuildResults
+}
