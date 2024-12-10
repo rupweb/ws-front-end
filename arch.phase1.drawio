@@ -1,11 +1,11 @@
 <mxfile host="65bd71144e">
     <diagram id="RnvROO-fHxQEMewYnGY0" name="Page-1">
-        <mxGraphModel dx="2581" dy="2239" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="2539" dy="2287" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="2" value="FX Trading Screen&lt;br&gt;(spot, fwd, swap)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
-                    <mxGeometry x="20" y="60" width="120" height="60" as="geometry"/>
+                <mxCell id="2" value="FX Widget" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="75" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="35" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" parent="1" source="3" target="20" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -227,7 +227,7 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="104" value="" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" parent="1" vertex="1">
-                    <mxGeometry x="-140" y="35" width="20" height="30" as="geometry"/>
+                    <mxGeometry x="-60" y="20" width="20" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="112" style="edgeStyle=none;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;startArrow=none;startFill=0;" parent="1" source="110" target="64" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -485,10 +485,10 @@
                 <mxCell id="224" value="Spreader" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
                     <mxGeometry x="485" y="200" width="70" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="225" value="FXall" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="225" value="FXall" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
                     <mxGeometry x="720" y="-80" width="70" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="226" value="Existing&lt;br&gt;FXall&lt;br&gt;relationship" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                <mxCell id="226" value="Existing&lt;br&gt;FXall&lt;br&gt;relationship" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
                     <mxGeometry x="715" y="-150" width="80" height="60" as="geometry"/>
                 </mxCell>
             </root>

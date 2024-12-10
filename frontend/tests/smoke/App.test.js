@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import App from '../../src/App.js';
 
 // Mock the Authenticator component from AWS Amplify
@@ -8,7 +9,7 @@ jest.mock('@aws-amplify/ui-react', () => ({
 }));
 
 // Mock the WebSocketProvider
-jest.mock('../../src/handlers/WebSocketContext.js', () => ({
+jest.mock('../../src/contexts/WebSocketContext.js', () => ({
   WebSocketProvider: ({ children }) => <div>{children}</div>,
   useWebSocket: jest.fn(() => ({
     sendMessage: jest.fn()
@@ -27,10 +28,14 @@ jest.mock('../../src/components/DeliveryDateField.js', () => {
   return jest.requireActual('./mock/DeliveryDateField.js');
 });
 
-test('renders the app with header and footer', () => {
-  console.log('Test started')
-
-  render(<App />);
+test('renders the app with header and footer', async () => {
+  await act(async () => {
+    render(
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <App />
+      </Router>
+    );
+  });
 
   // Check if the CookieConsent component is rendered
   expect(screen.getByText(/This website uses cookies/i)).toBeInTheDocument();
@@ -55,5 +60,5 @@ test('renders the app with header and footer', () => {
   const footer = screen.getByRole('contentinfo');
   expect(footer).toBeInTheDocument();
 
-  console.log('Test finished')
+  console.log('Test finished');
 });

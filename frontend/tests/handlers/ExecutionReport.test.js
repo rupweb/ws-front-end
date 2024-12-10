@@ -40,7 +40,6 @@ describe('handleIncomingExecutionReport', () => {
         console.log(data);
         console.log("Setup encoder");
 
-        // Setup the execution report encoder
         const bufferLength = ExecutionReportEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH;
         const buffer = new ArrayBuffer(bufferLength);
         const headerEncoder = new MessageHeaderEncoder();
@@ -48,14 +47,12 @@ describe('handleIncomingExecutionReport', () => {
 
         console.log("Encode");
 
-        // Wrap and set header
         headerEncoder.wrap(buffer, 0)
-        .blockLength(ExecutionReportEncoder.BLOCK_LENGTH)
-        .templateId(2) 
-        .schemaId(1)
-        .version(1);
+            .blockLength(ExecutionReportEncoder.BLOCK_LENGTH)
+            .templateId(2)
+            .schemaId(1)
+            .version(1);
 
-        // Encode the data
         encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
         encoder.encodeamount(data.amount);
         encoder.currency(data.currency);
@@ -71,16 +68,37 @@ describe('handleIncomingExecutionReport', () => {
         encoder.dealID(data.dealID);
         encoder.encodefxRate(data.fxRate);
 
-        // Mock console to capture the output
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-        // Call test function
-        handleIncomingMessage(buffer);
+        const mockSetExecutionReport = jest.fn();
+        const mockSetShowExecutionReport = jest.fn();
 
-        // Check if the log contains the expected message
-        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', data);
+        console.log("Incoming message");
+        handleIncomingMessage(
+            buffer,
+            jest.fn(), // setQuote
+            jest.fn(), // setShowQuote
+            mockSetExecutionReport,
+            mockSetShowExecutionReport,
+            jest.fn(), // setError
+            jest.fn() // setShowError
+        );
 
-        // Restore console
+        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', expect.any(Object));
+        expect(mockSetExecutionReport).toHaveBeenCalledWith({
+            dealID: data.dealID,
+            amount: data.amount.mantissa * Math.pow(10, data.amount.exponent),
+            currency: data.currency,
+            symbol: data.symbol,
+            deliveryDate: data.deliveryDate,
+            secondaryCurrency: data.secondaryCurrency,
+            rate: data.fxRate.mantissa * Math.pow(10, data.fxRate.exponent),
+            secondaryAmount: data.secondaryAmount.mantissa * Math.pow(10, data.secondaryAmount.exponent),
+        });
+
+        expect(mockSetShowExecutionReport).toHaveBeenCalledWith(true);
+
         consoleSpy.mockRestore();
     });
 });
+

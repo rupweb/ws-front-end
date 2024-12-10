@@ -13,10 +13,7 @@ describe('handleIncomingError', () => {
         console.log('handleIncomingError test');
 
         const data = {
-            amount: {
-                mantissa: 500000,
-                exponent: -2
-            },
+            amount: { mantissa: 500000, exponent: -2 },
             currency: 'GBP',
             side: 'BUY',
             symbol: 'GBPUSD',
@@ -26,36 +23,23 @@ describe('handleIncomingError', () => {
             quoteRequestID: 'QR654321',
             dealRequestID: 'DR654321',
             dealID: 'D654321',
-            fxRate: {
-                mantissa: 134560,
-                exponent: -5
-            },
-            secondaryAmount: {
-                mantissa: 672800,
-                exponent: -2
-            },
-            message: 'Error processing the request due to invalid input parameters.'
+            clientID: 'TEST',
+            fxRate: { mantissa: 134560, exponent: -5 },
+            secondaryAmount: { mantissa: 672800, exponent: -2 },
+            message: 'Error processing the request due to invalid input parameters.',
         };
 
-        console.log(data);
-        console.log("Setup encoder");
-
-        // Setup the error encoder
         const bufferLength = ErrorEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH;
         const buffer = new ArrayBuffer(bufferLength);
         const headerEncoder = new MessageHeaderEncoder();
         const encoder = new ErrorEncoder();
 
-        console.log("Encode");
-
-        // Wrap and set header
         headerEncoder.wrap(buffer, 0)
-        .blockLength(ErrorEncoder.BLOCK_LENGTH)
-        .templateId(5) 
-        .schemaId(1)
-        .version(1);
+            .blockLength(ErrorEncoder.BLOCK_LENGTH)
+            .templateId(5)
+            .schemaId(1)
+            .version(1);
 
-        // Encode the data
         encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
         encoder.encodeamount(data.amount);
         encoder.currency(data.currency);
@@ -67,23 +51,46 @@ describe('handleIncomingError', () => {
         encoder.quoteID(data.quoteID);
         encoder.dealRequestID(data.dealRequestID);
         encoder.dealID(data.dealID);
+        encoder.clientID(data.clientID);
         encoder.encodefxRate(data.fxRate);
         encoder.encodesecondaryAmount(data.secondaryAmount);
         encoder.message(data.message);
 
-        // Mock console to capture the output
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-        // Call test function
-        console.log("Test");
-        handleIncomingMessage(buffer);
+        const mockSetError = jest.fn();
+        const mockSetShowError = jest.fn();
 
-        console.log("Check log");
+        handleIncomingMessage(
+            buffer,
+            jest.fn(), // setQuote
+            jest.fn(), // setShowQuote
+            jest.fn(), // setExecutionReport
+            jest.fn(), // setShowExecutionReport
+            mockSetError,
+            mockSetShowError,
+        );
 
-        // Check if the log contains the expected message
-        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', data);
+        expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', expect.any(Object));
+        expect(mockSetError).toHaveBeenCalledWith({
+            amount: data.amount.mantissa * Math.pow(10, data.amount.exponent),
+            currency: data.currency,
+            side: data.side,
+            symbol: data.symbol,
+            deliveryDate: data.deliveryDate,
+            transactTime: data.transactTime,
+            quoteID: data.quoteID,
+            quoteRequestID: data.quoteRequestID,
+            dealRequestID: data.dealRequestID,
+            dealID: data.dealID,
+            clientID: data.clientID,
+            rate: data.fxRate.mantissa * Math.pow(10, data.fxRate.exponent),
+            secondaryAmount: data.secondaryAmount.mantissa * Math.pow(10, data.secondaryAmount.exponent),
+            message: data.message,
+        });
+        expect(mockSetShowError).toHaveBeenCalledWith(true);
 
-        // Restore console
         consoleSpy.mockRestore();
     });
 });
+

@@ -34,7 +34,11 @@
     "url": "^0.11.4",
     "web-vitals": "^4.2.4",
     "websocket-mock": "^1.0.1",
+    "ws": "^8.18.0",
     "ws-front-end": "file:"
+  },
+  "resolutions": {
+    "ws": "8.18.0"
   },
   "scripts": {
     "start": "react-scripts start",

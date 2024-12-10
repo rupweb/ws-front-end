@@ -1,97 +1,132 @@
-import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext.js';
-import { decodeExecutionReport } from '../../src/aeron/js/ExecutionReportDecoder.js';
-import { WebSocketServer } from 'ws';
-import React, { useEffect, useState } from 'react';
-import { render } from '@testing-library/react';
+import React from 'react';
+import { render, act, fireEvent } from '@testing-library/react';
+import WebSocketServer from 'jest-websocket-mock';
+import { WebSocketProvider, useWebSocket } from 'src/contexts/WebSocketContext.js';
 
-// Mock WebSocket server setup
-const mockServer = new WebSocketServer({ port: 8092 });
+import ExecutionReportEncoder from 'src/aeron/js/ExecutionReportEncoder.js'
+import ExecutionReportDecoder from 'src/aeron/js/ExecutionReportDecoder.js'
+import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
 
-const sendMockExecutionReport = () => {
-    const data = {
-        amount: { mantissa: 1000, exponent: -2 },
-        currency: 'USD',
-        secondaryAmount: { mantissa: 2000, exponent: -2 },
-        secondaryCurrency: 'EUR',
-        side: 'BUY',
-        symbol: 'EURUSD',
-        deliveryDate: '2023-01-01',
-        transactTime: '2023-01-01T12:00:00Z',
-        quoteRequestID: 'test-quote-request-id',
-        quoteID: 'test-quote-id',
-        dealRequestID: 'test-deal-request-id',
-        dealID: 'test-deal-id',
-        fxRate: { mantissa: 100, exponent: -2 }
-    };
+// Mock TextEncoder & TextDecoder
+import TextEncoder from '../aeron/TextEncoder.js';
+import TextDecoder from '../aeron/TextDecoder.js';
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
-    const buffer = new UnsafeBuffer(ByteBuffer.allocateDirect(ExecutionReportDecoder.BLOCK_LENGTH + MessageHeaderDecoder.ENCODED_LENGTH));
-    const encoder = new ExecutionReportEncoder();
-    const headerEncoder = new MessageHeaderEncoder();
-
-    encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
-    encoder.encodeamount(data.amount);
-    encoder.currency(data.currency);
-    encoder.encodesecondaryAmount(data.secondaryAmount);
-    encoder.secondaryCurrency(data.secondaryCurrency);
-    encoder.side(data.side);
-    encoder.symbol(data.symbol);
-    encoder.deliveryDate(data.deliveryDate);
-    encoder.transactTime(data.transactTime);
-    encoder.quoteRequestID(data.quoteRequestID);
-    encoder.quoteID(data.quoteID);
-    encoder.dealRequestID(data.dealRequestID);
-    encoder.dealID(data.dealID);
-    encoder.encodefxRate(data.fxRate);
-
-    mockServer.clients.forEach(client => {
-        client.send(buffer.byteArray());
-    });
+// Mock ExecutionReport data
+const data = {
+    amount: { mantissa: 1000, exponent: -2 },
+    currency: 'USD',
+    secondaryAmount: { mantissa: 2000, exponent: -2 },
+    secondaryCurrency: 'USD',
+    side: 'BUY',
+    symbol: 'EURUSD',
+    deliveryDate: '20230101',
+    transactTime: '20240101-00:00:00.000',
+    quoteRequestID: 'test-request',
+    quoteID: 'test-quote-id',
+    dealRequestID: 'test-request',
+    dealID: 'test-deal-id',
+    fxRate: { mantissa: 123456, exponent: -5 },
+    clientID: 'CLNT'
 };
 
-mockServer.on('connection', socket => {
-    sendMockExecutionReport();
-});
+const TestComponent = () => {
+    const { sendMessage } = useWebSocket();
+    const sendTestMessage = () => {
+        // Encode the message
+        const buffer = new ArrayBuffer(ExecutionReportEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH);
+        const headerEncoder = new MessageHeaderEncoder();
+        const encoder = new ExecutionReportEncoder();
+    
+        // Encode the data
+        encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+        encoder.encodeamount(data.amount);
+        encoder.currency(data.currency);
+        encoder.encodesecondaryAmount(data.secondaryAmount);
+        encoder.secondaryCurrency(data.currency);
+        encoder.side(data.side);
+        encoder.symbol(data.symbol);
+        encoder.deliveryDate(data.deliveryDate);
+        encoder.transactTime(data.transactTime);
+        encoder.quoteRequestID(data.quoteRequestID);
+        encoder.quoteID(data.quoteID);
+        encoder.dealRequestID(data.dealRequestID);
+        encoder.dealID(data.dealID);     
+        encoder.encodefxRate(data.fxRate);
+        encoder.clientID(data.clientID);
 
-describe('WebSocket integration test', () => {
+        // Send the message on the WebSocket
+        sendMessage(buffer);
+    };
+
+    return <button onClick={sendTestMessage}>Send ExecutionReport</button>;
+};
+
+describe('WebSocket ExecutionReport integration test', () => {
+    let server;
+
+    beforeEach(() => {
+        server = new WebSocketServer('ws://localhost:8092');
+    });
+
+    afterEach(() => {
+        WebSocketServer.clean();
+    });
+
     it('receives an ExecutionReport message via WebSocket', async () => {
-        const TestComponent = () => {
-            const [executionReport, setExecutionReport] = useState(null);
-
-            useEffect(() => {
-                const handleExecutionReport = (data) => {
-                    const decodedExecutionReport = decodeExecutionReport(data);
-                    setExecutionReport(decodedExecutionReport);
-                };
-
-                // Use the WebSocket context's method to receive messages
-                useWebSocket().addMessageHandler(handleExecutionReport);
-
-                return () => {
-                    useWebSocket().removeMessageHandler(handleExecutionReport);
-                };
-            }, []);
-
-            return <div>{executionReport ? `Received ExecutionReport: ${JSON.stringify(executionReport)}` : 'Waiting for ExecutionReport...'}</div>;
-        };
-
         const { getByText } = render(
             <WebSocketProvider url="ws://localhost:8092">
                 <TestComponent />
             </WebSocketProvider>
         );
 
-        expect(getByText(/Waiting for ExecutionReport.../)).toBeInTheDocument();
+        await server.connected;
+        await act(async () => {
+            fireEvent.click(getByText('Send ExecutionReport'));
+        });
 
-        // Wait for the mock execution report to be received
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Allow server to process the message
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
-        expect(getByText(/Received ExecutionReport:/)).toBeInTheDocument();
+        // Log all server messages
+        console.log('Server messages after sending:', server.messages);
+    
+        // Verify the message was received on the server
+        const messages = server.messages.filter(
+            (message) => !(typeof message === 'string' && message.includes('Connection established'))
+        );
+        expect(messages).toHaveLength(1);
+    
+        // Received message
+        const receivedMessage = messages[0];
+        console.log('Received message:', receivedMessage);
 
-        console.log('Test finished')
+        // Decode the received message
+        const decoder = new ExecutionReportDecoder();
+        const buffer = new Uint8Array(receivedMessage).buffer;
+        decoder.wrap(buffer, MessageHeaderEncoder.ENCODED_LENGTH);
+
+        console.log('Decoding received message...');
+
+        const decodedData = {
+            amount: decoder.decodeamount(),
+            currency: decoder.currency(),
+            secondaryAmount: decoder.decodesecondaryAmount(),
+            secondaryCurrency: decoder.secondaryCurrency(),
+            side: decoder.side().replace(/\0/g, ''),
+            symbol: decoder.symbol(),
+            deliveryDate: decoder.deliveryDate(),
+            transactTime: decoder.transactTime(),
+            quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
+            quoteID: decoder.quoteID().replace(/\0/g, ''),
+            dealRequestID: decoder.dealRequestID().replace(/\0/g, ''),
+            dealID: decoder.dealID().replace(/\0/g, ''),
+            fxRate: decoder.decodefxRate(),
+            clientID: decoder.clientID(),
+        };
+
+        // Step 6: Assert the decoded data matches the original data
+        expect(decodedData).toEqual(data);
     });
-});
-
-// Close the mock server after tests
-afterAll(() => {
-    mockServer.close();
 });

@@ -1,65 +1,106 @@
-import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext.js';
-import { encodeDealRequest } from '../../src/messages/encodeDealRequest.js';
-import { WebSocketServer } from 'ws';
 import React from 'react';
-import { render, act } from '@testing-library/react';
+import { render, act, fireEvent } from '@testing-library/react';
+import WebSocketServer from 'jest-websocket-mock';
+import { WebSocketProvider, useWebSocket } from 'src/contexts/WebSocketContext.js';
+import encodeDealRequest from 'src/messages/encodeDealRequest.js';
+import DealRequestDecoder from 'src/aeron/js/DealRequestDecoder.js'
+import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
 
-// Mock WebSocket server setup
-const mockServer = new WebSocketServer({ port: 8092 });
+// Mock TextEncoder & TextDecoder
+import TextEncoder from '../aeron/TextEncoder.js';
+import TextDecoder from '../aeron/TextDecoder.js';
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
-mockServer.on('connection', socket => {
-    socket.on('message', message => {
-        const data = new Uint8Array(message);
-        // Handle incoming message, for example, decode and check the content
-        console.log('Server received:', data);
-    });
-});
+// Mock dealRequestData
+const data = {
+    amount: { mantissa: 1000, exponent: -2 },
+    currency: 'USD',
+    side: 'BUY',
+    symbol: 'EURUSD',
+    deliveryDate: '20230101',
+    transactTime: '20240101-00:00:00.000',
+    quoteRequestID: 'test-request',
+    quoteID: 'test-quote-id',
+    dealRequestID: 'test-request',
+    fxRate: { mantissa: 123456, exponent: -5 },
+    secondaryAmount: { mantissa: 2000, exponent: -2 },
+    clientID: 'CLNT'
+};
+
+const TestComponent = () => {
+    const { sendMessage } = useWebSocket();
+    const sendTestMessage = () => {
+        const encodedMessage = encodeDealRequest(data);
+        sendMessage(encodedMessage);
+    };
+
+    return <button onClick={sendTestMessage}>Send DealRequest</button>;
+};
 
 describe('WebSocket integration test', () => {
-    it('sends a DealRequest message via WebSocket', async () => {
-        console.log('WebSocket integration test')
-        const TestComponent = () => {
-            const { sendMessage } = useWebSocket();
+    let server;
 
-            const sendTestMessage = () => {
-                const dealRequestData = {
-                    amount: { mantissa: 1000, exponent: -2 },
-                    currency: 'USD',
-                    side: 'BUY',
-                    symbol: 'EURUSD',
-                    deliveryDate: '2023-01-01',
-                    transactTime: '2023-01-01T12:00:00Z',
-                    quoteRequestID: 'test-quote-request-id',
-                    quoteID: 'test-quote-id',
-                    dealRequestID: 'test-deal-request-id',
-                    ticketRef: 'test-ticket-ref',
-                    fxRate: { mantissa: 100, exponent: -2 }
-                };
+    beforeEach(() => {
+        server = new WebSocketServer('ws://localhost:8092');
+    });
 
-                const encodedMessage = encodeDealRequest(dealRequestData);
-                sendMessage(encodedMessage);
-            };
+    afterEach(() => {
+        server.close();
+    });
 
-            return <button onClick={sendTestMessage}>Send DealRequest</button>;
-        };
-
+    it('sends a DealRequest message and decodes it correctly', async () => {
         const { getByText } = render(
             <WebSocketProvider url="ws://localhost:8092">
                 <TestComponent />
             </WebSocketProvider>
         );
-
+    
+        await server.connected;
         await act(async () => {
-            getByText('Send DealRequest').click();
+            fireEvent.click(getByText('Send DealRequest'));
         });
+    
+        // Allow server to process the message
+        await new Promise((resolve) => setTimeout(resolve, 50));
+    
+        // Log all server messages
+        console.log('Server messages after sending:', server.messages);
+    
+        // Verify the message was received on the server
+        const messages = server.messages.filter(
+            (message) => !(typeof message === 'string' && message.includes('Connection established'))
+        );
+        expect(messages).toHaveLength(1);
+    
+        // Received message
+        const receivedMessage = messages[0];
+        console.log('Received message:', receivedMessage);
+    
+        // Decode the received message
+        const decoder = new DealRequestDecoder();
+        const buffer = new Uint8Array(receivedMessage).buffer;
+        decoder.wrap(buffer, MessageHeaderEncoder.ENCODED_LENGTH);
 
-        // Verify that the message was sent correctly
-        // You can use assertions to check the server logs or other means to validate the test
-        console.log('Test finished')
+        console.log('Decoding received message...');
+
+        // Decode the data
+        const decodedData = {
+            amount: decoder.decodeamount(),
+            currency: decoder.currency(),
+            side: decoder.side().replace(/\0/g, ''),
+            symbol: decoder.symbol(),
+            deliveryDate: decoder.deliveryDate(),
+            transactTime: decoder.transactTime(),
+            quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
+            quoteID: decoder.quoteID().replace(/\0/g, ''),
+            dealRequestID: decoder.dealRequestID().replace(/\0/g, ''),
+            fxRate: decoder.decodefxRate(),
+            secondaryAmount: decoder.decodesecondaryAmount(),
+            clientID: decoder.clientID()
+        };
+
+        // Check if the decoded data matches the expected data
+        expect(decodedData).toEqual(data);
     });
-});
-
-// Close the mock server after tests
-afterAll(() => {
-    mockServer.close();
 });

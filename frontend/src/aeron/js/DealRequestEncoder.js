@@ -110,6 +110,7 @@ class DealRequestEncoder {
             this.buffer.setUint8(offset + i, i < bytes.length ? bytes[i] : 0);
         }
     }
+
 }
 
 export default DealRequestEncoder;

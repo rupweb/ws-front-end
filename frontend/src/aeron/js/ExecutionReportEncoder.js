@@ -4,7 +4,7 @@ import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 class ExecutionReportEncoder {
     static BLOCK_LENGTH = 149;
     static TEMPLATE_ID = 2;
-    static SCHEMA_ID = 1;
+    static SCHEMA_ID = 2;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -115,12 +115,6 @@ class ExecutionReportEncoder {
         this.fxRateEncoder.exponent(value.exponent);
     }
 
-    // Encode processed
-    processed(value) {
-        this.buffer.setUint8(this.offset + 140, value, true);
-        return this;
-    }
-
     putString(offset, value, length) {
         const encoder = new TextEncoder();
         const bytes = encoder.encode(value);
@@ -128,6 +122,7 @@ class ExecutionReportEncoder {
             this.buffer.setUint8(offset + i, i < bytes.length ? bytes[i] : 0);
         }
     }
+
 }
 
 export default ExecutionReportEncoder;

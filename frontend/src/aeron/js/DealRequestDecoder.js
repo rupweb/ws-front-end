@@ -105,6 +105,7 @@ class DealRequestDecoder {
         const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
+
 }
 
 export default DealRequestDecoder;

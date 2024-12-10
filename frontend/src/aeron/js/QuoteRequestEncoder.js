@@ -4,7 +4,7 @@ import MessageHeaderEncoder from './MessageHeaderEncoder.js';
 class QuoteRequestEncoder {
     static BLOCK_LENGTH = 82;
     static TEMPLATE_ID = 3;
-    static SCHEMA_ID = 1;
+    static SCHEMA_ID = 3;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -90,6 +90,7 @@ class QuoteRequestEncoder {
             this.buffer.setUint8(offset + i, i < bytes.length ? bytes[i] : 0);
         }
     }
+
 }
 
 export default QuoteRequestEncoder;

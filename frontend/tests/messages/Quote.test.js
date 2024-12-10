@@ -1,90 +1,116 @@
-import { WebSocketProvider, useWebSocket } from '../../src/handlers/WebSocketContext.js';
-import { decodeQuote } from '../../src/aeron/js/QuoteDecoder.js';
-import { WebSocketServer } from 'ws';
-import React, { useEffect, useState } from 'react';
-import { render } from '@testing-library/react';
+import React from 'react';
+import { render, act, fireEvent } from '@testing-library/react';
+import WebSocketServer from 'jest-websocket-mock';
+import { WebSocketProvider, useWebSocket } from 'src/contexts/WebSocketContext.js';
 
-// Mock WebSocket server setup
-const mockServer = new WebSocketServer({ port: 8092 });
+import QuoteEncoder from 'src/aeron/js/QuoteEncoder.js'
+import QuoteDecoder from 'src/aeron/js/QuoteDecoder.js'
+import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
 
-const sendMockQuote = () => {
-    const quoteData = {
-        amount: { mantissa: 1000, exponent: -2 },
-        currency: 'USD',
-        fxRate: { mantissa: 100, exponent: -2 },
-        transactTime: '2023-01-01T12:00:00Z',
-        side: 'BUY',
-        symbol: 'EURUSD',
-        quoteID: 'test-quote-id',
-        quoteRequestID: 'test-quote-request-id',
-        secondaryAmount: { mantissa: 100, exponent: -2 },
-    };
+// Mock TextEncoder & TextDecoder
+import TextEncoder from '../aeron/TextEncoder.js';
+import TextDecoder from '../aeron/TextDecoder.js';
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
-    const buffer = new UnsafeBuffer(ByteBuffer.allocateDirect(QuoteDecoder.BLOCK_LENGTH + MessageHeaderDecoder.ENCODED_LENGTH));
-    const encoder = new QuoteEncoder();
-    const headerEncoder = new MessageHeaderEncoder();
-
-    // Encode the quote
-    encoder.wrapAndApplyHeader(data, 0, headerEncoder);
-    encoder.encodeamount(data.amount);
-    encoder.currency(data.currency);
-    encoder.side(data.side);
-    encoder.symbol(data.symbol);
-    encoder.transactTime(data.transactTime);
-    encoder.quoteID(data.quoteID);
-    encoder.quoteRequestID(data.quoteRequestID);
-    encoder.encodefxRate(data.fxRate);
-    encoder.encodesecondaryAmount(data.secondaryAmount);
-
-    mockServer.clients.forEach(client => {
-        client.send(buffer.byteArray());
-    });
+const data = {
+    amount: { mantissa: 1000, exponent: -2 },
+    currency: 'USD',
+    fxRate: { mantissa: 123456, exponent: -5 },
+    side: 'BUY',
+    symbol: 'EURUSD',
+    transactTime: '20240101-00:00:00.000',
+    quoteRequestID: 'test-request',
+    quoteID: 'test-quote-id',
+    secondaryAmount: { mantissa: 100, exponent: -2 },
 };
 
-mockServer.on('connection', socket => {
-    sendMockQuote();
-});
+const TestComponent = () => {
+    const { sendMessage } = useWebSocket();
+    const sendTestMessage = () => {
 
-describe('WebSocket integration test', () => {
+        const buffer = new ArrayBuffer(QuoteEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH);
+        const headerEncoder = new MessageHeaderEncoder();
+        const encoder = new QuoteEncoder();
+
+        // Encode the quote
+        encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
+        encoder.encodeamount(data.amount);
+        encoder.currency(data.currency);
+        encoder.side(data.side);
+        encoder.symbol(data.symbol);
+        encoder.transactTime(data.transactTime);
+        encoder.quoteID(data.quoteID);
+        encoder.quoteRequestID(data.quoteRequestID);
+        encoder.encodefxRate(data.fxRate);
+        encoder.encodesecondaryAmount(data.secondaryAmount);
+
+        // Send the message on the WebSocket
+        sendMessage(buffer);
+    };
+
+    return <button onClick={sendTestMessage}>Send Quote</button>;
+};
+
+describe('WebSocket Quote integration test', () => {
+    let server;
+
+    beforeEach(() => {
+        server = new WebSocketServer('ws://localhost:8092');
+    });
+
+    afterEach(() => {
+        WebSocketServer.clean();
+    });
+
     it('receives a Quote message via WebSocket', async () => {
-        const TestComponent = () => {
-            const [quote, setQuote] = useState(null);
-
-            useEffect(() => {
-                const handleQuote = (data) => {
-                    const decodedQuote = decodeQuote(data);
-                    setQuote(decodedQuote);
-                };
-
-                // Use the WebSocket context's method to receive messages
-                useWebSocket().addMessageHandler(handleQuote);
-
-                return () => {
-                    useWebSocket().removeMessageHandler(handleQuote);
-                };
-            }, []);
-
-            return <div>{quote ? `Received Quote: ${JSON.stringify(quote)}` : 'Waiting for Quote...'}</div>;
-        };
-
         const { getByText } = render(
             <WebSocketProvider url="ws://localhost:8092">
                 <TestComponent />
             </WebSocketProvider>
         );
 
-        expect(getByText(/Waiting for Quote.../)).toBeInTheDocument();
+        await server.connected;
+        await act(async () => {
+            fireEvent.click(getByText('Send Quote'));
+        });
 
-        // Wait for the mock quote to be received
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Allow server to process the message
+        await new Promise((resolve) => setTimeout(resolve, 50));
 
-        expect(getByText(/Received Quote:/)).toBeInTheDocument();
+        // Log all server messages
+        console.log('Server messages after sending:', server.messages);
+    
+        // Verify the message was received on the server
+        const messages = server.messages.filter(
+            (message) => !(typeof message === 'string' && message.includes('Connection established'))
+        );
+        expect(messages).toHaveLength(1);
+    
+        // Received message
+        const receivedMessage = messages[0];
+        console.log('Received message:', receivedMessage);
 
-        console.log('Test finished')
+        // Decode the received message
+        const decoder = new QuoteDecoder();
+        const buffer = new Uint8Array(receivedMessage).buffer;
+        decoder.wrap(buffer, MessageHeaderEncoder.ENCODED_LENGTH);
+
+        console.log('Decoding received message...');
+
+        const decodedData = {
+            amount: decoder.decodeamount(),
+            currency: decoder.currency(),
+            side: decoder.side().replace(/\0/g, ''),
+            symbol: decoder.symbol(),
+            transactTime: decoder.transactTime(),
+            quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
+            quoteID: decoder.quoteID().replace(/\0/g, ''),
+            fxRate: decoder.decodefxRate(),
+            secondaryAmount: decoder.decodesecondaryAmount()
+        };
+
+        // Assert the decoded data matches the original data
+        expect(decodedData).toEqual(data);
     });
-});
-
-// Close the mock server after tests
-afterAll(() => {
-    mockServer.close();
 });
