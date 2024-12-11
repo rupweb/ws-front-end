@@ -1,10 +1,10 @@
-import DecimalEncoder from './DecimalEncoder.js';
-import MessageHeaderEncoder from './MessageHeaderEncoder.js';
+import DecimalEncoder from '../DecimalEncoder.js';
+import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class CreditNoticeEncoder {
     static BLOCK_LENGTH = 409;
     static TEMPLATE_ID = 3;
-    static SCHEMA_ID = 1;
+    static SCHEMA_ID = 3;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -95,12 +95,6 @@ class CreditNoticeEncoder {
         return this;
     }
 
-    // Encode processed
-    processed(value) {
-        this.buffer.setUint8(this.offset + 400, value, true);
-        return this;
-    }
-
     putString(offset, value, length) {
         const encoder = new TextEncoder();
         const bytes = encoder.encode(value);
@@ -108,6 +102,7 @@ class CreditNoticeEncoder {
             this.buffer.setUint8(offset + i, i < bytes.length ? bytes[i] : 0);
         }
     }
+
 }
 
 export default CreditNoticeEncoder;

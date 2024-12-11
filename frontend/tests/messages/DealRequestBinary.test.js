@@ -1,6 +1,6 @@
 import encodeDealRequest from 'src/messages/encodeDealRequest.js';
-import DealRequestDecoder from 'src/aeron/js/DealRequestDecoder.js';
-import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
+import DealRequestDecoder from 'src/aeron/v1/DealRequestDecoder.js';
+import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 
 // Mock TextEncoder & TextDecoder
 import TextEncoder from '../aeron/TextEncoder.js';
@@ -9,7 +9,7 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // Mock dealRequestData
-const dealRequestData = {
+const data = {
     amount: { mantissa: 1000, exponent: -2 },
     currency: 'USD',
     side: 'BUY',
@@ -27,7 +27,7 @@ const dealRequestData = {
 describe('DealRequest binary encoding and decoding', () => {
     it('should encode and decode DealRequest correctly', () => {
         // Encode the dealRequestData
-        const encodedMessage = encodeDealRequest(dealRequestData);
+        const encodedMessage = encodeDealRequest(data);
         console.log('Encoded buffer:', new Uint8Array(encodedMessage));
         const encodedArray = new Uint8Array(encodedMessage);
 
@@ -53,6 +53,6 @@ describe('DealRequest binary encoding and decoding', () => {
         };
 
         // Verify the decoded data matches the original data
-        expect(decodedData).toEqual(dealRequestData);
+        expect(decodedData).toEqual(data);
     });
 });

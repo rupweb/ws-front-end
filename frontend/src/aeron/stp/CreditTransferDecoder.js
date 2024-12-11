@@ -1,6 +1,7 @@
-import DecimalDecoder from './DecimalDecoder.js';
+import DecimalDecoder from '../DecimalDecoder.js';
 
 class CreditTransferDecoder {
+    static BLOCK_LENGTH = 788;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -115,33 +116,28 @@ class CreditTransferDecoder {
         return this.getString(this.offset + 679, 100);
     }
 
-    // Decode processed
-    processed() {
-        return this.buffer.getUint8(this.offset + 779, true);
-    }
-
     toString() {
         return {
-            transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
-            bankOperationCode: this.bankOperationCode().replace(/\0/g, ''),
-            valueDate: this.valueDate().replace(/\0/g, ''),
-            currencyCode: this.currencyCode().replace(/\0/g, ''),
-            amount: this.decodeamount(),
-            instructedAmount: this.decodeinstructedAmount(),
-            orderingCustomer: this.orderingCustomer().replace(/\0/g, ''),
-            orderingInstitution: this.orderingInstitution().replace(/\0/g, ''),
-            sendersCorrespondent: this.sendersCorrespondent().replace(/\0/g, ''),
-            receiversCorrespondent: this.receiversCorrespondent().replace(/\0/g, ''),
-            intermediaryInstitution: this.intermediaryInstitution().replace(/\0/g, ''),
-            accountWithInstitution: this.accountWithInstitution().replace(/\0/g, ''),
-            beneficiaryCustomer: this.beneficiaryCustomer().replace(/\0/g, ''),
-            remittanceInformation: this.remittanceInformation().replace(/\0/g, ''),
-            detailsOfCharges: this.detailsOfCharges().replace(/\0/g, ''),
-            sendersCharges: this.sendersCharges().replace(/\0/g, ''),
-            receiversCharges: this.receiversCharges().replace(/\0/g, ''),
-            senderToReceiverInformation: this.senderToReceiverInformation().replace(/\0/g, ''),
-            regulatoryReporting: this.regulatoryReporting().replace(/\0/g, ''),
-            processed: this.processed(),
+                transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
+                bankOperationCode: this.bankOperationCode().replace(/\0/g, ''),
+                valueDate: this.valueDate().replace(/\0/g, ''),
+                currencyCode: this.currencyCode().replace(/\0/g, ''),
+                amount: this.decodeamount(),
+                instructedAmount: this.decodeinstructedAmount(),
+                orderingCustomer: this.orderingCustomer().replace(/\0/g, ''),
+                orderingInstitution: this.orderingInstitution().replace(/\0/g, ''),
+                sendersCorrespondent: this.sendersCorrespondent().replace(/\0/g, ''),
+                receiversCorrespondent: this.receiversCorrespondent().replace(/\0/g, ''),
+                intermediaryInstitution: this.intermediaryInstitution().replace(/\0/g, ''),
+                accountWithInstitution: this.accountWithInstitution().replace(/\0/g, ''),
+                beneficiaryCustomer: this.beneficiaryCustomer().replace(/\0/g, ''),
+                remittanceInformation: this.remittanceInformation().replace(/\0/g, ''),
+                detailsOfCharges: this.detailsOfCharges().replace(/\0/g, ''),
+                sendersCharges: this.sendersCharges().replace(/\0/g, ''),
+                receiversCharges: this.receiversCharges().replace(/\0/g, ''),
+                senderToReceiverInformation: this.senderToReceiverInformation().replace(/\0/g, ''),
+                regulatoryReporting: this.regulatoryReporting().replace(/\0/g, ''),
+                processed: this.processed(),
         };
     }
 
@@ -150,6 +146,7 @@ class CreditTransferDecoder {
         const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
+
 }
 
 export default CreditTransferDecoder;

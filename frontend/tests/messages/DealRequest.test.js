@@ -3,8 +3,8 @@ import { render, act, fireEvent } from '@testing-library/react';
 import WebSocketServer from 'jest-websocket-mock';
 import { WebSocketProvider, useWebSocket } from 'src/contexts/WebSocketContext.js';
 import encodeDealRequest from 'src/messages/encodeDealRequest.js';
-import DealRequestDecoder from 'src/aeron/js/DealRequestDecoder.js'
-import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
+import DealRequestDecoder from 'src/aeron/v1/DealRequestDecoder.js'
+import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 
 // Mock TextEncoder & TextDecoder
 import TextEncoder from '../aeron/TextEncoder.js';
@@ -42,7 +42,7 @@ describe('WebSocket integration test', () => {
     let server;
 
     beforeEach(() => {
-        server = new WebSocketServer('ws://localhost:8092');
+        server = new WebSocketServer('ws://localhost:8290');
     });
 
     afterEach(() => {
@@ -51,7 +51,7 @@ describe('WebSocket integration test', () => {
 
     it('sends a DealRequest message and decodes it correctly', async () => {
         const { getByText } = render(
-            <WebSocketProvider url="ws://localhost:8092">
+            <WebSocketProvider url="ws://localhost:8290">
                 <TestComponent />
             </WebSocketProvider>
         );

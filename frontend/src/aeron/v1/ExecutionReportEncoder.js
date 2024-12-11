@@ -1,5 +1,5 @@
-import DecimalEncoder from './DecimalEncoder.js';
-import MessageHeaderEncoder from './MessageHeaderEncoder.js';
+import DecimalEncoder from '../DecimalEncoder.js';
+import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class ExecutionReportEncoder {
     static BLOCK_LENGTH = 149;

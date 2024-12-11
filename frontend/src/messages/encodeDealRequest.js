@@ -1,5 +1,5 @@
-import DealRequestEncoder from '../aeron/js/DealRequestEncoder.js'
-import MessageHeaderEncoder from '../aeron/js/MessageHeaderEncoder.js'
+import DealRequestEncoder from '../aeron/v1/DealRequestEncoder.js'
+import MessageHeaderEncoder from '../aeron/MessageHeaderEncoder.js'
 
 const encodeDealRequest = (data) => {
     const buffer = new ArrayBuffer(DealRequestEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH);

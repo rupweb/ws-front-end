@@ -3,9 +3,9 @@ import { render, act, fireEvent } from '@testing-library/react';
 import WebSocketServer from 'jest-websocket-mock';
 import { WebSocketProvider, useWebSocket } from 'src/contexts/WebSocketContext.js';
 
-import QuoteEncoder from 'src/aeron/js/QuoteEncoder.js'
-import QuoteDecoder from 'src/aeron/js/QuoteDecoder.js'
-import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
+import QuoteEncoder from 'src/aeron/v1/QuoteEncoder.js'
+import QuoteDecoder from 'src/aeron/v1/QuoteDecoder.js'
+import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 
 // Mock TextEncoder & TextDecoder
 import TextEncoder from '../aeron/TextEncoder.js';
@@ -56,7 +56,7 @@ describe('WebSocket Quote integration test', () => {
     let server;
 
     beforeEach(() => {
-        server = new WebSocketServer('ws://localhost:8092');
+        server = new WebSocketServer('ws://localhost:8294');
     });
 
     afterEach(() => {
@@ -65,7 +65,7 @@ describe('WebSocket Quote integration test', () => {
 
     it('receives a Quote message via WebSocket', async () => {
         const { getByText } = render(
-            <WebSocketProvider url="ws://localhost:8092">
+            <WebSocketProvider url="ws://localhost:8294">
                 <TestComponent />
             </WebSocketProvider>
         );

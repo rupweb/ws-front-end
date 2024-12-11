@@ -1,10 +1,10 @@
-import DecimalEncoder from './DecimalEncoder.js';
-import MessageHeaderEncoder from './MessageHeaderEncoder.js';
+import DecimalEncoder from '../DecimalEncoder.js';
+import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class STPErrorEncoder {
     static BLOCK_LENGTH = 284;
     static TEMPLATE_ID = 5;
-    static SCHEMA_ID = 1;
+    static SCHEMA_ID = 5;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -47,6 +47,7 @@ class STPErrorEncoder {
             this.buffer.setUint8(offset + i, i < bytes.length ? bytes[i] : 0);
         }
     }
+
 }
 
 export default STPErrorEncoder;

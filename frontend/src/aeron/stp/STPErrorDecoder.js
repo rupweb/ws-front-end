@@ -1,6 +1,7 @@
-import DecimalDecoder from './DecimalDecoder.js';
+import DecimalDecoder from '../DecimalDecoder.js';
 
 class STPErrorDecoder {
+    static BLOCK_LENGTH = 284;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -26,8 +27,8 @@ class STPErrorDecoder {
 
     toString() {
         return {
-            transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
-            message: this.message().replace(/\0/g, ''),
+                transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
+                message: this.message().replace(/\0/g, ''),
         };
     }
 
@@ -36,6 +37,7 @@ class STPErrorDecoder {
         const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
+
 }
 
 export default STPErrorDecoder;

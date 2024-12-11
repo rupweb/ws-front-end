@@ -11,9 +11,9 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // Mock QuoteDecoder and MessageHeaderEncoder
-import QuoteEncoder from 'src/aeron/js/QuoteEncoder.js';
-import QuoteDecoder from 'src/aeron/js/QuoteDecoder.js';
-import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
+import QuoteEncoder from 'src/aeron/v1/QuoteEncoder.js';
+import QuoteDecoder from 'src/aeron/v1/QuoteDecoder.js';
+import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 
 const data = {
     amount: { mantissa: 1000, exponent: -2 },
@@ -32,7 +32,7 @@ describe('WebSocket Quote Test', () => {
 
     beforeAll((done) => {
         // Setup a WebSocket server
-        server = new WebSocketServer({ port: 8099 });
+        server = new WebSocketServer({ port: 8295 });
         server.on('connection', (ws) => {
             ws.on('message', (message) => {
                 receivedMessage = message; // Capture the received message
@@ -41,7 +41,7 @@ describe('WebSocket Quote Test', () => {
         });
 
         // Setup a WebSocket client
-        client = new WebSocket('ws://localhost:8099');
+        client = new WebSocket('ws://localhost:8295');
         client.on('open', done); // Wait for the connection to open
     });
 

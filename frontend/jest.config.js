@@ -23,7 +23,7 @@ export default {
   // An array of file extensions your modules use
   moduleFileExtensions: ["js", "jsx", "json", "node"],
 
-  moduleDirectories: ['node_modules', 'src', '<rootDir>'],
+  moduleDirectories: ['node_modules', 'src', '<rootDir>/src', '<rootDir>'],
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
   moduleNameMapper: {
@@ -31,7 +31,8 @@ export default {
     '\\.(gif|ttf|eot|svg|png|jpg)$': '<rootDir>/../mocks/fileMock.js',
     '^Polyglot$': '<rootDir>/../mocks/polyglot.js',
     '^WebSocketContext$': '<rootDir>/../mocks/WebSocketContext.js',
-    '^MessageHeaderDecoder$': '<rootDir>/mocks/MessageHeaderDecoder.js'
+    '^MessageHeaderDecoder$': '<rootDir>/mocks/MessageHeaderDecoder.js',
+    '^src/(.*)$': '<rootDir>/src/$1'
   },
 
   // The test environment that will be used for testing

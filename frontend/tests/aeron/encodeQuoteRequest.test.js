@@ -9,10 +9,7 @@ global.TextDecoder = TextDecoder;
 describe('Quote Request Message Encoding/Decoding', () => {
     it('should correctly encode Quote Request message', () => {
         const data = {
-            amount: {
-                mantissa: 12345678,
-                exponent: -2
-            },
+            amount: { mantissa: 12345678, exponent: -2 },
             saleCurrency: 'USD',
             side: 'BUY',
             symbol: 'EURUSD',

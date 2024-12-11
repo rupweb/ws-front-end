@@ -3,9 +3,9 @@ import { render, act, fireEvent } from '@testing-library/react';
 import WebSocketServer from 'jest-websocket-mock';
 import { WebSocketProvider, useWebSocket } from 'src/contexts/WebSocketContext.js';
 
-import ExecutionReportEncoder from 'src/aeron/js/ExecutionReportEncoder.js'
-import ExecutionReportDecoder from 'src/aeron/js/ExecutionReportDecoder.js'
-import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
+import ExecutionReportEncoder from 'src/aeron/v1/ExecutionReportEncoder.js'
+import ExecutionReportDecoder from 'src/aeron/v1/ExecutionReportDecoder.js'
+import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 
 // Mock TextEncoder & TextDecoder
 import TextEncoder from '../aeron/TextEncoder.js';
@@ -67,7 +67,7 @@ describe('WebSocket ExecutionReport integration test', () => {
     let server;
 
     beforeEach(() => {
-        server = new WebSocketServer('ws://localhost:8092');
+        server = new WebSocketServer('ws://localhost:8292');
     });
 
     afterEach(() => {
@@ -76,7 +76,7 @@ describe('WebSocket ExecutionReport integration test', () => {
 
     it('receives an ExecutionReport message via WebSocket', async () => {
         const { getByText } = render(
-            <WebSocketProvider url="ws://localhost:8092">
+            <WebSocketProvider url="ws://localhost:8292">
                 <TestComponent />
             </WebSocketProvider>
         );

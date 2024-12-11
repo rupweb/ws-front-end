@@ -1,6 +1,7 @@
-import DecimalDecoder from './DecimalDecoder.js';
+import DecimalDecoder from '../DecimalDecoder.js';
 
-class ErrorDecoder {
+class DealRequestDecoder {
+    static BLOCK_LENGTH = 129;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -64,20 +65,15 @@ class ErrorDecoder {
         return this.getString(this.offset + 83, 16);
     }
 
-    // Decode dealID
-    dealID() {
-        return this.getString(this.offset + 99, 16);
-    }
-
     decodefxRate() {
-        this.fxRateDecoder.wrap(this.buffer.buffer, this.offset + 115);
+        this.fxRateDecoder.wrap(this.buffer.buffer, this.offset + 99);
         const mantissa = Number(this.fxRateDecoder.mantissa());
         const exponent = this.fxRateDecoder.exponent();
         return { mantissa, exponent };
     }
 
     decodesecondaryAmount() {
-        this.secondaryAmountDecoder.wrap(this.buffer.buffer, this.offset + 124);
+        this.secondaryAmountDecoder.wrap(this.buffer.buffer, this.offset + 108);
         const mantissa = Number(this.secondaryAmountDecoder.mantissa());
         const exponent = this.secondaryAmountDecoder.exponent();
         return { mantissa, exponent };
@@ -85,30 +81,23 @@ class ErrorDecoder {
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 133, 4);
-    }
-
-    // Decode message
-    message() {
-        return this.getString(this.offset + 137, 256);
+        return this.getString(this.offset + 117, 4);
     }
 
     toString() {
         return {
-            amount: this.decodeamount(),
-            currency: this.currency().replace(/\0/g, ''),
-            side: this.side().replace(/\0/g, ''),
-            symbol: this.symbol().replace(/\0/g, ''),
-            deliveryDate: this.deliveryDate().replace(/\0/g, ''),
-            transactTime: this.transactTime().replace(/\0/g, ''),
-            quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
-            quoteID: this.quoteID().replace(/\0/g, ''),
-            dealRequestID: this.dealRequestID().replace(/\0/g, ''),
-            dealID: this.dealID().replace(/\0/g, ''),
-            fxRate: this.decodefxRate(),
-            secondaryAmount: this.decodesecondaryAmount(),
-            clientID: this.clientID().replace(/\0/g, ''),
-            message: this.message().replace(/\0/g, ''),
+                amount: this.decodeamount(),
+                currency: this.currency().replace(/\0/g, ''),
+                side: this.side().replace(/\0/g, ''),
+                symbol: this.symbol().replace(/\0/g, ''),
+                deliveryDate: this.deliveryDate().replace(/\0/g, ''),
+                transactTime: this.transactTime().replace(/\0/g, ''),
+                quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
+                quoteID: this.quoteID().replace(/\0/g, ''),
+                dealRequestID: this.dealRequestID().replace(/\0/g, ''),
+                fxRate: this.decodefxRate(),
+                secondaryAmount: this.decodesecondaryAmount(),
+                clientID: this.clientID().replace(/\0/g, ''),
         };
     }
 
@@ -120,4 +109,4 @@ class ErrorDecoder {
 
 }
 
-export default ErrorDecoder;
+export default DealRequestDecoder;

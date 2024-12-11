@@ -1,6 +1,7 @@
-import DecimalDecoder from './DecimalDecoder.js';
+import DecimalDecoder from '../DecimalDecoder.js';
 
 class DebitNoticeDecoder {
+    static BLOCK_LENGTH = 409;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -72,25 +73,20 @@ class DebitNoticeDecoder {
         return this.getString(this.offset + 300, 100);
     }
 
-    // Decode processed
-    processed() {
-        return this.buffer.getUint8(this.offset + 400, true);
-    }
-
     toString() {
         return {
-            transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
-            relatedReference: this.relatedReference().replace(/\0/g, ''),
-            accountIdentification: this.accountIdentification().replace(/\0/g, ''),
-            valueDate: this.valueDate().replace(/\0/g, ''),
-            currencyCode: this.currencyCode().replace(/\0/g, ''),
-            amount: this.decodeamount(),
-            senderToReceiverInformation: this.senderToReceiverInformation().replace(/\0/g, ''),
-            orderingCustomer: this.orderingCustomer().replace(/\0/g, ''),
-            orderingInstitution: this.orderingInstitution().replace(/\0/g, ''),
-            detailsOfCharges: this.detailsOfCharges().replace(/\0/g, ''),
-            regulatoryReporting: this.regulatoryReporting().replace(/\0/g, ''),
-            processed: this.processed(),
+                transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
+                relatedReference: this.relatedReference().replace(/\0/g, ''),
+                accountIdentification: this.accountIdentification().replace(/\0/g, ''),
+                valueDate: this.valueDate().replace(/\0/g, ''),
+                currencyCode: this.currencyCode().replace(/\0/g, ''),
+                amount: this.decodeamount(),
+                senderToReceiverInformation: this.senderToReceiverInformation().replace(/\0/g, ''),
+                orderingCustomer: this.orderingCustomer().replace(/\0/g, ''),
+                orderingInstitution: this.orderingInstitution().replace(/\0/g, ''),
+                detailsOfCharges: this.detailsOfCharges().replace(/\0/g, ''),
+                regulatoryReporting: this.regulatoryReporting().replace(/\0/g, ''),
+                processed: this.processed(),
         };
     }
 
@@ -99,6 +95,7 @@ class DebitNoticeDecoder {
         const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
+
 }
 
 export default DebitNoticeDecoder;

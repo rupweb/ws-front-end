@@ -1,6 +1,7 @@
-import DecimalDecoder from './DecimalDecoder.js';
+import DecimalDecoder from '../DecimalDecoder.js';
 
 class AdminDecoder {
+    static BLOCK_LENGTH = 272;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -36,7 +37,7 @@ class AdminDecoder {
 
     // Decode timestamp
     timestamp() {
-        return this.buffer.getInt64(this.offset + 64, true);
+        return this.buffer.getBigInt64(this.offset + 64, true);
     }
 
     // Decode detailedMessage
@@ -51,13 +52,13 @@ class AdminDecoder {
 
     toString() {
         return {
-            applicationName: this.applicationName().replace(/\0/g, ''),
-            instanceId: this.instanceId().replace(/\0/g, ''),
-            environment: this.environment().replace(/\0/g, ''),
-            messageType: this.messageType().replace(/\0/g, ''),
-            timestamp: this.timestamp().replace(/\0/g, ''),
-            detailedMessage: this.detailedMessage().replace(/\0/g, ''),
-            hostInfo: this.hostInfo().replace(/\0/g, ''),
+                applicationName: this.applicationName().replace(/\0/g, ''),
+                instanceId: this.instanceId().replace(/\0/g, ''),
+                environment: this.environment().replace(/\0/g, ''),
+                messageType: this.messageType().replace(/\0/g, ''),
+                timestamp: this.timestamp().replace(/\0/g, ''),
+                detailedMessage: this.detailedMessage().replace(/\0/g, ''),
+                hostInfo: this.hostInfo().replace(/\0/g, ''),
         };
     }
 
@@ -66,6 +67,7 @@ class AdminDecoder {
         const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
+
 }
 
 export default AdminDecoder;

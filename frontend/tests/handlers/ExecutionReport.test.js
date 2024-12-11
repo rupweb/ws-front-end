@@ -1,6 +1,6 @@
 import handleIncomingMessage from '../../src/handlers/handleIncomingMessage.js';
-import ExecutionReportEncoder from '../../src/aeron/js/executionReportEncoder.js';
-import MessageHeaderEncoder from '../../src/aeron/js/MessageHeaderEncoder.js';
+import ExecutionReportEncoder from '../../src/aeron/v1/executionReportEncoder.js';
+import MessageHeaderEncoder from '../../src/aeron/MessageHeaderEncoder.js';
 
 // Mock TextEncoder & TextDecoder
 import TextEncoder from '../aeron/TextEncoder.js';

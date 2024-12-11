@@ -1,5 +1,5 @@
-import DecimalEncoder from './DecimalEncoder.js';
-import MessageHeaderEncoder from './MessageHeaderEncoder.js';
+import DecimalEncoder from '../DecimalEncoder.js';
+import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class AdminEncoder {
     static BLOCK_LENGTH = 272;
@@ -54,7 +54,7 @@ class AdminEncoder {
 
     // Encode timestamp
     timestamp(value) {
-        this.buffer.setInt64(this.offset + 64, value, true);
+        this.buffer.setBigInt64(this.offset + 64, value, true);
         return this;
     }
 
@@ -77,6 +77,7 @@ class AdminEncoder {
             this.buffer.setUint8(offset + i, i < bytes.length ? bytes[i] : 0);
         }
     }
+
 }
 
 export default AdminEncoder;

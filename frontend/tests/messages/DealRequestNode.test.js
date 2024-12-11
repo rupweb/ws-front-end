@@ -12,8 +12,8 @@ global.TextDecoder = TextDecoder;
 
 // Mock DealRequestDecoder and MessageHeaderEncoder
 import encodeDealRequest from 'src/messages/encodeDealRequest.js';
-import DealRequestDecoder from 'src/aeron/js/DealRequestDecoder.js';
-import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
+import DealRequestDecoder from 'src/aeron/v1/DealRequestDecoder.js';
+import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 
 const data = {
     amount: { mantissa: 1000, exponent: -2 },
@@ -35,7 +35,7 @@ describe('WebSocket DealRequest Test', () => {
 
     beforeAll((done) => {
         // Setup a WebSocket server
-        server = new WebSocketServer({ port: 8099 });
+        server = new WebSocketServer({ port: 8291 });
         server.on('connection', (ws) => {
             ws.on('message', (message) => {
                 receivedMessage = message; // Capture the received message
@@ -44,7 +44,7 @@ describe('WebSocket DealRequest Test', () => {
         });
 
         // Setup a WebSocket client
-        client = new WebSocket('ws://localhost:8099');
+        client = new WebSocket('ws://localhost:8291');
         client.on('open', done); // Wait for the connection to open
     });
 

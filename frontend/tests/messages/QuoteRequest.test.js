@@ -4,8 +4,8 @@ import WebSocketServer from 'jest-websocket-mock';
 import { WebSocketProvider, useWebSocket } from 'src/contexts/WebSocketContext.js';
 
 import encodeQuoteRequest from 'src/messages/encodeQuoteRequest.js';
-import QuoteRequestDecoder from 'src/aeron/js/QuoteRequestDecoder.js'
-import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
+import QuoteRequestDecoder from 'src/aeron/v1/QuoteRequestDecoder.js'
+import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 
 // Mock TextEncoder & TextDecoder
 import TextEncoder from '../aeron/TextEncoder.js';
@@ -39,7 +39,7 @@ describe('WebSocket Quote Request integration test', () => {
     let server;
 
     beforeEach(() => {
-        server = new WebSocketServer('ws://localhost:8092');
+        server = new WebSocketServer('ws://localhost:8296');
     });
 
     afterEach(() => {
@@ -48,7 +48,7 @@ describe('WebSocket Quote Request integration test', () => {
 
     it('receives a Quote Request message via WebSocket', async () => {
         const { getByText } = render(
-            <WebSocketProvider url="ws://localhost:8092">
+            <WebSocketProvider url="ws://localhost:8296">
                 <TestComponent />
             </WebSocketProvider>
         );

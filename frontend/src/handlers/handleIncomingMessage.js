@@ -1,7 +1,7 @@
-import MessageHeaderDecoder from '../aeron/js/MessageHeaderDecoder.js';
-import QuoteDecoder from '../aeron/js/QuoteDecoder.js';
-import ExecutionReportDecoder from '../aeron/js/ExecutionReportDecoder.js';
-import ErrorDecoder from '../aeron/js/ErrorDecoder.js';
+import MessageHeaderDecoder from '../aeron/MessageHeaderDecoder.js';
+import QuoteDecoder from '../aeron/v1/QuoteDecoder.js';
+import ExecutionReportDecoder from '../aeron/v1/ExecutionReportDecoder.js';
+import ErrorDecoder from '../aeron/v1/ErrorDecoder.js';
 
 const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport, setShowExecutionReport, setError, setShowError) => {
     console.log('Incoming data: ', data);

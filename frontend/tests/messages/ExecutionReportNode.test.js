@@ -11,9 +11,9 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // Mock DealRequestDecoder and MessageHeaderEncoder
-import ExecutionReportEncoder from 'src/aeron/js/ExecutionReportEncoder.js';
-import ExecutionReportDecoder from 'src/aeron/js/ExecutionReportDecoder.js';
-import MessageHeaderEncoder from 'src/aeron/js/MessageHeaderEncoder.js';
+import ExecutionReportEncoder from 'src/aeron/v1/ExecutionReportEncoder.js';
+import ExecutionReportDecoder from 'src/aeron/v1/ExecutionReportDecoder.js';
+import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 
 const data = {
     amount: { mantissa: 1000, exponent: -2 },
@@ -37,7 +37,7 @@ describe('WebSocket ExecutionReport Test', () => {
 
     beforeAll((done) => {
         // Setup a WebSocket server
-        server = new WebSocketServer({ port: 8099 });
+        server = new WebSocketServer({ port: 8293 });
         server.on('connection', (ws) => {
             ws.on('message', (message) => {
                 receivedMessage = message; // Capture the received message
@@ -46,7 +46,7 @@ describe('WebSocket ExecutionReport Test', () => {
         });
 
         // Setup a WebSocket client
-        client = new WebSocket('ws://localhost:8099');
+        client = new WebSocket('ws://localhost:8293');
         client.on('open', done); // Wait for the connection to open
     });
 

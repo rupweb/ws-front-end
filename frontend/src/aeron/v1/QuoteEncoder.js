@@ -1,10 +1,10 @@
-import DecimalEncoder from './DecimalEncoder.js';
-import MessageHeaderEncoder from './MessageHeaderEncoder.js';
+import DecimalEncoder from '../DecimalEncoder.js';
+import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
-class DealRequestEncoder {
-    static BLOCK_LENGTH = 129;
-    static TEMPLATE_ID = 1;
-    static SCHEMA_ID = 1;
+class QuoteEncoder {
+    static BLOCK_LENGTH = 105;
+    static TEMPLATE_ID = 4;
+    static SCHEMA_ID = 4;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -24,10 +24,10 @@ class DealRequestEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(DealRequestEncoder.BLOCK_LENGTH)
-            .templateId(DealRequestEncoder.TEMPLATE_ID)
-            .schemaId(DealRequestEncoder.SCHEMA_ID)
-            .version(DealRequestEncoder.SCHEMA_VERSION);
+            .blockLength(QuoteEncoder.BLOCK_LENGTH)
+            .templateId(QuoteEncoder.TEMPLATE_ID)
+            .schemaId(QuoteEncoder.SCHEMA_ID)
+            .version(QuoteEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
@@ -55,51 +55,39 @@ class DealRequestEncoder {
         return this;
     }
 
-    // Encode deliveryDate
-    deliveryDate(value) {
-        this.putString(this.offset + 22, value, 8);
-        return this;
-    }
-
     // Encode transactTime
     transactTime(value) {
-        this.putString(this.offset + 30, value, 21);
-        return this;
-    }
-
-    // Encode quoteRequestID
-    quoteRequestID(value) {
-        this.putString(this.offset + 51, value, 16);
+        this.putString(this.offset + 22, value, 21);
         return this;
     }
 
     // Encode quoteID
     quoteID(value) {
-        this.putString(this.offset + 67, value, 16);
+        this.putString(this.offset + 43, value, 16);
         return this;
     }
 
-    // Encode dealRequestID
-    dealRequestID(value) {
-        this.putString(this.offset + 83, value, 16);
+    // Encode quoteRequestID
+    quoteRequestID(value) {
+        this.putString(this.offset + 59, value, 16);
         return this;
     }
 
     encodefxRate(value) {
-        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 99);
+        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 75);
         this.fxRateEncoder.mantissa(value.mantissa);
         this.fxRateEncoder.exponent(value.exponent);
     }
 
     encodesecondaryAmount(value) {
-        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 108);
+        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 84);
         this.secondaryAmountEncoder.mantissa(value.mantissa);
         this.secondaryAmountEncoder.exponent(value.exponent);
     }
 
     // Encode clientID
     clientID(value) {
-        this.putString(this.offset + 117, value, 4);
+        this.putString(this.offset + 93, value, 4);
         return this;
     }
 
@@ -113,4 +101,4 @@ class DealRequestEncoder {
 
 }
 
-export default DealRequestEncoder;
+export default QuoteEncoder;

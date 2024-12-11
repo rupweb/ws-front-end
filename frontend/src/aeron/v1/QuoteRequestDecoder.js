@@ -1,6 +1,7 @@
-import DecimalDecoder from './DecimalDecoder.js';
+import DecimalDecoder from '../DecimalDecoder.js';
 
 class QuoteRequestDecoder {
+    static BLOCK_LENGTH = 82;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -64,15 +65,15 @@ class QuoteRequestDecoder {
 
     toString() {
         return {
-            amount: this.decodeamount(),
-            saleCurrency: this.saleCurrency().replace(/\0/g, ''),
-            side: this.side().replace(/\0/g, ''),
-            symbol: this.symbol().replace(/\0/g, ''),
-            deliveryDate: this.deliveryDate().replace(/\0/g, ''),
-            transactTime: this.transactTime().replace(/\0/g, ''),
-            quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
-            currencyOwned: this.currencyOwned().replace(/\0/g, ''),
-            clientID: this.clientID().replace(/\0/g, ''),
+                amount: this.decodeamount(),
+                saleCurrency: this.saleCurrency().replace(/\0/g, ''),
+                side: this.side().replace(/\0/g, ''),
+                symbol: this.symbol().replace(/\0/g, ''),
+                deliveryDate: this.deliveryDate().replace(/\0/g, ''),
+                transactTime: this.transactTime().replace(/\0/g, ''),
+                quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
+                currencyOwned: this.currencyOwned().replace(/\0/g, ''),
+                clientID: this.clientID().replace(/\0/g, ''),
         };
     }
 

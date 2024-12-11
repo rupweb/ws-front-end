@@ -10,10 +10,7 @@ describe('Deal Request Message Encoding/Decoding', () => {
     it('should correctly encode Deal Request message', () => {
 
         const data = {
-            amount: {
-                mantissa: 100000,
-                exponent: -2
-            },
+            amount: { mantissa: 100000, exponent: -2 },
             currency: 'USD',
             side: 'BUY',
             symbol: 'EURUSD',
@@ -22,10 +19,7 @@ describe('Deal Request Message Encoding/Decoding', () => {
             quoteRequestID: 'QR12345678',
             quoteID: 'QR12345678.1',
             dealRequestID: 'DR-1234-5678',
-            fxRate: {
-                mantissa: 123456,
-                exponent: -5
-            }
+            fxRate: { mantissa: 123456, exponent: -5 }
         };
 
         try {
