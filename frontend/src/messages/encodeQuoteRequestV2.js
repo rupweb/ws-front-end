@@ -5,7 +5,7 @@ const encodeQuoteRequest = (data) => {
 
     const groupHeaderLength = 4; // Adjust for legs header
 
-    const bufferLength = 8 + QuoteRequestEncoder.BLOCK_LENGTH +
+    const bufferLength = QuoteRequestEncoder.BLOCK_LENGTH +
                          MessageHeaderEncoder.ENCODED_LENGTH + 
                          groupHeaderLength +
                          data.legs.length * QuoteRequestEncoder.LEG_BLOCK_LENGTH; // Adjust for legs data

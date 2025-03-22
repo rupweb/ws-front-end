@@ -16,7 +16,7 @@ class CreditNoticeEncoder {
 
     wrap(buffer, offset) {
         this.buffer = new DataView(buffer);
-        this.offset = offset + 8; // Add the header again? The first field starts at 16
+        this.offset = offset;
         return this;
     }
 

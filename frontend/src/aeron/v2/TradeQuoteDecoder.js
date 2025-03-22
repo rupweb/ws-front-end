@@ -19,7 +19,7 @@ class TradeQuoteDecoder {
 
     wrap(buffer, offset) {
         this.buffer = new DataView(buffer);
-        this.offset = offset + 8; // Add the header again? The first field starts at 16
+        this.offset = offset;
         return this;
     }
 
@@ -143,7 +143,7 @@ class TradeQuoteDecoder {
                 quoteID: this.quoteID().replace(/\0/g, ''),
                 quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
                 clientID: this.clientID().replace(/\0/g, ''),
-                leg: this.decodeLeg(this.buffer, this.offset + 8),
+                leg: this.decodeLeg(this.buffer, this.offset),
         };
     }
 

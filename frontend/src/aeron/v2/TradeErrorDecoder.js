@@ -15,7 +15,7 @@ class TradeErrorDecoder {
 
     wrap(buffer, offset) {
         this.buffer = new DataView(buffer);
-        this.offset = offset + 8; // Add the header again? The first field starts at 16
+        this.offset = offset;
         return this;
     }
 
@@ -127,7 +127,7 @@ class TradeErrorDecoder {
                 dealID: this.dealID().replace(/\0/g, ''),
                 clientID: this.clientID().replace(/\0/g, ''),
                 message: this.message().replace(/\0/g, ''),
-                leg: this.decodeLeg(this.buffer, this.offset + 8),
+                leg: this.decodeLeg(this.buffer, this.offset),
         };
     }
 

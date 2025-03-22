@@ -5,7 +5,7 @@ const encodeDealRequest = (data) => {
 
     const groupHeaderLength = 4; // Adjust for legs header
 
-    const bufferLength = 8 + DealRequestEncoder.BLOCK_LENGTH +
+    const bufferLength = DealRequestEncoder.BLOCK_LENGTH +
                          MessageHeaderEncoder.ENCODED_LENGTH + 
                          groupHeaderLength +
                          data.legs.length * DealRequestEncoder.LEG_BLOCK_LENGTH; // Adjust for legs data
