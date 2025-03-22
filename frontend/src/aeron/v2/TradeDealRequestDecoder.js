@@ -1,14 +1,15 @@
 import DecimalDecoder from '../DecimalDecoder.js';
 
-class ExecutionReportDecoder {
-    static BLOCK_LENGTH = 115;
+class TradeDealRequestDecoder {
+    static BLOCK_LENGTH = 106;
     static LITTLE_ENDIAN = true;
 
     constructor() {
         this.offset = 0;
         this.buffer = null;
         this.amountDecoder = new DecimalDecoder();
-        this.secondaryAmountDecoder = new DecimalDecoder();
+        this.spotDecoder = new DecimalDecoder();
+        this.fwdDecoder = new DecimalDecoder();
         this.priceDecoder = new DecimalDecoder();
         this.leg= [];
     }
@@ -46,33 +47,23 @@ class ExecutionReportDecoder {
 
     // Decode quoteID
     quoteID() {
-        return this.getString(this.offset + 54, 16);
+        return this.getString(this.offset + 54, 24);
     }
 
     // Decode dealRequestID
     dealRequestID() {
-        return this.getString(this.offset + 70, 16);
-    }
-
-    // Decode dealID
-    dealID() {
-        return this.getString(this.offset + 86, 16);
+        return this.getString(this.offset + 78, 16);
     }
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 102, 4);
-    }
-
-    // Decode processed
-    processed() {
-        return this.buffer.getUint8(this.offset + 106, true);
+        return this.getString(this.offset + 94, 4);
     }
 
     decodeLeg() {
         const results = [];
-        const groupHeaderOffset = ExecutionReportDecoder.BLOCK_LENGTH + 8;
-        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, ExecutionReportDecoder.LITTLE_ENDIAN);
+        const groupHeaderOffset = TradeDealRequestDecoder.BLOCK_LENGTH + 8;
+        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, TradeDealRequestDecoder.LITTLE_ENDIAN);
         let currentOffset = groupHeaderOffset + 4;
 
         for (let i = 0; i < numInGroup; i++) {
@@ -87,20 +78,26 @@ class ExecutionReportDecoder {
 
             entry.currency = this.getString(currentOffset, 3);
             currentOffset += 3;
-            
-            this.secondaryAmountDecoder.wrap(this.buffer.buffer, currentOffset);
-            entry.secondaryAmount = {
-                mantissa: this.secondaryAmountDecoder.mantissa(),
-                exponent: this.secondaryAmountDecoder.exponent()
-            };
-            currentOffset += DecimalDecoder.ENCODED_LENGTH;
-
-            entry.secondaryCurrency = this.getString(currentOffset, 3);
-            currentOffset += 3;
             entry.valueDate = this.getString(currentOffset, 8);
             currentOffset += 8;
             entry.side = this.getString(currentOffset, 4);
             currentOffset += 4;
+            
+            this.spotDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.spot = {
+                mantissa: this.spotDecoder.mantissa(),
+                exponent: this.spotDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
+
+            
+            this.fwdDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.fwd = {
+                mantissa: this.fwdDecoder.mantissa(),
+                exponent: this.fwdDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
+
             
             this.priceDecoder.wrap(this.buffer.buffer, currentOffset);
             entry.price = {
@@ -124,9 +121,7 @@ class ExecutionReportDecoder {
                 quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
                 quoteID: this.quoteID().replace(/\0/g, ''),
                 dealRequestID: this.dealRequestID().replace(/\0/g, ''),
-                dealID: this.dealID().replace(/\0/g, ''),
                 clientID: this.clientID().replace(/\0/g, ''),
-                processed: this.processed(),
                 leg: this.decodeLeg(this.buffer, this.offset + 8),
         };
     }
@@ -139,4 +134,4 @@ class ExecutionReportDecoder {
 
 }
 
-export default ExecutionReportDecoder;
+export default TradeDealRequestDecoder;

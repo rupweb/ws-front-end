@@ -11,6 +11,7 @@ import agrona.messages.MessageHeaderDecoder;
 import app.App;
 import io.aeron.Subscription;
 import io.aeron.logbuffer.FragmentHandler;
+import messages.admin.Admin;
 import sbe.SbeAdminEncoder;
 import setup.Setup;
 import setup.SetupSingleton;
@@ -79,7 +80,7 @@ public class AdminTest {
         // Give the subscription time to start
         Setup.sleepSeconds(1);
 
-        messages.Admin admin = ProcessUtil.getAdminMessage("TEST", "");
+        Admin admin = ProcessUtil.getAdminMessage("TEST", "");
         App.getAeronClient().getAdminSender().sendAdmin(admin);
 
         // Give the subscription time to process

@@ -94,7 +94,7 @@ public class ErrorTest {
             transactTime, quoteID, quoteRequestID, dealRequestID, dealID, fxRate, secondaryAmount, clientID, message);
 
         // Publish the error
-        Publication testErrorPublication = aeronErrorClient.getAeron().addPublication(AeronErrorClient.ADMIN_CHANNEL, AeronErrorClient.ADMIN_STREAM_ID);
+        Publication testErrorPublication = aeronErrorClient.getAeron().addPublication(AeronErrorClient.ERROR_CHANNEL, AeronErrorClient.ERROR_STREAM_ID);
 
         // Sender
         log.info("Publish message");

@@ -1,6 +1,6 @@
 import DecimalDecoder from '../DecimalDecoder.js';
 
-class DebitNoticeDecoder {
+class PostTradeDebitNoticeDecoder {
     static BLOCK_LENGTH = 409;
     static LITTLE_ENDIAN = true;
 
@@ -103,4 +103,4 @@ class DebitNoticeDecoder {
 
 }
 
-export default DebitNoticeDecoder;
+export default PostTradeDebitNoticeDecoder;

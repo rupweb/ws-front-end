@@ -1,7 +1,7 @@
 import DecimalDecoder from '../DecimalDecoder.js';
 
-class ExecutionReportDecoder {
-    static BLOCK_LENGTH = 115;
+class TradeConfirmationDecoder {
+    static BLOCK_LENGTH = 570;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -9,6 +9,8 @@ class ExecutionReportDecoder {
         this.buffer = null;
         this.amountDecoder = new DecimalDecoder();
         this.secondaryAmountDecoder = new DecimalDecoder();
+        this.spotDecoder = new DecimalDecoder();
+        this.fwdDecoder = new DecimalDecoder();
         this.priceDecoder = new DecimalDecoder();
         this.leg= [];
     }
@@ -19,60 +21,40 @@ class ExecutionReportDecoder {
         return this;
     }
 
-    // Decode transactionType
-    transactionType() {
-        return this.getString(this.offset + 0, 3);
+    // Decode confirmID
+    confirmID() {
+        return this.buffer.getUint32(this.offset + 0, true);
     }
 
-    // Decode symbol
-    symbol() {
-        return this.getString(this.offset + 3, 6);
-    }
-
-    // Decode transactTime
-    transactTime() {
-        return this.getString(this.offset + 9, 21);
-    }
-
-    // Decode messageTime
-    messageTime() {
-        return this.buffer.getBigInt64(this.offset + 30, true);
-    }
-
-    // Decode quoteRequestID
-    quoteRequestID() {
-        return this.getString(this.offset + 38, 16);
-    }
-
-    // Decode quoteID
-    quoteID() {
-        return this.getString(this.offset + 54, 16);
-    }
-
-    // Decode dealRequestID
-    dealRequestID() {
-        return this.getString(this.offset + 70, 16);
-    }
-
-    // Decode dealID
-    dealID() {
-        return this.getString(this.offset + 86, 16);
+    // Decode client
+    client() {
+        return this.getString(this.offset + 4, 50);
     }
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 102, 4);
+        return this.getString(this.offset + 54, 20);
+    }
+
+    // Decode clientEmail
+    clientEmail() {
+        return this.getString(this.offset + 74, 50);
+    }
+
+    // Decode dealID
+    dealID() {
+        return this.getString(this.offset + 124, 20);
     }
 
     // Decode processed
     processed() {
-        return this.buffer.getUint8(this.offset + 106, true);
+        return this.buffer.getUint8(this.offset + 144, true);
     }
 
     decodeLeg() {
         const results = [];
-        const groupHeaderOffset = ExecutionReportDecoder.BLOCK_LENGTH + 8;
-        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, ExecutionReportDecoder.LITTLE_ENDIAN);
+        const groupHeaderOffset = TradeConfirmationDecoder.BLOCK_LENGTH + 8;
+        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, TradeConfirmationDecoder.LITTLE_ENDIAN);
         let currentOffset = groupHeaderOffset + 4;
 
         for (let i = 0; i < numInGroup; i++) {
@@ -97,10 +79,26 @@ class ExecutionReportDecoder {
 
             entry.secondaryCurrency = this.getString(currentOffset, 3);
             currentOffset += 3;
-            entry.valueDate = this.getString(currentOffset, 8);
+            entry.paymentDate = this.getString(currentOffset, 8);
             currentOffset += 8;
             entry.side = this.getString(currentOffset, 4);
             currentOffset += 4;
+            
+            this.spotDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.spot = {
+                mantissa: this.spotDecoder.mantissa(),
+                exponent: this.spotDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
+
+            
+            this.fwdDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.fwd = {
+                mantissa: this.fwdDecoder.mantissa(),
+                exponent: this.fwdDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
+
             
             this.priceDecoder.wrap(this.buffer.buffer, currentOffset);
             entry.price = {
@@ -109,6 +107,22 @@ class ExecutionReportDecoder {
             };
             currentOffset += DecimalDecoder.ENCODED_LENGTH;
 
+            entry.country = this.getString(currentOffset, 20);
+            currentOffset += 20;
+            entry.beneficiaryIBAN = this.getString(currentOffset, 34);
+            currentOffset += 34;
+            entry.beneficiaryBankSWIFT = this.getString(currentOffset, 11);
+            currentOffset += 11;
+            entry.bankName = this.getString(currentOffset, 50);
+            currentOffset += 50;
+            entry.bankAddress = this.getString(currentOffset, 100);
+            currentOffset += 100;
+            entry.branchNo = this.getString(currentOffset, 20);
+            currentOffset += 20;
+            entry.beneficiary = this.getString(currentOffset, 50);
+            currentOffset += 50;
+            entry.additionalInformation = this.getString(currentOffset, 100);
+            currentOffset += 100;
             results.push(entry);
         }
 
@@ -117,15 +131,11 @@ class ExecutionReportDecoder {
 
     toString() {
         return {
-                transactionType: this.transactionType().replace(/\0/g, ''),
-                symbol: this.symbol().replace(/\0/g, ''),
-                transactTime: this.transactTime().replace(/\0/g, ''),
-                messageTime: this.messageTime(),
-                quoteRequestID: this.quoteRequestID().replace(/\0/g, ''),
-                quoteID: this.quoteID().replace(/\0/g, ''),
-                dealRequestID: this.dealRequestID().replace(/\0/g, ''),
-                dealID: this.dealID().replace(/\0/g, ''),
+                confirmID: this.confirmID(),
+                client: this.client().replace(/\0/g, ''),
                 clientID: this.clientID().replace(/\0/g, ''),
+                clientEmail: this.clientEmail().replace(/\0/g, ''),
+                dealID: this.dealID().replace(/\0/g, ''),
                 processed: this.processed(),
                 leg: this.decodeLeg(this.buffer, this.offset + 8),
         };
@@ -139,4 +149,4 @@ class ExecutionReportDecoder {
 
 }
 
-export default ExecutionReportDecoder;
+export default TradeConfirmationDecoder;

@@ -15,8 +15,8 @@ import sharedJava.AppConfig;
 
 public class AeronErrorClient {
     private static final Logger log = LogManager.getLogger(AeronErrorClient.class);
-    public static String ADMIN_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40150";
-    public static int ADMIN_STREAM_ID = 1050;
+    public static String ERROR_CHANNEL = "aeron:udp?control=127.0.0.1:40150|endpoint=127.0.0.1:40550|control-mode=dynamic";
+    public static int ERROR_STREAM_ID = 1050;
     public static int TIMEOUT_IN_SECONDS = 5;
 
     private final int fragmentLimit;
@@ -24,12 +24,12 @@ public class AeronErrorClient {
 
     public AeronErrorClient(AppConfig config) {
 
-        if (config.getProperty("aeron.admin.channel") != null) {
-            this.ADMIN_CHANNEL = config.getProperty("aeron.admin.channel");
+        if (config.getProperty("aeron.error.channel") != null) {
+            this.ERROR_CHANNEL = config.getProperty("aeron.error.channel");
         }
     
-        if (config.getIntProperty("aeron.admin.streamId") != null) {
-            this.ADMIN_STREAM_ID = config.getIntProperty("aeron.admin.streamId");
+        if (config.getIntProperty("aeron.error.streamId") != null) {
+            this.ERROR_STREAM_ID = config.getIntProperty("aeron.error.streamId");
         }
     
         if (config.getIntProperty("publish.timeout") != null) {
@@ -67,8 +67,8 @@ public class AeronErrorClient {
 
         this.running = true;
 
-        errorSubscription = aeron.addSubscription(ADMIN_CHANNEL, ADMIN_STREAM_ID);
-        log.info("Admin Subscription setup: channel={}, port={}, streamId={}", ADMIN_CHANNEL, getPort(ADMIN_CHANNEL), ADMIN_STREAM_ID);
+        errorSubscription = aeron.addSubscription(ERROR_CHANNEL, ERROR_STREAM_ID);
+        log.info("Admin Subscription setup: channel={}, port={}, streamId={}", ERROR_CHANNEL, getPort(ERROR_CHANNEL), ERROR_STREAM_ID);
 
         // Start the listener thread
         Thread.startVirtualThread(this::start);

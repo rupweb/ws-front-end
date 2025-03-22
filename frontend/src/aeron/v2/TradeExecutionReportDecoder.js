@@ -1,7 +1,7 @@
 import DecimalDecoder from '../DecimalDecoder.js';
 
-class ExecutionReportDecoder {
-    static BLOCK_LENGTH = 115;
+class TradeExecutionReportDecoder {
+    static BLOCK_LENGTH = 123;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -9,6 +9,8 @@ class ExecutionReportDecoder {
         this.buffer = null;
         this.amountDecoder = new DecimalDecoder();
         this.secondaryAmountDecoder = new DecimalDecoder();
+        this.spotDecoder = new DecimalDecoder();
+        this.fwdDecoder = new DecimalDecoder();
         this.priceDecoder = new DecimalDecoder();
         this.leg= [];
     }
@@ -46,33 +48,33 @@ class ExecutionReportDecoder {
 
     // Decode quoteID
     quoteID() {
-        return this.getString(this.offset + 54, 16);
+        return this.getString(this.offset + 54, 24);
     }
 
     // Decode dealRequestID
     dealRequestID() {
-        return this.getString(this.offset + 70, 16);
+        return this.getString(this.offset + 78, 16);
     }
 
     // Decode dealID
     dealID() {
-        return this.getString(this.offset + 86, 16);
+        return this.getString(this.offset + 94, 16);
     }
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 102, 4);
+        return this.getString(this.offset + 110, 4);
     }
 
     // Decode processed
     processed() {
-        return this.buffer.getUint8(this.offset + 106, true);
+        return this.buffer.getUint8(this.offset + 114, true);
     }
 
     decodeLeg() {
         const results = [];
-        const groupHeaderOffset = ExecutionReportDecoder.BLOCK_LENGTH + 8;
-        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, ExecutionReportDecoder.LITTLE_ENDIAN);
+        const groupHeaderOffset = TradeExecutionReportDecoder.BLOCK_LENGTH + 8;
+        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, TradeExecutionReportDecoder.LITTLE_ENDIAN);
         let currentOffset = groupHeaderOffset + 4;
 
         for (let i = 0; i < numInGroup; i++) {
@@ -101,6 +103,22 @@ class ExecutionReportDecoder {
             currentOffset += 8;
             entry.side = this.getString(currentOffset, 4);
             currentOffset += 4;
+            
+            this.spotDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.spot = {
+                mantissa: this.spotDecoder.mantissa(),
+                exponent: this.spotDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
+
+            
+            this.fwdDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.fwd = {
+                mantissa: this.fwdDecoder.mantissa(),
+                exponent: this.fwdDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
+
             
             this.priceDecoder.wrap(this.buffer.buffer, currentOffset);
             entry.price = {
@@ -139,4 +157,4 @@ class ExecutionReportDecoder {
 
 }
 
-export default ExecutionReportDecoder;
+export default TradeExecutionReportDecoder;

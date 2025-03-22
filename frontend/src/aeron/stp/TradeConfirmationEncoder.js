@@ -1,12 +1,12 @@
 import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
-class ConfirmationEncoder {
+class TradeConfirmationEncoder {
     static BLOCK_LENGTH = 570;
-    static LEG_BLOCK_LENGTH = 430;
+    static LEG_BLOCK_LENGTH = 448;
 
     static TEMPLATE_ID = 1;
-    static SCHEMA_ID = 1;
+    static SCHEMA_ID = 5;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -15,6 +15,8 @@ class ConfirmationEncoder {
         this.offset = 0;
         this.amountEncoder = new DecimalEncoder();
         this.secondaryAmountEncoder = new DecimalEncoder();
+        this.spotEncoder = new DecimalEncoder();
+        this.fwdEncoder = new DecimalEncoder();
         this.priceEncoder = new DecimalEncoder();
     }
 
@@ -26,10 +28,10 @@ class ConfirmationEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(ConfirmationEncoder.BLOCK_LENGTH)
-            .templateId(ConfirmationEncoder.TEMPLATE_ID)
-            .schemaId(ConfirmationEncoder.SCHEMA_ID)
-            .version(ConfirmationEncoder.SCHEMA_VERSION);
+            .blockLength(TradeConfirmationEncoder.BLOCK_LENGTH)
+            .templateId(TradeConfirmationEncoder.TEMPLATE_ID)
+            .schemaId(TradeConfirmationEncoder.SCHEMA_ID)
+            .version(TradeConfirmationEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
@@ -70,11 +72,11 @@ class ConfirmationEncoder {
     }
 
     encodeLeg(data) {
-        const groupHeaderOffset = ConfirmationEncoder.BLOCK_LENGTH + 8;
+        const groupHeaderOffset = this.offset + TradeConfirmationEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, ConfirmationEncoder.LITTLE_ENDIAN);
-        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, ConfirmationEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeConfirmationEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeConfirmationEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;
         data.forEach((entry) => {
@@ -94,6 +96,14 @@ class ConfirmationEncoder {
             currentOffset += 8;
             this.putString(currentOffset, entry.side, 4);
             currentOffset += 4;
+            this.spotEncoder.wrap(this.buffer.buffer, currentOffset);
+            this.spotEncoder.mantissa(entry.spot.mantissa);
+            this.spotEncoder.exponent(entry.spot.exponent);
+            currentOffset += DecimalEncoder.ENCODED_LENGTH;
+            this.fwdEncoder.wrap(this.buffer.buffer, currentOffset);
+            this.fwdEncoder.mantissa(entry.fwd.mantissa);
+            this.fwdEncoder.exponent(entry.fwd.exponent);
+            currentOffset += DecimalEncoder.ENCODED_LENGTH;
             this.priceEncoder.wrap(this.buffer.buffer, currentOffset);
             this.priceEncoder.mantissa(entry.price.mantissa);
             this.priceEncoder.exponent(entry.price.exponent);
@@ -127,4 +137,4 @@ class ConfirmationEncoder {
 
 }
 
-export default ConfirmationEncoder;
+export default TradeConfirmationEncoder;

@@ -1,18 +1,18 @@
-import DealRequestEncoder from '../aeron/v2/DealRequestEncoder.js';
+import QuoteRequestEncoder from '../aeron/v2/QuoteRequestEncoder.js';
 import MessageHeaderEncoder from '../aeron/MessageHeaderEncoder.js'
 
-const encodeDealRequest = (data) => {
+const encodeQuoteRequest = (data) => {
 
     const groupHeaderLength = 4; // Adjust for legs header
 
-    const bufferLength = 8 + DealRequestEncoder.BLOCK_LENGTH +
+    const bufferLength = 8 + QuoteRequestEncoder.BLOCK_LENGTH +
                          MessageHeaderEncoder.ENCODED_LENGTH + 
                          groupHeaderLength +
-                         data.legs.length * DealRequestEncoder.LEG_BLOCK_LENGTH; // Adjust for legs data
+                         data.legs.length * QuoteRequestEncoder.LEG_BLOCK_LENGTH; // Adjust for legs data
 
     const buffer = new ArrayBuffer(bufferLength);
     const headerEncoder = new MessageHeaderEncoder();
-    const encoder = new DealRequestEncoder();
+    const encoder = new QuoteRequestEncoder();
 
     // Encode the data
     encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
@@ -23,8 +23,6 @@ const encodeDealRequest = (data) => {
             .transactTime(data.transactTime)
             .messageTime(data.messageTime)
             .quoteRequestID(data.quoteRequestID)
-            .quoteID(data.quoteID)
-            .dealRequestID(data.dealRequestID)
             .clientID(data.clientID);
 
     // Encode legs
@@ -33,5 +31,5 @@ const encodeDealRequest = (data) => {
     return buffer;
 };
 
-export default encodeDealRequest;
+export default encodeQuoteRequest;
 

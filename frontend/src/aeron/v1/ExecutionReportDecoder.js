@@ -94,6 +94,11 @@ class ExecutionReportDecoder {
         return { mantissa, exponent };
     }
 
+    // Decode processed
+    processed() {
+        return this.buffer.getUint8(this.offset + 140, true);
+    }
+
     toString() {
         return {
                 amount: this.decodeamount(),

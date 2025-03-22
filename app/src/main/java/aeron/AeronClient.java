@@ -12,16 +12,15 @@ import io.aeron.Publication;
 import io.aeron.Subscription;
 import io.aeron.logbuffer.FragmentHandler;
 import io.micrometer.core.instrument.MeterRegistry;
-
 import sharedJava.AppConfig;
 import sharedJava.aeron.AdminSender;
 import sharedJava.aeron.AeronSender;
 
 public class AeronClient {
     private static final Logger log = LogManager.getLogger(AeronClient.class);
-    public static String BACKEND_TO_FIX_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40101";
-    public static String FIX_TO_BACKEND_CHANNEL = "aeron:udp?endpoint=224.0.1.3:40102";
-    public static String ADMIN_CHANNEL = "aeron:udp?endpoint=224.0.1.1:40150";
+    public static String BACKEND_TO_FIX_CHANNEL = "aeron:udp?control=127.0.0.1:40101|control-mode=dynamic";
+    public static String FIX_TO_BACKEND_CHANNEL = "aeron:udp?control=127.0.0.1:40102|endpoint=127.0.0.1:40502|control-mode=dynamic";
+    public static String ADMIN_CHANNEL = "aeron:udp?control=127.0.0.1:40150|control-mode=dynamic";
     public static int BACKEND_TO_FIX_STREAM_ID = 1001;
     public static int FIX_TO_BACKEND_STREAM_ID = 1002;
     public static int ADMIN_STREAM_ID = 1050;

@@ -1,12 +1,12 @@
 import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
-class QuoteEncoder {
-    static BLOCK_LENGTH = 82;
-    static LEG_BLOCK_LENGTH = 42;
+class TradeQuoteRequestEncoder {
+    static BLOCK_LENGTH = 66;
+    static LEG_BLOCK_LENGTH = 24;
 
-    static TEMPLATE_ID = 2;
-    static SCHEMA_ID = 2;
+    static TEMPLATE_ID = 1;
+    static SCHEMA_ID = 4;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -14,8 +14,6 @@ class QuoteEncoder {
         this.buffer = null;
         this.offset = 0;
         this.amountEncoder = new DecimalEncoder();
-        this.bidEncoder = new DecimalEncoder();
-        this.offerEncoder = new DecimalEncoder();
     }
 
     wrap(buffer, offset) {
@@ -26,10 +24,10 @@ class QuoteEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(QuoteEncoder.BLOCK_LENGTH)
-            .templateId(QuoteEncoder.TEMPLATE_ID)
-            .schemaId(QuoteEncoder.SCHEMA_ID)
-            .version(QuoteEncoder.SCHEMA_VERSION);
+            .blockLength(TradeQuoteRequestEncoder.BLOCK_LENGTH)
+            .templateId(TradeQuoteRequestEncoder.TEMPLATE_ID)
+            .schemaId(TradeQuoteRequestEncoder.SCHEMA_ID)
+            .version(TradeQuoteRequestEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
@@ -57,30 +55,24 @@ class QuoteEncoder {
         return this;
     }
 
-    // Encode quoteID
-    quoteID(value) {
-        this.putString(this.offset + 38, value, 16);
-        return this;
-    }
-
     // Encode quoteRequestID
     quoteRequestID(value) {
-        this.putString(this.offset + 54, value, 16);
+        this.putString(this.offset + 38, value, 16);
         return this;
     }
 
     // Encode clientID
     clientID(value) {
-        this.putString(this.offset + 70, value, 4);
+        this.putString(this.offset + 54, value, 4);
         return this;
     }
 
     encodeLeg(data) {
-        const groupHeaderOffset = QuoteEncoder.BLOCK_LENGTH + 8;
+        const groupHeaderOffset = this.offset + TradeQuoteRequestEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, QuoteEncoder.LITTLE_ENDIAN);
-        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, QuoteEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeQuoteRequestEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeQuoteRequestEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;
         data.forEach((entry) => {
@@ -94,14 +86,6 @@ class QuoteEncoder {
             currentOffset += 8;
             this.putString(currentOffset, entry.side, 4);
             currentOffset += 4;
-            this.bidEncoder.wrap(this.buffer.buffer, currentOffset);
-            this.bidEncoder.mantissa(entry.bid.mantissa);
-            this.bidEncoder.exponent(entry.bid.exponent);
-            currentOffset += DecimalEncoder.ENCODED_LENGTH;
-            this.offerEncoder.wrap(this.buffer.buffer, currentOffset);
-            this.offerEncoder.mantissa(entry.offer.mantissa);
-            this.offerEncoder.exponent(entry.offer.exponent);
-            currentOffset += DecimalEncoder.ENCODED_LENGTH;
         });
     }
 
@@ -115,4 +99,4 @@ class QuoteEncoder {
 
 }
 
-export default QuoteEncoder;
+export default TradeQuoteRequestEncoder;

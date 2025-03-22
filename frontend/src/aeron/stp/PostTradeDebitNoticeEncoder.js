@@ -1,10 +1,10 @@
 import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
-class CreditNoticeEncoder {
+class PostTradeDebitNoticeEncoder {
     static BLOCK_LENGTH = 409;
-    static TEMPLATE_ID = 3;
-    static SCHEMA_ID = 3;
+    static TEMPLATE_ID = 2;
+    static SCHEMA_ID = 5;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -22,10 +22,10 @@ class CreditNoticeEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(CreditNoticeEncoder.BLOCK_LENGTH)
-            .templateId(CreditNoticeEncoder.TEMPLATE_ID)
-            .schemaId(CreditNoticeEncoder.SCHEMA_ID)
-            .version(CreditNoticeEncoder.SCHEMA_VERSION);
+            .blockLength(PostTradeDebitNoticeEncoder.BLOCK_LENGTH)
+            .templateId(PostTradeDebitNoticeEncoder.TEMPLATE_ID)
+            .schemaId(PostTradeDebitNoticeEncoder.SCHEMA_ID)
+            .version(PostTradeDebitNoticeEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
@@ -111,4 +111,4 @@ class CreditNoticeEncoder {
 
 }
 
-export default CreditNoticeEncoder;
+export default PostTradeDebitNoticeEncoder;

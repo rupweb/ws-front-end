@@ -11,7 +11,7 @@ class DecimalEncoder {
         this.buffer = new DataView(buffer);
         this.offset = offset;
         return this;
-    }
+    }    
 
     mantissa(value) {
         // This is a BigInt64 because the Java DecimalEncoder uses a setLong

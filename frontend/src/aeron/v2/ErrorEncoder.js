@@ -3,6 +3,8 @@ import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class ErrorEncoder {
     static BLOCK_LENGTH = 370;
+    static LEG_BLOCK_LENGTH = 45;
+
     static TEMPLATE_ID = 5;
     static SCHEMA_ID = 5;
     static SCHEMA_VERSION = 1;
@@ -93,10 +95,9 @@ class ErrorEncoder {
 
     encodeLeg(data) {
         const groupHeaderOffset = ErrorEncoder.BLOCK_LENGTH + 8;
-        const blockLength = 45;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, blockLength, ErrorEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, ErrorEncoder.LITTLE_ENDIAN);
         this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, ErrorEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;

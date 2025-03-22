@@ -3,6 +3,8 @@ import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class DealRequestEncoder {
     static BLOCK_LENGTH = 98;
+    static LEG_BLOCK_LENGTH = 33;
+
     static TEMPLATE_ID = 3;
     static SCHEMA_ID = 3;
     static SCHEMA_VERSION = 1;
@@ -80,10 +82,9 @@ class DealRequestEncoder {
 
     encodeLeg(data) {
         const groupHeaderOffset = DealRequestEncoder.BLOCK_LENGTH + 8;
-        const blockLength = 33;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, blockLength, DealRequestEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, DealRequestEncoder.LITTLE_ENDIAN);
         this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, DealRequestEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;

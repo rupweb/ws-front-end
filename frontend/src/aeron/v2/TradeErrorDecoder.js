@@ -1,7 +1,7 @@
 import DecimalDecoder from '../DecimalDecoder.js';
 
-class ExecutionReportDecoder {
-    static BLOCK_LENGTH = 115;
+class TradeErrorDecoder {
+    static BLOCK_LENGTH = 378;
     static LITTLE_ENDIAN = true;
 
     constructor() {
@@ -46,33 +46,33 @@ class ExecutionReportDecoder {
 
     // Decode quoteID
     quoteID() {
-        return this.getString(this.offset + 54, 16);
+        return this.getString(this.offset + 54, 24);
     }
 
     // Decode dealRequestID
     dealRequestID() {
-        return this.getString(this.offset + 70, 16);
+        return this.getString(this.offset + 78, 16);
     }
 
     // Decode dealID
     dealID() {
-        return this.getString(this.offset + 86, 16);
+        return this.getString(this.offset + 94, 16);
     }
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 102, 4);
+        return this.getString(this.offset + 110, 4);
     }
 
-    // Decode processed
-    processed() {
-        return this.buffer.getUint8(this.offset + 106, true);
+    // Decode message
+    message() {
+        return this.getString(this.offset + 114, 256);
     }
 
     decodeLeg() {
         const results = [];
-        const groupHeaderOffset = ExecutionReportDecoder.BLOCK_LENGTH + 8;
-        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, ExecutionReportDecoder.LITTLE_ENDIAN);
+        const groupHeaderOffset = TradeErrorDecoder.BLOCK_LENGTH + 8;
+        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, TradeErrorDecoder.LITTLE_ENDIAN);
         let currentOffset = groupHeaderOffset + 4;
 
         for (let i = 0; i < numInGroup; i++) {
@@ -126,7 +126,7 @@ class ExecutionReportDecoder {
                 dealRequestID: this.dealRequestID().replace(/\0/g, ''),
                 dealID: this.dealID().replace(/\0/g, ''),
                 clientID: this.clientID().replace(/\0/g, ''),
-                processed: this.processed(),
+                message: this.message().replace(/\0/g, ''),
                 leg: this.decodeLeg(this.buffer, this.offset + 8),
         };
     }
@@ -139,4 +139,4 @@ class ExecutionReportDecoder {
 
 }
 
-export default ExecutionReportDecoder;
+export default TradeErrorDecoder;

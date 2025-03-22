@@ -73,6 +73,11 @@ class CreditNoticeDecoder {
         return this.getString(this.offset + 300, 100);
     }
 
+    // Decode processed
+    processed() {
+        return this.buffer.getUint8(this.offset + 400, true);
+    }
+
     toString() {
         return {
                 transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),

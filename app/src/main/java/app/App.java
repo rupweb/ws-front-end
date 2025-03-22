@@ -10,8 +10,7 @@ import config.AeronConfiguration;
 import config.MeterConfiguration;
 import io.aeron.Aeron;
 import io.micrometer.core.instrument.MeterRegistry;
-import persistence.ClientDbInitializer;
-import persistence.SqlPersistor;
+import messages.admin.Admin;
 import sharedJava.AppConfig;
 import sharedJava.utils.ProcessUtil;
 
@@ -50,7 +49,6 @@ public class App {
         // Start Aeron environment
 	    StartWebsocket(webSocketPort);
         startAeronEnvironment(aeronDirectory, appConfig);
-        startDBEnvironment(clientDbURL);
         setRunning(true);
 
         log.info("Application started up");
@@ -94,20 +92,13 @@ public class App {
 
         System.setProperty("application.name", config.getProperty("application.name"));
 
-        messages.Admin admin = ProcessUtil.getAdminMessage("START", "");
+        Admin admin = ProcessUtil.getAdminMessage("START", "");
         App.getAeronClient().getAdminSender().sendAdmin(admin);
 	}
 
-    private void startDBEnvironment(String URL) {
-		log.info("Start SqLite at {}", URL);
-		ClientDbInitializer.initializeDatabase(URL);
-
-        new SqlPersistor().start();
-    }
-
 	public void stopAeronEnvironment() {
 
-        messages.Admin admin = ProcessUtil.getAdminMessage("STOP", "");
+        Admin admin = ProcessUtil.getAdminMessage("STOP", "");
         App.getAeronClient().getAdminSender().sendAdmin(admin);
 
         if (aeronClient != null) {

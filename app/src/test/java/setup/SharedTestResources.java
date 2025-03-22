@@ -12,12 +12,12 @@ import config.TestMediaDriver;
 public class SharedTestResources {
     private static final Logger log = LogManager.getLogger(SharedTestResources.class);
 
-    TestMediaDriver testMediaDriver = new TestMediaDriver();
-
     private App app;
     public App getAppMonitor() { return app; }
 
     private static boolean initialized = false;
+    public static String DIRECTORY = "/tmp/ws-test";
+    private static TestMediaDriver mediaDriver;
 
     public synchronized void initialize() {
         log.info("In SharedTestResources initialize");
@@ -25,8 +25,9 @@ public class SharedTestResources {
         if (!initialized) {
             // Initialize the test media driver here, before any test runs
             log.info("Initializing test media driver");
-            if (testMediaDriver != null) {
-                testMediaDriver.start();
+            if (mediaDriver == null || !mediaDriver.isRunning()) {
+                mediaDriver = new TestMediaDriver(DIRECTORY);
+                mediaDriver.start();
             } else {
                 log.error("TestMediaDriver is null");
             }
@@ -58,8 +59,8 @@ public class SharedTestResources {
             try {
                 app.stopAeronEnvironment();
 
-                if (testMediaDriver != null) {
-                    testMediaDriver.stop();
+                if (mediaDriver != null) {
+                    mediaDriver.stop();
                 }                
             } catch (Exception e) {
                 log.warn("Resources shut down interrupted");

@@ -1,12 +1,12 @@
 import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
-class QuoteEncoder {
-    static BLOCK_LENGTH = 82;
-    static LEG_BLOCK_LENGTH = 42;
+class TradeQuoteEncoder {
+    static BLOCK_LENGTH = 90;
+    static LEG_BLOCK_LENGTH = 78;
 
     static TEMPLATE_ID = 2;
-    static SCHEMA_ID = 2;
+    static SCHEMA_ID = 4;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -14,6 +14,10 @@ class QuoteEncoder {
         this.buffer = null;
         this.offset = 0;
         this.amountEncoder = new DecimalEncoder();
+        this.spotBidEncoder = new DecimalEncoder();
+        this.spotOfferEncoder = new DecimalEncoder();
+        this.fwdBidEncoder = new DecimalEncoder();
+        this.fwdOfferEncoder = new DecimalEncoder();
         this.bidEncoder = new DecimalEncoder();
         this.offerEncoder = new DecimalEncoder();
     }
@@ -26,10 +30,10 @@ class QuoteEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(QuoteEncoder.BLOCK_LENGTH)
-            .templateId(QuoteEncoder.TEMPLATE_ID)
-            .schemaId(QuoteEncoder.SCHEMA_ID)
-            .version(QuoteEncoder.SCHEMA_VERSION);
+            .blockLength(TradeQuoteEncoder.BLOCK_LENGTH)
+            .templateId(TradeQuoteEncoder.TEMPLATE_ID)
+            .schemaId(TradeQuoteEncoder.SCHEMA_ID)
+            .version(TradeQuoteEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
@@ -59,28 +63,28 @@ class QuoteEncoder {
 
     // Encode quoteID
     quoteID(value) {
-        this.putString(this.offset + 38, value, 16);
+        this.putString(this.offset + 38, value, 24);
         return this;
     }
 
     // Encode quoteRequestID
     quoteRequestID(value) {
-        this.putString(this.offset + 54, value, 16);
+        this.putString(this.offset + 62, value, 16);
         return this;
     }
 
     // Encode clientID
     clientID(value) {
-        this.putString(this.offset + 70, value, 4);
+        this.putString(this.offset + 78, value, 4);
         return this;
     }
 
     encodeLeg(data) {
-        const groupHeaderOffset = QuoteEncoder.BLOCK_LENGTH + 8;
+        const groupHeaderOffset = this.offset + TradeQuoteEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, QuoteEncoder.LITTLE_ENDIAN);
-        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, QuoteEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeQuoteEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeQuoteEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;
         data.forEach((entry) => {
@@ -94,6 +98,22 @@ class QuoteEncoder {
             currentOffset += 8;
             this.putString(currentOffset, entry.side, 4);
             currentOffset += 4;
+            this.spotBidEncoder.wrap(this.buffer.buffer, currentOffset);
+            this.spotBidEncoder.mantissa(entry.spotBid.mantissa);
+            this.spotBidEncoder.exponent(entry.spotBid.exponent);
+            currentOffset += DecimalEncoder.ENCODED_LENGTH;
+            this.spotOfferEncoder.wrap(this.buffer.buffer, currentOffset);
+            this.spotOfferEncoder.mantissa(entry.spotOffer.mantissa);
+            this.spotOfferEncoder.exponent(entry.spotOffer.exponent);
+            currentOffset += DecimalEncoder.ENCODED_LENGTH;
+            this.fwdBidEncoder.wrap(this.buffer.buffer, currentOffset);
+            this.fwdBidEncoder.mantissa(entry.fwdBid.mantissa);
+            this.fwdBidEncoder.exponent(entry.fwdBid.exponent);
+            currentOffset += DecimalEncoder.ENCODED_LENGTH;
+            this.fwdOfferEncoder.wrap(this.buffer.buffer, currentOffset);
+            this.fwdOfferEncoder.mantissa(entry.fwdOffer.mantissa);
+            this.fwdOfferEncoder.exponent(entry.fwdOffer.exponent);
+            currentOffset += DecimalEncoder.ENCODED_LENGTH;
             this.bidEncoder.wrap(this.buffer.buffer, currentOffset);
             this.bidEncoder.mantissa(entry.bid.mantissa);
             this.bidEncoder.exponent(entry.bid.exponent);
@@ -115,4 +135,4 @@ class QuoteEncoder {
 
 }
 
-export default QuoteEncoder;
+export default TradeQuoteEncoder;

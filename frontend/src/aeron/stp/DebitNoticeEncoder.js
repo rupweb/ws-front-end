@@ -95,6 +95,12 @@ class DebitNoticeEncoder {
         return this;
     }
 
+    // Encode processed
+    processed(value) {
+        this.buffer.setUint8(this.offset + 400, value, true);
+        return this;
+    }
+
     putString(offset, value, length) {
         const encoder = new TextEncoder();
         const bytes = encoder.encode(value);

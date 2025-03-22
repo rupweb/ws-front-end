@@ -1,6 +1,6 @@
 import DecimalDecoder from '../DecimalDecoder.js';
 
-class CreditTransferDecoder {
+class PostTradeCreditTransferDecoder {
     static BLOCK_LENGTH = 788;
     static LITTLE_ENDIAN = true;
 
@@ -154,4 +154,4 @@ class CreditTransferDecoder {
 
 }
 
-export default CreditTransferDecoder;
+export default PostTradeCreditTransferDecoder;

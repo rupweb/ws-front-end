@@ -1,5 +1,5 @@
 import { generateUUID } from '../utils/utils.js';
-import encodeDealRequest from '../messages/encodeDealRequest.js';
+import encodeDealRequest from '../messages/encodeDealRequest.js'
 import { format } from 'date-fns';
 
 const handleDealRequest = async ({

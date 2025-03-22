@@ -1,9 +1,9 @@
 import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
-class ExecutionReportEncoder {
-    static BLOCK_LENGTH = 115;
-    static LEG_BLOCK_LENGTH = 45;
+class TradeExecutionReportEncoder {
+    static BLOCK_LENGTH = 123;
+    static LEG_BLOCK_LENGTH = 63;
 
     static TEMPLATE_ID = 4;
     static SCHEMA_ID = 4;
@@ -15,6 +15,8 @@ class ExecutionReportEncoder {
         this.offset = 0;
         this.amountEncoder = new DecimalEncoder();
         this.secondaryAmountEncoder = new DecimalEncoder();
+        this.spotEncoder = new DecimalEncoder();
+        this.fwdEncoder = new DecimalEncoder();
         this.priceEncoder = new DecimalEncoder();
     }
 
@@ -26,10 +28,10 @@ class ExecutionReportEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(ExecutionReportEncoder.BLOCK_LENGTH)
-            .templateId(ExecutionReportEncoder.TEMPLATE_ID)
-            .schemaId(ExecutionReportEncoder.SCHEMA_ID)
-            .version(ExecutionReportEncoder.SCHEMA_VERSION);
+            .blockLength(TradeExecutionReportEncoder.BLOCK_LENGTH)
+            .templateId(TradeExecutionReportEncoder.TEMPLATE_ID)
+            .schemaId(TradeExecutionReportEncoder.SCHEMA_ID)
+            .version(TradeExecutionReportEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
@@ -65,40 +67,40 @@ class ExecutionReportEncoder {
 
     // Encode quoteID
     quoteID(value) {
-        this.putString(this.offset + 54, value, 16);
+        this.putString(this.offset + 54, value, 24);
         return this;
     }
 
     // Encode dealRequestID
     dealRequestID(value) {
-        this.putString(this.offset + 70, value, 16);
+        this.putString(this.offset + 78, value, 16);
         return this;
     }
 
     // Encode dealID
     dealID(value) {
-        this.putString(this.offset + 86, value, 16);
+        this.putString(this.offset + 94, value, 16);
         return this;
     }
 
     // Encode clientID
     clientID(value) {
-        this.putString(this.offset + 102, value, 4);
+        this.putString(this.offset + 110, value, 4);
         return this;
     }
 
     // Encode processed
     processed(value) {
-        this.buffer.setUint8(this.offset + 106, value, true);
+        this.buffer.setUint8(this.offset + 114, value, true);
         return this;
     }
 
     encodeLeg(data) {
-        const groupHeaderOffset = ExecutionReportEncoder.BLOCK_LENGTH + 8;
+        const groupHeaderOffset = this.offset + TradeExecutionReportEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, ExecutionReportEncoder.LITTLE_ENDIAN);
-        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, ExecutionReportEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeExecutionReportEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeExecutionReportEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;
         data.forEach((entry) => {
@@ -118,6 +120,14 @@ class ExecutionReportEncoder {
             currentOffset += 8;
             this.putString(currentOffset, entry.side, 4);
             currentOffset += 4;
+            this.spotEncoder.wrap(this.buffer.buffer, currentOffset);
+            this.spotEncoder.mantissa(entry.spot.mantissa);
+            this.spotEncoder.exponent(entry.spot.exponent);
+            currentOffset += DecimalEncoder.ENCODED_LENGTH;
+            this.fwdEncoder.wrap(this.buffer.buffer, currentOffset);
+            this.fwdEncoder.mantissa(entry.fwd.mantissa);
+            this.fwdEncoder.exponent(entry.fwd.exponent);
+            currentOffset += DecimalEncoder.ENCODED_LENGTH;
             this.priceEncoder.wrap(this.buffer.buffer, currentOffset);
             this.priceEncoder.mantissa(entry.price.mantissa);
             this.priceEncoder.exponent(entry.price.exponent);
@@ -135,4 +145,4 @@ class ExecutionReportEncoder {
 
 }
 
-export default ExecutionReportEncoder;
+export default TradeExecutionReportEncoder;

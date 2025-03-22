@@ -8,6 +8,9 @@ class ConfirmationDecoder {
         this.offset = 0;
         this.buffer = null;
         this.amountDecoder = new DecimalDecoder();
+        this.secondaryAmountDecoder = new DecimalDecoder();
+        this.priceDecoder = new DecimalDecoder();
+        this.leg= [];
     }
 
     wrap(buffer, offset) {
@@ -16,81 +19,96 @@ class ConfirmationDecoder {
         return this;
     }
 
+    // Decode confirmID
+    confirmID() {
+        return this.buffer.getUint32(this.offset + 0, true);
+    }
+
     // Decode client
     client() {
-        return this.getString(this.offset + 0, 50);
+        return this.getString(this.offset + 4, 50);
     }
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 50, 20);
+        return this.getString(this.offset + 54, 20);
     }
 
     // Decode clientEmail
     clientEmail() {
-        return this.getString(this.offset + 70, 50);
+        return this.getString(this.offset + 74, 50);
     }
 
     // Decode dealID
     dealID() {
-        return this.getString(this.offset + 120, 20);
+        return this.getString(this.offset + 124, 20);
     }
 
-    // Decode paymentDate
-    paymentDate() {
-        return this.getString(this.offset + 140, 8);
+    // Decode processed
+    processed() {
+        return this.buffer.getUint8(this.offset + 144, true);
     }
 
-    decodeamount() {
-        this.amountDecoder.wrap(this.buffer.buffer, this.offset + 148);
-        const mantissa = Number(this.amountDecoder.mantissa());
-        const exponent = this.amountDecoder.exponent();
-        return { mantissa, exponent };
-    }
+    decodeLeg() {
+        const results = [];
+        const groupHeaderOffset = ConfirmationDecoder.BLOCK_LENGTH + 8;
+        const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, ConfirmationDecoder.LITTLE_ENDIAN);
+        let currentOffset = groupHeaderOffset + 4;
 
-    // Decode currency
-    currency() {
-        return this.getString(this.offset + 157, 3);
-    }
+        for (let i = 0; i < numInGroup; i++) {
+            const entry = {};
+            
+            this.amountDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.amount = {
+                mantissa: this.amountDecoder.mantissa(),
+                exponent: this.amountDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
 
-    // Decode country
-    country() {
-        return this.getString(this.offset + 160, 20);
-    }
+            entry.currency = this.getString(currentOffset, 3);
+            currentOffset += 3;
+            
+            this.secondaryAmountDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.secondaryAmount = {
+                mantissa: this.secondaryAmountDecoder.mantissa(),
+                exponent: this.secondaryAmountDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
 
-    // Decode beneficiaryIBAN
-    beneficiaryIBAN() {
-        return this.getString(this.offset + 180, 34);
-    }
+            entry.secondaryCurrency = this.getString(currentOffset, 3);
+            currentOffset += 3;
+            entry.paymentDate = this.getString(currentOffset, 8);
+            currentOffset += 8;
+            entry.side = this.getString(currentOffset, 4);
+            currentOffset += 4;
+            
+            this.priceDecoder.wrap(this.buffer.buffer, currentOffset);
+            entry.price = {
+                mantissa: this.priceDecoder.mantissa(),
+                exponent: this.priceDecoder.exponent()
+            };
+            currentOffset += DecimalDecoder.ENCODED_LENGTH;
 
-    // Decode beneficiaryBankSWIFT
-    beneficiaryBankSWIFT() {
-        return this.getString(this.offset + 214, 11);
-    }
+            entry.country = this.getString(currentOffset, 20);
+            currentOffset += 20;
+            entry.beneficiaryIBAN = this.getString(currentOffset, 34);
+            currentOffset += 34;
+            entry.beneficiaryBankSWIFT = this.getString(currentOffset, 11);
+            currentOffset += 11;
+            entry.bankName = this.getString(currentOffset, 50);
+            currentOffset += 50;
+            entry.bankAddress = this.getString(currentOffset, 100);
+            currentOffset += 100;
+            entry.branchNo = this.getString(currentOffset, 20);
+            currentOffset += 20;
+            entry.beneficiary = this.getString(currentOffset, 50);
+            currentOffset += 50;
+            entry.additionalInformation = this.getString(currentOffset, 100);
+            currentOffset += 100;
+            results.push(entry);
+        }
 
-    // Decode bankName
-    bankName() {
-        return this.getString(this.offset + 225, 50);
-    }
-
-    // Decode bankAddress
-    bankAddress() {
-        return this.getString(this.offset + 275, 100);
-    }
-
-    // Decode branchNo
-    branchNo() {
-        return this.getString(this.offset + 375, 20);
-    }
-
-    // Decode beneficiary
-    beneficiary() {
-        return this.getString(this.offset + 395, 50);
-    }
-
-    // Decode additionalInformation
-    additionalInformation() {
-        return this.getString(this.offset + 445, 100);
+        return results;
     }
 
     toString() {
@@ -100,18 +118,8 @@ class ConfirmationDecoder {
                 clientID: this.clientID().replace(/\0/g, ''),
                 clientEmail: this.clientEmail().replace(/\0/g, ''),
                 dealID: this.dealID().replace(/\0/g, ''),
-                paymentDate: this.paymentDate().replace(/\0/g, ''),
-                amount: this.decodeamount(),
-                currency: this.currency().replace(/\0/g, ''),
-                country: this.country().replace(/\0/g, ''),
-                beneficiaryIBAN: this.beneficiaryIBAN().replace(/\0/g, ''),
-                beneficiaryBankSWIFT: this.beneficiaryBankSWIFT().replace(/\0/g, ''),
-                bankName: this.bankName().replace(/\0/g, ''),
-                bankAddress: this.bankAddress().replace(/\0/g, ''),
-                branchNo: this.branchNo().replace(/\0/g, ''),
-                beneficiary: this.beneficiary().replace(/\0/g, ''),
-                additionalInformation: this.additionalInformation().replace(/\0/g, ''),
                 processed: this.processed(),
+                leg: this.decodeLeg(this.buffer, this.offset + 8),
         };
     }
 

@@ -1,19 +1,16 @@
 import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
-class QuoteRequestEncoder {
+class TradeQuoteCancelEncoder {
     static BLOCK_LENGTH = 66;
-    static LEG_BLOCK_LENGTH = 24;
-
-    static TEMPLATE_ID = 1;
-    static SCHEMA_ID = 1;
+    static TEMPLATE_ID = 6;
+    static SCHEMA_ID = 4;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
     constructor() {
         this.buffer = null;
         this.offset = 0;
-        this.amountEncoder = new DecimalEncoder();
     }
 
     wrap(buffer, offset) {
@@ -24,10 +21,10 @@ class QuoteRequestEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(QuoteRequestEncoder.BLOCK_LENGTH)
-            .templateId(QuoteRequestEncoder.TEMPLATE_ID)
-            .schemaId(QuoteRequestEncoder.SCHEMA_ID)
-            .version(QuoteRequestEncoder.SCHEMA_VERSION);
+            .blockLength(TradeQuoteCancelEncoder.BLOCK_LENGTH)
+            .templateId(TradeQuoteCancelEncoder.TEMPLATE_ID)
+            .schemaId(TradeQuoteCancelEncoder.SCHEMA_ID)
+            .version(TradeQuoteCancelEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
@@ -67,28 +64,6 @@ class QuoteRequestEncoder {
         return this;
     }
 
-    encodeLeg(data) {
-        const groupHeaderOffset = QuoteRequestEncoder.BLOCK_LENGTH + 8;
-        const numInGroup = data.length;
-
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, QuoteRequestEncoder.LITTLE_ENDIAN);
-        this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, QuoteRequestEncoder.LITTLE_ENDIAN);
-
-        let currentOffset = groupHeaderOffset + 4;
-        data.forEach((entry) => {
-            this.amountEncoder.wrap(this.buffer.buffer, currentOffset);
-            this.amountEncoder.mantissa(entry.amount.mantissa);
-            this.amountEncoder.exponent(entry.amount.exponent);
-            currentOffset += DecimalEncoder.ENCODED_LENGTH;
-            this.putString(currentOffset, entry.currency, 3);
-            currentOffset += 3;
-            this.putString(currentOffset, entry.valueDate, 8);
-            currentOffset += 8;
-            this.putString(currentOffset, entry.side, 4);
-            currentOffset += 4;
-        });
-    }
-
     putString(offset, value, length) {
         const encoder = new TextEncoder();
         const bytes = encoder.encode(value);
@@ -99,4 +74,4 @@ class QuoteRequestEncoder {
 
 }
 
-export default QuoteRequestEncoder;
+export default TradeQuoteCancelEncoder;

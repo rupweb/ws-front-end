@@ -1,10 +1,10 @@
 import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
-class CreditTransferEncoder {
+class PostTradeCreditTransferEncoder {
     static BLOCK_LENGTH = 788;
     static TEMPLATE_ID = 4;
-    static SCHEMA_ID = 4;
+    static SCHEMA_ID = 5;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
@@ -23,10 +23,10 @@ class CreditTransferEncoder {
 
     wrapAndApplyHeader(buffer, offset, headerEncoder) {
         headerEncoder.wrap(buffer, offset)
-            .blockLength(CreditTransferEncoder.BLOCK_LENGTH)
-            .templateId(CreditTransferEncoder.TEMPLATE_ID)
-            .schemaId(CreditTransferEncoder.SCHEMA_ID)
-            .version(CreditTransferEncoder.SCHEMA_VERSION);
+            .blockLength(PostTradeCreditTransferEncoder.BLOCK_LENGTH)
+            .templateId(PostTradeCreditTransferEncoder.TEMPLATE_ID)
+            .schemaId(PostTradeCreditTransferEncoder.SCHEMA_ID)
+            .version(PostTradeCreditTransferEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
@@ -160,4 +160,4 @@ class CreditTransferEncoder {
 
 }
 
-export default CreditTransferEncoder;
+export default PostTradeCreditTransferEncoder;

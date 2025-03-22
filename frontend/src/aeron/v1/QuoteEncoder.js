@@ -4,7 +4,7 @@ import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 class QuoteEncoder {
     static BLOCK_LENGTH = 105;
     static TEMPLATE_ID = 4;
-    static SCHEMA_ID = 4;
+    static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;
 
