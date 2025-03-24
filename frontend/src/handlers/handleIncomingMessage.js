@@ -23,7 +23,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
         switch (headerDecoder.templateId()) {
             case 4: { // Quote
                 const decoder = new QuoteDecoder();
-                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH + 8);
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 
                 // Decode the data
                 decodedData = {
@@ -57,7 +57,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
             }
             case 2: { // Execution Report
                 const decoder = new ExecutionReportDecoder();
-                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH + 8);
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 
                 decodedData = {
                     amount: decoder.decodeamount(),
@@ -97,7 +97,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
             }
             case 5: { // Error
                 const decoder = new ErrorDecoder();
-                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH + 8);
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 
                 decodedData = {
                     amount: decoder.decodeamount(),

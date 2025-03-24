@@ -14,7 +14,6 @@ import io.aeron.logbuffer.FragmentHandler;
 import io.micrometer.core.instrument.MeterRegistry;
 import sharedJava.AppConfig;
 import sharedJava.aeron.AdminSender;
-import sharedJava.aeron.AeronSender;
 
 public class AeronClient {
     private static final Logger log = LogManager.getLogger(AeronClient.class);

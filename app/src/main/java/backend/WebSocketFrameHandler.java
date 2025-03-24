@@ -35,13 +35,22 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
-        if (frame instanceof BinaryWebSocketFrame) {
+        if (frame instanceof BinaryWebSocketFrame binaryFrame) {
             logger.debug("Received binary message");
-            ByteBuf byteBuf = frame.content();
-            byte[] data = new byte[byteBuf.readableBytes()];
-            byteBuf.readBytes(data);
+        
+            ByteBuf byteBuf = binaryFrame.content();
+    
+            // Don't advance reader index – just get raw buffer
+            int offset = byteBuf.readerIndex();
+            int length = byteBuf.readableBytes();
+    
+            byte[] data = new byte[length];
+            byteBuf.getBytes(offset, data);  // don't use readBytes
+    
             UnsafeBuffer buffer = new UnsafeBuffer(data);
-            App.getAeronClient().getSender().send(buffer, "");
+    
+            // Pass in offset = 0, length = data.length
+            App.getAeronClient().getSender().send(buffer, 0, data.length, "");
         } else if (frame instanceof TextWebSocketFrame textFrame) {
             String request = textFrame.text();
             logger.debug("Received message: {}", request);     
