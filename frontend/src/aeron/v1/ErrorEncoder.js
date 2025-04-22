@@ -3,7 +3,7 @@ import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class ErrorEncoder {
     static BLOCK_LENGTH = 401;
-    static TEMPLATE_ID = 5;
+    static TEMPLATE_ID = 6;
     static SCHEMA_ID = 1;
     static SCHEMA_VERSION = 1;
     static LITTLE_ENDIAN = true;

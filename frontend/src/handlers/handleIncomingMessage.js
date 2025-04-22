@@ -88,7 +88,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
 
                 break;
             }
-            case 5: { // Error
+            case 6: { // Error
                 const decoder = new ErrorDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 

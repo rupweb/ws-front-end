@@ -17,26 +17,26 @@ const ExecutionReportModal = ({ show, message, onClose, executionReport, handleR
   const values = executionReport
     ? [
         executionReport.dealID,
-        executionReport.amount.toFixed(2),
+        executionReport.amount,
         executionReport.currency,
         executionReport.symbol,
         executionReport.deliveryDate,
-        executionReport.rate.toFixed(5),
+        executionReport.rate,
         executionReport.secondaryCurrency,
-        executionReport.secondaryAmount.toFixed(2)
+        executionReport.secondaryAmount
       ]
     : [];
 
     const trade = {
       date: new Date().toLocaleDateString(),
       dealID: executionReport.dealID,
-      salePrice: executionReport.amount.toFixed(2),
+      salePrice: executionReport.amount,
       saleCurrency: executionReport.currency,
       symbol: executionReport.symbol,
       deliveryDate: executionReport.deliveryDate,
       currencyIHave: executionReport.secondaryCurrency,
-      fxRate: executionReport.rate.toFixed(5),
-      amountToPay: executionReport.secondaryAmount.toFixed(2)
+      fxRate: executionReport.rate,
+      amountToPay: executionReport.secondaryAmount
     };
   
     const executions = JSON.parse(localStorage.getItem('executions')) || [];

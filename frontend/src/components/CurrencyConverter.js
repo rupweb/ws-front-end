@@ -102,8 +102,8 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
 
         {showQuote && (
           <div className="mt-3">
-            <p>FX Rate: {(quote.fxRate ?? 0).toFixed(5)}</p>
-            <p>Amount to pay: {(quote.secondaryAmount ?? 0).toFixed(2)} {quote.fromCurrency}</p>
+            <p>FX Rate: {quote.fxRate}</p>
+            <p>Amount to pay: {quote.secondaryAmount} {quote.fromCurrency}</p>
           </div>
         )}
 

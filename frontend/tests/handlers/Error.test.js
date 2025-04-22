@@ -37,7 +37,7 @@ describe('handleIncomingError', () => {
 
         headerEncoder.wrap(buffer, 0)
             .blockLength(ErrorEncoder.BLOCK_LENGTH)
-            .templateId(5)
+            .templateId(6)
             .schemaId(1)
             .version(1);
 

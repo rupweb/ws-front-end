@@ -24,7 +24,7 @@ dependencies {
     implementation 'org.agrona:agrona:1.23.1'
 
     // SBE helpers
-    implementation 'rupweb:ws-shared:1.0.24'
+    implementation 'rupweb:ws-shared:1.0.27'
 
     // Websockets implementation 
     implementation 'io.netty:netty-all:4.1.114.Final'
