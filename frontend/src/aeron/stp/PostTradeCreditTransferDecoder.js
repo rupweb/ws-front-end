@@ -5,8 +5,8 @@ class PostTradeCreditTransferDecoder {
     static LITTLE_ENDIAN = true;
 
     constructor() {
-        this.offset = 0;
         this.buffer = null;
+        this.offset = 0;
         this.amountDecoder = new DecimalDecoder();
         this.instructedAmountDecoder = new DecimalDecoder();
     }
@@ -17,35 +17,40 @@ class PostTradeCreditTransferDecoder {
         return this;
     }
 
+    // Decode header
+    header() {
+        return this.getString(this.offset + 0, 8);
+    }
+
     // Decode transactionReferenceNumber
     transactionReferenceNumber() {
-        return this.getString(this.offset + 0, 20);
+        return this.getString(this.offset + 8, 20);
     }
 
     // Decode bankOperationCode
     bankOperationCode() {
-        return this.getString(this.offset + 20, 20);
+        return this.getString(this.offset + 28, 20);
     }
 
     // Decode valueDate
     valueDate() {
-        return this.getString(this.offset + 40, 8);
+        return this.getString(this.offset + 48, 8);
     }
 
     // Decode currencyCode
     currencyCode() {
-        return this.getString(this.offset + 48, 3);
+        return this.getString(this.offset + 56, 3);
     }
 
     decodeamount() {
-        this.amountDecoder.wrap(this.buffer.buffer, this.offset + 51);
+        this.amountDecoder.wrap(this.buffer.buffer, this.offset + 59);
         const mantissa = Number(this.amountDecoder.mantissa());
         const exponent = this.amountDecoder.exponent();
         return { mantissa, exponent };
     }
 
     decodeinstructedAmount() {
-        this.instructedAmountDecoder.wrap(this.buffer.buffer, this.offset + 60);
+        this.instructedAmountDecoder.wrap(this.buffer.buffer, this.offset + 68);
         const mantissa = Number(this.instructedAmountDecoder.mantissa());
         const exponent = this.instructedAmountDecoder.exponent();
         return { mantissa, exponent };
@@ -53,76 +58,77 @@ class PostTradeCreditTransferDecoder {
 
     // Decode orderingCustomer
     orderingCustomer() {
-        return this.getString(this.offset + 69, 50);
+        return this.getString(this.offset + 77, 50);
     }
 
     // Decode orderingInstitution
     orderingInstitution() {
-        return this.getString(this.offset + 119, 50);
+        return this.getString(this.offset + 127, 50);
     }
 
     // Decode sendersCorrespondent
     sendersCorrespondent() {
-        return this.getString(this.offset + 169, 50);
+        return this.getString(this.offset + 177, 50);
     }
 
     // Decode receiversCorrespondent
     receiversCorrespondent() {
-        return this.getString(this.offset + 219, 50);
+        return this.getString(this.offset + 227, 50);
     }
 
     // Decode intermediaryInstitution
     intermediaryInstitution() {
-        return this.getString(this.offset + 269, 50);
+        return this.getString(this.offset + 277, 50);
     }
 
     // Decode accountWithInstitution
     accountWithInstitution() {
-        return this.getString(this.offset + 319, 50);
+        return this.getString(this.offset + 327, 50);
     }
 
     // Decode beneficiaryCustomer
     beneficiaryCustomer() {
-        return this.getString(this.offset + 369, 50);
+        return this.getString(this.offset + 377, 50);
     }
 
     // Decode remittanceInformation
     remittanceInformation() {
-        return this.getString(this.offset + 419, 100);
+        return this.getString(this.offset + 427, 100);
     }
 
     // Decode detailsOfCharges
     detailsOfCharges() {
-        return this.getString(this.offset + 519, 20);
+        return this.getString(this.offset + 527, 20);
     }
 
     // Decode sendersCharges
     sendersCharges() {
-        return this.getString(this.offset + 539, 20);
+        return this.getString(this.offset + 547, 20);
     }
 
     // Decode receiversCharges
     receiversCharges() {
-        return this.getString(this.offset + 559, 20);
+        return this.getString(this.offset + 567, 20);
     }
 
     // Decode senderToReceiverInformation
     senderToReceiverInformation() {
-        return this.getString(this.offset + 579, 100);
+        return this.getString(this.offset + 587, 100);
     }
 
     // Decode regulatoryReporting
     regulatoryReporting() {
-        return this.getString(this.offset + 679, 100);
+        return this.getString(this.offset + 687, 100);
     }
 
     // Decode processed
     processed() {
-        return this.buffer.getUint8(this.offset + 779, true);
+        return this.buffer.getUint8(this.offset + 787, true);
     }
 
     toString() {
         return {
+                header: this.header().replace(/\0/g, ''),
                 transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
                 bankOperationCode: this.bankOperationCode().replace(/\0/g, ''),
                 valueDate: this.valueDate().replace(/\0/g, ''),
@@ -147,8 +153,8 @@ class PostTradeCreditTransferDecoder {
     }
 
     getString(offset, length) {
+        const bytes = new Uint8Array(this.buffer.buffer, this.buffer.byteOffset + offset, length);
         const decoder = new TextDecoder();
-        const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
 

@@ -5,8 +5,8 @@ class PostTradeErrorDecoder {
     static LITTLE_ENDIAN = true;
 
     constructor() {
-        this.offset = 0;
         this.buffer = null;
+        this.offset = 0;
     }
 
     wrap(buffer, offset) {
@@ -15,26 +15,32 @@ class PostTradeErrorDecoder {
         return this;
     }
 
+    // Decode header
+    header() {
+        return this.getString(this.offset + 0, 8);
+    }
+
     // Decode transactionReferenceNumber
     transactionReferenceNumber() {
-        return this.getString(this.offset + 0, 20);
+        return this.getString(this.offset + 8, 20);
     }
 
     // Decode message
     message() {
-        return this.getString(this.offset + 20, 256);
+        return this.getString(this.offset + 28, 256);
     }
 
     toString() {
         return {
+                header: this.header().replace(/\0/g, ''),
                 transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
                 message: this.message().replace(/\0/g, ''),
         };
     }
 
     getString(offset, length) {
+        const bytes = new Uint8Array(this.buffer.buffer, this.buffer.byteOffset + offset, length);
         const decoder = new TextDecoder();
-        const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
 

@@ -28,45 +28,51 @@ class AdminEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
+    // Encode header
+    header(value) {
+        this.putString(this.offset + 0, value, 8);
+        return this;
+    }
+
     // Encode applicationName
     applicationName(value) {
-        this.putString(this.offset + 0, value, 32);
+        this.putString(this.offset + 8, value, 32);
         return this;
     }
 
     // Encode instanceId
     instanceId(value) {
-        this.putString(this.offset + 32, value, 16);
+        this.putString(this.offset + 40, value, 16);
         return this;
     }
 
     // Encode environment
     environment(value) {
-        this.putString(this.offset + 48, value, 8);
+        this.putString(this.offset + 56, value, 8);
         return this;
     }
 
     // Encode messageType
     messageType(value) {
-        this.putString(this.offset + 56, value, 8);
+        this.putString(this.offset + 64, value, 8);
         return this;
     }
 
     // Encode timestamp
     timestamp(value) {
-        this.buffer.setBigInt64(this.offset + 64, value, true);
+        this.buffer.setBigInt64(this.offset + 72, value, true);
         return this;
     }
 
     // Encode detailedMessage
     detailedMessage(value) {
-        this.putString(this.offset + 72, value, 128);
+        this.putString(this.offset + 80, value, 128);
         return this;
     }
 
     // Encode hostInfo
     hostInfo(value) {
-        this.putString(this.offset + 200, value, 64);
+        this.putString(this.offset + 208, value, 64);
         return this;
     }
 

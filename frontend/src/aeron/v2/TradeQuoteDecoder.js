@@ -5,8 +5,8 @@ class TradeQuoteDecoder {
     static LITTLE_ENDIAN = true;
 
     constructor() {
-        this.offset = 0;
         this.buffer = null;
+        this.offset = 0;
         this.amountDecoder = new DecimalDecoder();
         this.spotBidDecoder = new DecimalDecoder();
         this.spotOfferDecoder = new DecimalDecoder();
@@ -23,44 +23,49 @@ class TradeQuoteDecoder {
         return this;
     }
 
+    // Decode header
+    header() {
+        return this.getString(this.offset + 0, 8);
+    }
+
     // Decode transactionType
     transactionType() {
-        return this.getString(this.offset + 0, 3);
+        return this.getString(this.offset + 8, 3);
     }
 
     // Decode symbol
     symbol() {
-        return this.getString(this.offset + 3, 6);
+        return this.getString(this.offset + 11, 6);
     }
 
     // Decode transactTime
     transactTime() {
-        return this.getString(this.offset + 9, 21);
+        return this.getString(this.offset + 17, 21);
     }
 
     // Decode messageTime
     messageTime() {
-        return this.buffer.getBigInt64(this.offset + 30, true);
+        return this.buffer.getBigInt64(this.offset + 38, true);
     }
 
     // Decode quoteID
     quoteID() {
-        return this.getString(this.offset + 38, 24);
+        return this.getString(this.offset + 46, 24);
     }
 
     // Decode quoteRequestID
     quoteRequestID() {
-        return this.getString(this.offset + 62, 16);
+        return this.getString(this.offset + 70, 16);
     }
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 78, 4);
+        return this.getString(this.offset + 86, 4);
     }
 
     decodeLeg() {
         const results = [];
-        const groupHeaderOffset = TradeQuoteDecoder.BLOCK_LENGTH + 8;
+        const groupHeaderOffset = this.offset + TradeQuoteDecoder.BLOCK_LENGTH;
         const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, TradeQuoteDecoder.LITTLE_ENDIAN);
         let currentOffset = groupHeaderOffset + 4;
 
@@ -136,6 +141,7 @@ class TradeQuoteDecoder {
 
     toString() {
         return {
+                header: this.header().replace(/\0/g, ''),
                 transactionType: this.transactionType().replace(/\0/g, ''),
                 symbol: this.symbol().replace(/\0/g, ''),
                 transactTime: this.transactTime().replace(/\0/g, ''),
@@ -148,8 +154,8 @@ class TradeQuoteDecoder {
     }
 
     getString(offset, length) {
+        const bytes = new Uint8Array(this.buffer.buffer, this.buffer.byteOffset + offset, length);
         const decoder = new TextDecoder();
-        const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
 

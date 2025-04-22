@@ -5,8 +5,8 @@ class TradeConfirmationDecoder {
     static LITTLE_ENDIAN = true;
 
     constructor() {
-        this.offset = 0;
         this.buffer = null;
+        this.offset = 0;
         this.amountDecoder = new DecimalDecoder();
         this.secondaryAmountDecoder = new DecimalDecoder();
         this.spotDecoder = new DecimalDecoder();
@@ -21,39 +21,44 @@ class TradeConfirmationDecoder {
         return this;
     }
 
+    // Decode header
+    header() {
+        return this.getString(this.offset + 0, 8);
+    }
+
     // Decode confirmID
     confirmID() {
-        return this.buffer.getUint32(this.offset + 0, true);
+        return this.buffer.getUint32(this.offset + 8, true);
     }
 
     // Decode client
     client() {
-        return this.getString(this.offset + 4, 50);
+        return this.getString(this.offset + 12, 50);
     }
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 54, 20);
+        return this.getString(this.offset + 62, 20);
     }
 
     // Decode clientEmail
     clientEmail() {
-        return this.getString(this.offset + 74, 50);
+        return this.getString(this.offset + 82, 50);
     }
 
     // Decode dealID
     dealID() {
-        return this.getString(this.offset + 124, 20);
+        return this.getString(this.offset + 132, 20);
     }
 
     // Decode processed
     processed() {
-        return this.buffer.getUint8(this.offset + 144, true);
+        return this.buffer.getUint8(this.offset + 152, true);
     }
 
     decodeLeg() {
         const results = [];
-        const groupHeaderOffset = TradeConfirmationDecoder.BLOCK_LENGTH + 8;
+        const groupHeaderOffset = this.offset + TradeConfirmationDecoder.BLOCK_LENGTH;
         const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, TradeConfirmationDecoder.LITTLE_ENDIAN);
         let currentOffset = groupHeaderOffset + 4;
 
@@ -131,6 +136,7 @@ class TradeConfirmationDecoder {
 
     toString() {
         return {
+                header: this.header().replace(/\0/g, ''),
                 confirmID: this.confirmID(),
                 client: this.client().replace(/\0/g, ''),
                 clientID: this.clientID().replace(/\0/g, ''),
@@ -142,8 +148,8 @@ class TradeConfirmationDecoder {
     }
 
     getString(offset, length) {
+        const bytes = new Uint8Array(this.buffer.buffer, this.buffer.byteOffset + offset, length);
         const decoder = new TextDecoder();
-        const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
 

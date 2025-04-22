@@ -5,8 +5,8 @@ class TradeErrorDecoder {
     static LITTLE_ENDIAN = true;
 
     constructor() {
-        this.offset = 0;
         this.buffer = null;
+        this.offset = 0;
         this.amountDecoder = new DecimalDecoder();
         this.secondaryAmountDecoder = new DecimalDecoder();
         this.priceDecoder = new DecimalDecoder();
@@ -19,59 +19,64 @@ class TradeErrorDecoder {
         return this;
     }
 
+    // Decode header
+    header() {
+        return this.getString(this.offset + 0, 8);
+    }
+
     // Decode transactionType
     transactionType() {
-        return this.getString(this.offset + 0, 3);
+        return this.getString(this.offset + 8, 3);
     }
 
     // Decode symbol
     symbol() {
-        return this.getString(this.offset + 3, 6);
+        return this.getString(this.offset + 11, 6);
     }
 
     // Decode transactTime
     transactTime() {
-        return this.getString(this.offset + 9, 21);
+        return this.getString(this.offset + 17, 21);
     }
 
     // Decode messageTime
     messageTime() {
-        return this.buffer.getBigInt64(this.offset + 30, true);
+        return this.buffer.getBigInt64(this.offset + 38, true);
     }
 
     // Decode quoteRequestID
     quoteRequestID() {
-        return this.getString(this.offset + 38, 16);
+        return this.getString(this.offset + 46, 16);
     }
 
     // Decode quoteID
     quoteID() {
-        return this.getString(this.offset + 54, 24);
+        return this.getString(this.offset + 62, 24);
     }
 
     // Decode dealRequestID
     dealRequestID() {
-        return this.getString(this.offset + 78, 16);
+        return this.getString(this.offset + 86, 16);
     }
 
     // Decode dealID
     dealID() {
-        return this.getString(this.offset + 94, 16);
+        return this.getString(this.offset + 102, 16);
     }
 
     // Decode clientID
     clientID() {
-        return this.getString(this.offset + 110, 4);
+        return this.getString(this.offset + 118, 4);
     }
 
     // Decode message
     message() {
-        return this.getString(this.offset + 114, 256);
+        return this.getString(this.offset + 122, 256);
     }
 
     decodeLeg() {
         const results = [];
-        const groupHeaderOffset = TradeErrorDecoder.BLOCK_LENGTH + 8;
+        const groupHeaderOffset = this.offset + TradeErrorDecoder.BLOCK_LENGTH;
         const numInGroup = this.buffer.getUint16(groupHeaderOffset + 2, TradeErrorDecoder.LITTLE_ENDIAN);
         let currentOffset = groupHeaderOffset + 4;
 
@@ -117,6 +122,7 @@ class TradeErrorDecoder {
 
     toString() {
         return {
+                header: this.header().replace(/\0/g, ''),
                 transactionType: this.transactionType().replace(/\0/g, ''),
                 symbol: this.symbol().replace(/\0/g, ''),
                 transactTime: this.transactTime().replace(/\0/g, ''),
@@ -132,8 +138,8 @@ class TradeErrorDecoder {
     }
 
     getString(offset, length) {
+        const bytes = new Uint8Array(this.buffer.buffer, this.buffer.byteOffset + offset, length);
         const decoder = new TextDecoder();
-        const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
 

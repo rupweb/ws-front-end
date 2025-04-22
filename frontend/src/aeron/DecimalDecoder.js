@@ -14,7 +14,7 @@ class DecimalDecoder {
     }
 
     mantissa() {
-        // This is a BigInt64 because the Java DecimalDencoder uses a getLong
+        // This is a BigInt64 because the Java DecimalDecoder uses a getLong
         return this.buffer.getBigInt64(this.offset, DecimalDecoder.LITTLE_ENDIAN);
     }
 

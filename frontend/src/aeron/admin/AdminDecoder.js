@@ -5,8 +5,8 @@ class AdminDecoder {
     static LITTLE_ENDIAN = true;
 
     constructor() {
-        this.offset = 0;
         this.buffer = null;
+        this.offset = 0;
     }
 
     wrap(buffer, offset) {
@@ -15,43 +15,49 @@ class AdminDecoder {
         return this;
     }
 
+    // Decode header
+    header() {
+        return this.getString(this.offset + 0, 8);
+    }
+
     // Decode applicationName
     applicationName() {
-        return this.getString(this.offset + 0, 32);
+        return this.getString(this.offset + 8, 32);
     }
 
     // Decode instanceId
     instanceId() {
-        return this.getString(this.offset + 32, 16);
+        return this.getString(this.offset + 40, 16);
     }
 
     // Decode environment
     environment() {
-        return this.getString(this.offset + 48, 8);
+        return this.getString(this.offset + 56, 8);
     }
 
     // Decode messageType
     messageType() {
-        return this.getString(this.offset + 56, 8);
+        return this.getString(this.offset + 64, 8);
     }
 
     // Decode timestamp
     timestamp() {
-        return this.buffer.getBigInt64(this.offset + 64, true);
+        return this.buffer.getBigInt64(this.offset + 72, true);
     }
 
     // Decode detailedMessage
     detailedMessage() {
-        return this.getString(this.offset + 72, 128);
+        return this.getString(this.offset + 80, 128);
     }
 
     // Decode hostInfo
     hostInfo() {
-        return this.getString(this.offset + 200, 64);
+        return this.getString(this.offset + 208, 64);
     }
 
     toString() {
         return {
+                header: this.header().replace(/\0/g, ''),
                 applicationName: this.applicationName().replace(/\0/g, ''),
                 instanceId: this.instanceId().replace(/\0/g, ''),
                 environment: this.environment().replace(/\0/g, ''),
@@ -63,8 +69,8 @@ class AdminDecoder {
     }
 
     getString(offset, length) {
+        const bytes = new Uint8Array(this.buffer.buffer, this.buffer.byteOffset + offset, length);
         const decoder = new TextDecoder();
-        const bytes = new Uint8Array(this.buffer.buffer, offset, length);
         return decoder.decode(bytes);
     }
 

@@ -34,51 +34,57 @@ class TradeDealRequestEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
+    // Encode header
+    header(value) {
+        this.putString(this.offset + 0, value, 8);
+        return this;
+    }
+
     // Encode transactionType
     transactionType(value) {
-        this.putString(this.offset + 0, value, 3);
+        this.putString(this.offset + 8, value, 3);
         return this;
     }
 
     // Encode symbol
     symbol(value) {
-        this.putString(this.offset + 3, value, 6);
+        this.putString(this.offset + 11, value, 6);
         return this;
     }
 
     // Encode transactTime
     transactTime(value) {
-        this.putString(this.offset + 9, value, 21);
+        this.putString(this.offset + 17, value, 21);
         return this;
     }
 
     // Encode messageTime
     messageTime(value) {
-        this.buffer.setBigInt64(this.offset + 30, value, true);
+        this.buffer.setBigInt64(this.offset + 38, value, true);
         return this;
     }
 
     // Encode quoteRequestID
     quoteRequestID(value) {
-        this.putString(this.offset + 38, value, 16);
+        this.putString(this.offset + 46, value, 16);
         return this;
     }
 
     // Encode quoteID
     quoteID(value) {
-        this.putString(this.offset + 54, value, 24);
+        this.putString(this.offset + 62, value, 24);
         return this;
     }
 
     // Encode dealRequestID
     dealRequestID(value) {
-        this.putString(this.offset + 78, value, 16);
+        this.putString(this.offset + 86, value, 16);
         return this;
     }
 
     // Encode clientID
     clientID(value) {
-        this.putString(this.offset + 94, value, 4);
+        this.putString(this.offset + 102, value, 4);
         return this;
     }
 

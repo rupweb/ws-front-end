@@ -49,6 +49,12 @@ public class AeronSender {
             }
     
         } while (result < 0L);
+
+        if (result > 0) {
+            log.info("✅ Offer succeeded with result: {}", result);
+        } else {
+            log.warn("❌ Offer failed with code: {}", result);
+        }
     
         log.info("Published {}", type);
     }    

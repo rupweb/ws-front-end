@@ -16,35 +16,31 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
 
     try {
         const headerDecoder = new MessageHeaderDecoder();
-
-        // Wrap the header to read it
         headerDecoder.wrap(data, 0);
 
         switch (headerDecoder.templateId()) {
             case 4: { // Quote
                 const decoder = new QuoteDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                logData(data);
 
                 // Decode the data
                 decodedData = {
                     amount: decoder.decodeamount(),
                     currency: decoder.currency(),
-                    side: decoder.side().replace(/\0/g, ''),
-                    symbol: decoder.symbol(),
-                    transactTime: decoder.transactTime(),
-                    quoteID: decoder.quoteID().replace(/\0/g, ''),
-                    quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
+                    side: trimNulls(decoder.side()),
+                    symbol: trimNulls(decoder.symbol()),
+                    transactTime: trimNulls(decoder.transactTime()),
+                    quoteID: trimNulls(decoder.quoteID()),
+                    quoteRequestID: trimNulls(decoder.quoteRequestID()),
                     fxRate: decoder.decodefxRate(),
                     secondaryAmount: decoder.decodesecondaryAmount(),
-                    clientID: decoder.clientID().replace(/\0/g, '')
+                    clientID: trimNulls(decoder.clientID())
                 };
 
-                const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
-                const secondaryAmount1 = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
-
                 setQuote({
-                    fxRate: fxRate1,
-                    secondaryAmount: secondaryAmount1,
+                    fxRate: formatDecimal(decodedData.fxRate),
+                    secondaryAmount: formatDecimal(decodedData.secondaryAmount),
                     symbol: decodedData.symbol,
                     quoteRequestID: decodedData.quoteRequestID,
                     quoteID: decodedData.quoteID
@@ -58,37 +54,34 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
             case 2: { // Execution Report
                 const decoder = new ExecutionReportDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                logData(data);
 
                 decodedData = {
                     amount: decoder.decodeamount(),
                     currency: decoder.currency(),
                     secondaryAmount: decoder.decodesecondaryAmount(),
                     secondaryCurrency: decoder.secondaryCurrency(),
-                    side: decoder.side().replace(/\0/g, ''),
-                    symbol: decoder.symbol(),
+                    side: trimNulls(decoder.side()),
+                    symbol: trimNulls(decoder.symbol()),
                     deliveryDate: decoder.deliveryDate(),
-                    transactTime: decoder.transactTime(),
-                    quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
-                    quoteID: decoder.quoteID().replace(/\0/g, ''),
-                    dealRequestID: decoder.dealRequestID().replace(/\0/g, ''),
-                    dealID: decoder.dealID().replace(/\0/g, ''),
-                    clientID: decoder.clientID().replace(/\0/g, ''),
-                    fxRate: decoder.decodefxRate()
+                    transactTime: trimNulls(decoder.transactTime()),
+                    quoteRequestID: trimNulls(decoder.quoteRequestID()),
+                    quoteID: trimNulls(decoder.quoteID()),
+                    dealRequestID: trimNulls(decoder.dealRequestID()),
+                    dealID: trimNulls(decoder.dealID()),
+                    fxRate: decoder.decodefxRate(),
+                    clientID: trimNulls(decoder.clientID())
                 };
-
-                const amount1 = decodedData.amount.mantissa * Math.pow(10, decodedData.amount.exponent);
-                const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
-                const secondaryAmount1 = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
 
                 setExecutionReport({
                     dealID: decodedData.dealID,
-                    amount: amount1,
+                    amount: formatDecimal(decodedData.amount),
                     currency: decodedData.currency,
                     symbol: decodedData.symbol,
                     deliveryDate: decodedData.deliveryDate,
                     secondaryCurrency: decodedData.secondaryCurrency,
-                    rate: fxRate1,
-                    secondaryAmount: secondaryAmount1
+                    rate: formatDecimal(decodedData.fxRate),
+                    secondaryAmount: formatDecimal(decodedData.secondaryAmount)
                 });
 
                 setShowExecutionReport(true);
@@ -102,26 +95,22 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 decodedData = {
                     amount: decoder.decodeamount(),
                     currency: decoder.currency(),
-                    side: decoder.side().replace(/\0/g, ''),
-                    symbol: decoder.symbol(),
+                    side: trimNulls(decoder.side()),
+                    symbol: trimNulls(decoder.symbol()),
                     deliveryDate: decoder.deliveryDate(),
-                    transactTime: decoder.transactTime(),
-                    quoteRequestID: decoder.quoteRequestID().replace(/\0/g, ''),
-                    quoteID: decoder.quoteID().replace(/\0/g, ''),
-                    dealRequestID: decoder.dealRequestID().replace(/\0/g, ''),
-                    dealID: decoder.dealID().replace(/\0/g, ''),
+                    transactTime: trimNulls(decoder.transactTime()),
+                    quoteRequestID: trimNulls(decoder.quoteRequestID()),
+                    quoteID: trimNulls(decoder.quoteID()),
+                    dealRequestID: trimNulls(decoder.dealRequestID()),
+                    dealID: trimNulls(decoder.dealID()),
                     fxRate: decoder.decodefxRate(),
                     secondaryAmount: decoder.decodesecondaryAmount(),
-                    clientID: decoder.clientID().replace(/\0/g, ''),
-                    message: decoder.message().replace(/\0/g, '')
+                    clientID: trimNulls(decoder.clientID()),
+                    message: trimNulls(decoder.message())
                 };
 
-                const amount1 = decodedData.amount.mantissa * Math.pow(10, decodedData.amount.exponent);
-                const fxRate1 = decodedData.fxRate.mantissa * Math.pow(10, decodedData.fxRate.exponent);
-                const secondaryAmount1 = decodedData.secondaryAmount.mantissa * Math.pow(10, decodedData.secondaryAmount.exponent);
-
                 setError({
-                    amount: amount1,
+                    amount: formatDecimal(decodedData.amount),
                     currency: decodedData.currency,
                     side: decodedData.side,
                     symbol: decodedData.symbol,
@@ -131,8 +120,8 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     quoteID: decodedData.quoteID,
                     dealRequestID: decodedData.dealRequestID,
                     dealID: decodedData.dealID,
-                    rate: fxRate1,
-                    secondaryAmount: secondaryAmount1,
+                    rate: formatDecimal(decodedData.fxRate),
+                    secondaryAmount: formatDecimal(decodedData.secondaryAmount),
                     clientID: decodedData.clientID,
                     message: decodedData.message
                 });
@@ -153,3 +142,27 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
 };
 
 export default handleIncomingMessage;
+
+function logData(data) {
+    // 🧪 LOG: check alignment after header
+    const startOffset = MessageHeaderDecoder.ENCODED_LENGTH;
+    const byteSlice = new Uint8Array(data, startOffset);
+    const hexDump = Array.from(byteSlice).map(b => b.toString(16).padStart(2, '0')).join(' ');
+    console.log('🧪 Bytes after header:', hexDump);
+}
+
+function trimNulls(value) {
+    return value.replace(/\0+$/, '');
+}
+
+function formatDecimal (decimal) {
+    if (decimal && typeof decimal === "object" && "mantissa" in decimal && "exponent" in decimal) {
+      const mantissa = typeof decimal.mantissa === "bigint" ? Number(decimal.mantissa) : decimal.mantissa;
+      const exponent = typeof decimal.exponent === "bigint" ? Number(decimal.exponent) : decimal.exponent;
+  
+      const precision = Math.abs(exponent); // Use exponent as precision
+      return (mantissa * Math.pow(10, exponent)).toFixed(precision);
+    }
+    return null;
+}
+  

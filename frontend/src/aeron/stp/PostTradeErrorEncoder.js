@@ -28,15 +28,21 @@ class PostTradeErrorEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
+    // Encode header
+    header(value) {
+        this.putString(this.offset + 0, value, 8);
+        return this;
+    }
+
     // Encode transactionReferenceNumber
     transactionReferenceNumber(value) {
-        this.putString(this.offset + 0, value, 20);
+        this.putString(this.offset + 8, value, 20);
         return this;
     }
 
     // Encode message
     message(value) {
-        this.putString(this.offset + 20, value, 256);
+        this.putString(this.offset + 28, value, 256);
         return this;
     }
 

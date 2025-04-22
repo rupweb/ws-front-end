@@ -138,6 +138,11 @@ public class AeronClient {
         FragmentHandler fragmentHandler = (buffer, offset, length, header) -> {
             byte[] data = new byte[length];
             buffer.getBytes(offset, data);
+
+            // Print as hex string
+            String hex = java.util.HexFormat.of().formatHex(data);
+            log.info("Received buffer as hex: {}", hex);
+
             WebSocketFrameHandler.broadcast(data);
         };
 

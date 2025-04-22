@@ -31,93 +31,99 @@ class ExecutionReportEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
+    // Encode header
+    header(value) {
+        this.putString(this.offset + 0, value, 8);
+        return this;
+    }
+
     encodeamount(value) {
-        this.amountEncoder.wrap(this.buffer.buffer, this.offset + 0);
+        this.amountEncoder.wrap(this.buffer.buffer, this.offset + 8);
         this.amountEncoder.mantissa(value.mantissa);
         this.amountEncoder.exponent(value.exponent);
     }
 
     // Encode currency
     currency(value) {
-        this.putString(this.offset + 9, value, 3);
+        this.putString(this.offset + 17, value, 3);
         return this;
     }
 
     encodesecondaryAmount(value) {
-        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 12);
+        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 20);
         this.secondaryAmountEncoder.mantissa(value.mantissa);
         this.secondaryAmountEncoder.exponent(value.exponent);
     }
 
     // Encode secondaryCurrency
     secondaryCurrency(value) {
-        this.putString(this.offset + 21, value, 3);
+        this.putString(this.offset + 29, value, 3);
         return this;
     }
 
     // Encode side
     side(value) {
-        this.putString(this.offset + 24, value, 4);
+        this.putString(this.offset + 32, value, 4);
         return this;
     }
 
     // Encode symbol
     symbol(value) {
-        this.putString(this.offset + 28, value, 6);
+        this.putString(this.offset + 36, value, 6);
         return this;
     }
 
     // Encode deliveryDate
     deliveryDate(value) {
-        this.putString(this.offset + 34, value, 8);
+        this.putString(this.offset + 42, value, 8);
         return this;
     }
 
     // Encode transactTime
     transactTime(value) {
-        this.putString(this.offset + 42, value, 21);
+        this.putString(this.offset + 50, value, 21);
         return this;
     }
 
     // Encode quoteRequestID
     quoteRequestID(value) {
-        this.putString(this.offset + 63, value, 16);
+        this.putString(this.offset + 71, value, 16);
         return this;
     }
 
     // Encode quoteID
     quoteID(value) {
-        this.putString(this.offset + 79, value, 16);
+        this.putString(this.offset + 87, value, 16);
         return this;
     }
 
     // Encode dealRequestID
     dealRequestID(value) {
-        this.putString(this.offset + 95, value, 16);
+        this.putString(this.offset + 103, value, 16);
         return this;
     }
 
     // Encode dealID
     dealID(value) {
-        this.putString(this.offset + 111, value, 16);
+        this.putString(this.offset + 119, value, 16);
         return this;
     }
 
     // Encode clientID
     clientID(value) {
-        this.putString(this.offset + 127, value, 4);
+        this.putString(this.offset + 135, value, 4);
         return this;
     }
 
     encodefxRate(value) {
-        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 131);
+        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 139);
         this.fxRateEncoder.mantissa(value.mantissa);
         this.fxRateEncoder.exponent(value.exponent);
     }
 
     // Encode processed
     processed(value) {
-        this.buffer.setUint8(this.offset + 140, value, true);
+        this.buffer.setUint8(this.offset + 148, value, true);
         return this;
     }
 

@@ -31,87 +31,93 @@ class ErrorEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
+    // Encode header
+    header(value) {
+        this.putString(this.offset + 0, value, 8);
+        return this;
+    }
+
     encodeamount(value) {
-        this.amountEncoder.wrap(this.buffer.buffer, this.offset + 0);
+        this.amountEncoder.wrap(this.buffer.buffer, this.offset + 8);
         this.amountEncoder.mantissa(value.mantissa);
         this.amountEncoder.exponent(value.exponent);
     }
 
     // Encode currency
     currency(value) {
-        this.putString(this.offset + 9, value, 3);
+        this.putString(this.offset + 17, value, 3);
         return this;
     }
 
     // Encode side
     side(value) {
-        this.putString(this.offset + 12, value, 4);
+        this.putString(this.offset + 20, value, 4);
         return this;
     }
 
     // Encode symbol
     symbol(value) {
-        this.putString(this.offset + 16, value, 6);
+        this.putString(this.offset + 24, value, 6);
         return this;
     }
 
     // Encode deliveryDate
     deliveryDate(value) {
-        this.putString(this.offset + 22, value, 8);
+        this.putString(this.offset + 30, value, 8);
         return this;
     }
 
     // Encode transactTime
     transactTime(value) {
-        this.putString(this.offset + 30, value, 21);
+        this.putString(this.offset + 38, value, 21);
         return this;
     }
 
     // Encode quoteRequestID
     quoteRequestID(value) {
-        this.putString(this.offset + 51, value, 16);
+        this.putString(this.offset + 59, value, 16);
         return this;
     }
 
     // Encode quoteID
     quoteID(value) {
-        this.putString(this.offset + 67, value, 16);
+        this.putString(this.offset + 75, value, 16);
         return this;
     }
 
     // Encode dealRequestID
     dealRequestID(value) {
-        this.putString(this.offset + 83, value, 16);
+        this.putString(this.offset + 91, value, 16);
         return this;
     }
 
     // Encode dealID
     dealID(value) {
-        this.putString(this.offset + 99, value, 16);
+        this.putString(this.offset + 107, value, 16);
         return this;
     }
 
     encodefxRate(value) {
-        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 115);
+        this.fxRateEncoder.wrap(this.buffer.buffer, this.offset + 123);
         this.fxRateEncoder.mantissa(value.mantissa);
         this.fxRateEncoder.exponent(value.exponent);
     }
 
     encodesecondaryAmount(value) {
-        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 124);
+        this.secondaryAmountEncoder.wrap(this.buffer.buffer, this.offset + 132);
         this.secondaryAmountEncoder.mantissa(value.mantissa);
         this.secondaryAmountEncoder.exponent(value.exponent);
     }
 
     // Encode clientID
     clientID(value) {
-        this.putString(this.offset + 133, value, 4);
+        this.putString(this.offset + 141, value, 4);
         return this;
     }
 
     // Encode message
     message(value) {
-        this.putString(this.offset + 137, value, 256);
+        this.putString(this.offset + 145, value, 256);
         return this;
     }
 

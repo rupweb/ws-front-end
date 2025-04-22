@@ -35,39 +35,45 @@ class TradeConfirmationEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
+    // Encode header
+    header(value) {
+        this.putString(this.offset + 0, value, 8);
+        return this;
+    }
+
     // Encode confirmID
     confirmID(value) {
-        this.buffer.setUint32(this.offset + 0, value, true);
+        this.buffer.setUint32(this.offset + 8, value, true);
         return this;
     }
 
     // Encode client
     client(value) {
-        this.putString(this.offset + 4, value, 50);
+        this.putString(this.offset + 12, value, 50);
         return this;
     }
 
     // Encode clientID
     clientID(value) {
-        this.putString(this.offset + 54, value, 20);
+        this.putString(this.offset + 62, value, 20);
         return this;
     }
 
     // Encode clientEmail
     clientEmail(value) {
-        this.putString(this.offset + 74, value, 50);
+        this.putString(this.offset + 82, value, 50);
         return this;
     }
 
     // Encode dealID
     dealID(value) {
-        this.putString(this.offset + 124, value, 20);
+        this.putString(this.offset + 132, value, 20);
         return this;
     }
 
     // Encode processed
     processed(value) {
-        this.buffer.setUint8(this.offset + 144, value, true);
+        this.buffer.setUint8(this.offset + 152, value, true);
         return this;
     }
 

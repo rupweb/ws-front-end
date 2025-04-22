@@ -1,6 +1,7 @@
 import handleIncomingMessage from '../../src/handlers/handleIncomingMessage.js';
 import QuoteEncoder from '../../src/aeron/v1/quoteEncoder.js'
 import MessageHeaderEncoder from '../../src/aeron/MessageHeaderEncoder.js';
+import { formatDecimal } from "./utils.js";
 
 // Mock TextEncoder & TextDecoder
 import TextEncoder from '../aeron/TextEncoder.js';
@@ -63,8 +64,8 @@ describe('handleIncomingQuote', () => {
 
         expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', expect.any(Object));
         expect(mockSetQuote).toHaveBeenCalledWith({
-            fxRate: data.fxRate.mantissa * Math.pow(10, data.fxRate.exponent),
-            secondaryAmount: data.secondaryAmount.mantissa * Math.pow(10, data.secondaryAmount.exponent),
+            fxRate: formatDecimal(data.fxRate),
+            secondaryAmount: formatDecimal(data.secondaryAmount),
             symbol: data.symbol,
             quoteRequestID: data.quoteRequestID,
             quoteID: data.quoteID,

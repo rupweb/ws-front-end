@@ -30,123 +30,129 @@ class PostTradeCreditTransferEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
+    // Encode header
+    header(value) {
+        this.putString(this.offset + 0, value, 8);
+        return this;
+    }
+
     // Encode transactionReferenceNumber
     transactionReferenceNumber(value) {
-        this.putString(this.offset + 0, value, 20);
+        this.putString(this.offset + 8, value, 20);
         return this;
     }
 
     // Encode bankOperationCode
     bankOperationCode(value) {
-        this.putString(this.offset + 20, value, 20);
+        this.putString(this.offset + 28, value, 20);
         return this;
     }
 
     // Encode valueDate
     valueDate(value) {
-        this.putString(this.offset + 40, value, 8);
+        this.putString(this.offset + 48, value, 8);
         return this;
     }
 
     // Encode currencyCode
     currencyCode(value) {
-        this.putString(this.offset + 48, value, 3);
+        this.putString(this.offset + 56, value, 3);
         return this;
     }
 
     encodeamount(value) {
-        this.amountEncoder.wrap(this.buffer.buffer, this.offset + 51);
+        this.amountEncoder.wrap(this.buffer.buffer, this.offset + 59);
         this.amountEncoder.mantissa(value.mantissa);
         this.amountEncoder.exponent(value.exponent);
     }
 
     encodeinstructedAmount(value) {
-        this.instructedAmountEncoder.wrap(this.buffer.buffer, this.offset + 60);
+        this.instructedAmountEncoder.wrap(this.buffer.buffer, this.offset + 68);
         this.instructedAmountEncoder.mantissa(value.mantissa);
         this.instructedAmountEncoder.exponent(value.exponent);
     }
 
     // Encode orderingCustomer
     orderingCustomer(value) {
-        this.putString(this.offset + 69, value, 50);
+        this.putString(this.offset + 77, value, 50);
         return this;
     }
 
     // Encode orderingInstitution
     orderingInstitution(value) {
-        this.putString(this.offset + 119, value, 50);
+        this.putString(this.offset + 127, value, 50);
         return this;
     }
 
     // Encode sendersCorrespondent
     sendersCorrespondent(value) {
-        this.putString(this.offset + 169, value, 50);
+        this.putString(this.offset + 177, value, 50);
         return this;
     }
 
     // Encode receiversCorrespondent
     receiversCorrespondent(value) {
-        this.putString(this.offset + 219, value, 50);
+        this.putString(this.offset + 227, value, 50);
         return this;
     }
 
     // Encode intermediaryInstitution
     intermediaryInstitution(value) {
-        this.putString(this.offset + 269, value, 50);
+        this.putString(this.offset + 277, value, 50);
         return this;
     }
 
     // Encode accountWithInstitution
     accountWithInstitution(value) {
-        this.putString(this.offset + 319, value, 50);
+        this.putString(this.offset + 327, value, 50);
         return this;
     }
 
     // Encode beneficiaryCustomer
     beneficiaryCustomer(value) {
-        this.putString(this.offset + 369, value, 50);
+        this.putString(this.offset + 377, value, 50);
         return this;
     }
 
     // Encode remittanceInformation
     remittanceInformation(value) {
-        this.putString(this.offset + 419, value, 100);
+        this.putString(this.offset + 427, value, 100);
         return this;
     }
 
     // Encode detailsOfCharges
     detailsOfCharges(value) {
-        this.putString(this.offset + 519, value, 20);
+        this.putString(this.offset + 527, value, 20);
         return this;
     }
 
     // Encode sendersCharges
     sendersCharges(value) {
-        this.putString(this.offset + 539, value, 20);
+        this.putString(this.offset + 547, value, 20);
         return this;
     }
 
     // Encode receiversCharges
     receiversCharges(value) {
-        this.putString(this.offset + 559, value, 20);
+        this.putString(this.offset + 567, value, 20);
         return this;
     }
 
     // Encode senderToReceiverInformation
     senderToReceiverInformation(value) {
-        this.putString(this.offset + 579, value, 100);
+        this.putString(this.offset + 587, value, 100);
         return this;
     }
 
     // Encode regulatoryReporting
     regulatoryReporting(value) {
-        this.putString(this.offset + 679, value, 100);
+        this.putString(this.offset + 687, value, 100);
         return this;
     }
 
     // Encode processed
     processed(value) {
-        this.buffer.setUint8(this.offset + 779, value, true);
+        this.buffer.setUint8(this.offset + 787, value, true);
         return this;
     }
 

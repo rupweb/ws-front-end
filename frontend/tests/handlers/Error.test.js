@@ -1,6 +1,7 @@
 import handleIncomingMessage from '../../src/handlers/handleIncomingMessage.js';
 import ErrorEncoder from '../../src/aeron/v1/errorEncoder.js';
 import MessageHeaderEncoder from '../../src/aeron/MessageHeaderEncoder.js';
+import { formatDecimal } from "./utils.js";
 
 // Mock TextEncoder & TextDecoder
 import TextEncoder from '../aeron/TextEncoder.js';
@@ -73,7 +74,7 @@ describe('handleIncomingError', () => {
 
         expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', expect.any(Object));
         expect(mockSetError).toHaveBeenCalledWith({
-            amount: data.amount.mantissa * Math.pow(10, data.amount.exponent),
+            amount: formatDecimal(data.amount),
             currency: data.currency,
             side: data.side,
             symbol: data.symbol,
@@ -84,8 +85,8 @@ describe('handleIncomingError', () => {
             dealRequestID: data.dealRequestID,
             dealID: data.dealID,
             clientID: data.clientID,
-            rate: data.fxRate.mantissa * Math.pow(10, data.fxRate.exponent),
-            secondaryAmount: data.secondaryAmount.mantissa * Math.pow(10, data.secondaryAmount.exponent),
+            rate: formatDecimal(data.fxRate),
+            secondaryAmount: formatDecimal(data.secondaryAmount),
             message: data.message,
         });
         expect(mockSetShowError).toHaveBeenCalledWith(true);
