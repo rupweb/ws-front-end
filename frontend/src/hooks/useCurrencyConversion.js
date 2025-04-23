@@ -9,6 +9,7 @@ import useExecutionModal from './useExecutionModal.js';
 import useErrorModal from './useErrorModal.js';
 import { useWebSocket } from '../contexts/WebSocketContext.js'; 
 import prepareQuoteRequest from '../handlers/handleQuoteRequest.js';
+import prepareQuoteCancel from '../handlers/handleQuoteCancel.js';
 import prepareDealRequest from '../handlers/handleDealRequest.js';
 import prepareReset from '../handlers/handleReset.js';
 
@@ -73,6 +74,13 @@ const useCurrencyConversion = (amplifyUsername) => {
     handleClientIDCheck
   });
 
+  const handleQuoteCancel = () => prepareQuoteCancel({
+    symbol: quote.symbol,
+    quoteRequestID: quote.quoteRequestID,
+    clientID,
+    sendMessage
+  });
+
   const handleDealRequest = () => prepareDealRequest({
     amount,
     toCurrency,
@@ -121,6 +129,7 @@ const useCurrencyConversion = (amplifyUsername) => {
     setShowQuote,
     handleQuoteRequest,
     handleQuoteMessage,
+    handleQuoteCancel,
     handleDealRequest,
     executionReport,
     showExecutionReport,

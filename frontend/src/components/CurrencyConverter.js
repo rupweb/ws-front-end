@@ -31,6 +31,7 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
     quote,
     showQuote,
     handleQuoteRequest,
+    handleQuoteCancel,
     handleDealRequest,
     executionReport,
     showExecutionReport,
@@ -127,7 +128,10 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
                 >
                   YES
                 </button>
-                <button className="btn btn-danger" onClick={handleReset}>NO</button>
+                <button className="btn btn-danger"   onClick={() => { 
+                    handleReset(); 
+                    handleQuoteCancel();
+                  }}>NO</button>
               </div>
             </div>
           </div>

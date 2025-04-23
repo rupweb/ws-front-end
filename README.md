@@ -62,6 +62,13 @@ To ensure start on reboot run
 
 Per below add the backend jar to the frontend jar
 
+## frontend dev
+
+For local dev use to run the frontend:
+
+    1. Navigate to `frontend` directory.
+    2. Use `npm start` to run the frontend.
+
 ## backend
 
 This contains an express server.
