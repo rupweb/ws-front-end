@@ -94,7 +94,7 @@
   align-items: flex-start; /* Align items at the top */
   min-height: 100vh;
   padding-top: 20px; /* Add some padding at the top */
-  max-width: 600px; /* Ensure the auth container is not too wide */
+  max-width: 100%; /* Ensure the auth container is not too wide */
   margin: 0 auto; /* Center the auth container */
 }
 

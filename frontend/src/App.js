@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Route, Routes, Link, useNavigate } from 'react-router-dom';
 import './css/App.css';
 import CurrencyConverter from './components/CurrencyConverter.js';
+import TradeEntry from './components/TradeEntry.js';
 import Blotter from './components/Blotter.js';
 import Onboarding from './components/Onboarding.js';
 import { Authenticator } from '@aws-amplify/ui-react';
@@ -58,6 +59,7 @@ function App() {
                   <div className="content-container">
                   <Routes>
                     <Route path="/" element={<CurrencyConverter amplifyUsername={amplifyUsername} kycComplete={kycComplete} />} />
+                    <Route path="/trade" element={<TradeEntry />} />
                     <Route path="/blotter" element={<Blotter />} />
                     <Route path="/onboarding" element={<Onboarding />} />
                   </Routes>
@@ -82,6 +84,7 @@ const Header = ({ user, signOut }) => (
       />
       <nav className="nav-links">
         <Link to="/">Home</Link>
+        <Link to="/trade">Trade</Link>
         <Link to="/blotter">Blotter</Link>
         {user && <Link to="/onboarding">Account</Link>}
         {user && <button className="sign-out-button" onClick={signOut}>Sign Out</button>}

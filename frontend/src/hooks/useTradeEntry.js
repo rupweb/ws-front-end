@@ -1,0 +1,142 @@
+import { useState } from 'react';
+import { addBusinessDays } from '../utils/utils.js';
+import useFormValidation from './useFormValidation.js';
+import useClientIDHandling from './useClientIDHandling.js';
+import useQuoteHandling from './useQuoteHandling.js';
+import useDealHandling from './useDealHandling.js';
+import useErrorHandling from './useErrorHandling.js';
+import useExecutionModal from './useExecutionModal.js';
+import useErrorModal from './useErrorModal.js';
+import { useWebSocket } from '../contexts/WebSocketContext.js';
+import prepareQuoteRequest from '../handlers/handleQuoteRequest.js';
+import prepareQuoteCancel from '../handlers/handleQuoteCancel.js';
+import prepareDealRequest from '../handlers/handleDealRequest.js';
+import prepareReset from '../handlers/handleReset.js';
+
+const useTradeEntry = (amplifyUsername) => {
+  const {
+    quote,
+    setQuote,
+    showQuote,
+    setShowQuote,
+    executionReport,
+    setExecutionReport,
+    showExecutionReport,
+    setShowExecutionReport,
+    error,
+    setError,
+    showError,
+    setShowError,
+    sendMessage
+  } = useWebSocket();
+
+  const [fromCurrency, setFromCurrency] = useState('EUR');
+  const [toCurrency, setToCurrency] = useState('USD');
+  const [amount, setAmount] = useState('');
+  const [selectedDate, setSelectedDate] = useState(addBusinessDays(new Date(), 2));
+
+  const isFormValid = useFormValidation(fromCurrency, toCurrency, amount);
+
+  const [clientID, setClientID] = useState(amplifyUsername || '');
+  const [clientIDMessage, setClientIDMessage] = useState('');
+  const [showClientID, setShowClientID] = useState(false);
+  const [executionReportMessage, setExecutionReportMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const { handleClientIDCheck, handleClientIDModalClose } = useClientIDHandling(
+    amplifyUsername,
+    setClientID,
+    setClientIDMessage,
+    setShowClientID
+  );
+
+  const { handleQuoteMessage } = useQuoteHandling(setQuote);
+  const { handleExecutionReport } = useDealHandling(setExecutionReport, setExecutionReportMessage, setShowExecutionReport);
+  const { handleErrorMessage } = useErrorHandling(setError, setErrorMessage, setShowError);
+  const { handleExecutionModalClose } = useExecutionModal(setShowExecutionReport);
+  const { handleErrorModalClose } = useErrorModal(setShowError);
+
+  const handleQuoteRequest = () => prepareQuoteRequest({
+    clientID,
+    amount,
+    selectedDate,
+    toCurrency,
+    fromCurrency,
+    sendMessage,
+    handleClientIDCheck
+  });
+
+  const handleQuoteCancel = () => prepareQuoteCancel({
+    symbol: quote.symbol,
+    quoteRequestID: quote.quoteRequestID,
+    clientID,
+    sendMessage
+  });
+
+  const handleDealRequest = () => prepareDealRequest({
+    amount,
+    toCurrency,
+    selectedDate,
+    fromCurrency,
+    fxRate: quote.fxRate,
+    secondaryAmount: quote.secondaryAmount,
+    symbol: quote.symbol,
+    quoteRequestID: quote.quoteRequestID,
+    quoteID: quote.quoteID,
+    clientID,
+    sendMessage
+  });
+
+  const handleReset = () => prepareReset({
+    setFromCurrency,
+    setToCurrency,
+    setAmount,
+    setSelectedDate,
+    setClientID,
+    setQuote,
+    setShowQuote,
+    setExecutionReport,
+    setShowExecutionReport,
+    setError,
+    setShowError
+  });
+
+  return {
+    fromCurrency,
+    setFromCurrency,
+    toCurrency,
+    setToCurrency,
+    amount,
+    setAmount,
+    selectedDate,
+    setSelectedDate,
+    isFormValid,
+    clientID,
+    setClientID,
+    clientIDMessage,
+    showClientID,
+    handleClientIDModalClose,
+    quote,
+    showQuote,
+    setShowQuote,
+    handleQuoteRequest,
+    handleQuoteMessage,
+    handleQuoteCancel,
+    handleDealRequest,
+    executionReport,
+    showExecutionReport,
+    setShowExecutionReport,
+    handleExecutionReport,
+    executionReportMessage,
+    handleExecutionModalClose,
+    error,
+    showError,
+    setShowError,
+    handleErrorMessage,
+    errorMessage,
+    handleErrorModalClose,
+    handleReset
+  };
+};
+
+export default useTradeEntry;
