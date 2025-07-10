@@ -1,4 +1,4 @@
-import DealRequestEncoder from '../aeron/v2/DealRequestEncoder.js';
+import DealRequestEncoder from '../aeron/v2/TradeDealRequestEncoder.js';
 import MessageHeaderEncoder from '../aeron/MessageHeaderEncoder.js'
 
 const encodeDealRequest = (data) => {

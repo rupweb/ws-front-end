@@ -1,4 +1,4 @@
-import QuoteRequestEncoder from '../aeron/v2/QuoteRequestEncoder.js';
+import QuoteRequestEncoder from '../aeron/v2/TradeQuoteRequestEncoder.js';
 import MessageHeaderEncoder from '../aeron/MessageHeaderEncoder.js'
 
 const encodeQuoteRequest = (data) => {
