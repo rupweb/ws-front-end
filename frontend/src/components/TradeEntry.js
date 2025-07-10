@@ -1,26 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../css/TradeEntry.css';
 import useTradeEntry from '../hooks/useTradeEntry.js';
 import ClientIDModal from './ClientIDModal.js';
 import ExecutionReportModal from './ExecutionReportModal.js';
 import ErrorModal from './ErrorModal.js';
-import { isWeekday, addBusinessDays } from '../utils/utils.js';
+import SpotTradeEntry from './SpotTradeEntry.js';
+import SwapTradeEntry from './SwapTradeEntry.js';
+import MultiLegTradeEntry from './MultiLegTradeEntry.js';
+import { addBusinessDays } from '../utils/utils.js';
 
 const TradeEntry = ({ amplifyUsername }) => {
-
-  const [side, setSide] = useState('Sell');
-  const [tenor, setTenor] = useState('1M');
-
   const {
-    fromCurrency,
-    setFromCurrency,
-    toCurrency,
-    setToCurrency,
-    amount,
-    setAmount,
-    selectedDate,
-    setSelectedDate,
-    isFormValid,
+    transactionType,
+    setTransactionType,
+    symbol,
+    setSymbol,
+    legs,
+    setLegs,
     clientIDMessage,
     showClientID,
     handleClientIDModalClose,
@@ -37,74 +33,82 @@ const TradeEntry = ({ amplifyUsername }) => {
     showError,
     errorMessage,
     handleErrorModalClose,
-    handleReset
+    handleReset,
   } = useTradeEntry(amplifyUsername);
 
   const minDate = addBusinessDays(new Date(), 2);
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
 
+  const renderTradeForm = () => {
+    if (transactionType === 'SPO' || transactionType === 'FWD') {
+      return (
+        <SpotTradeEntry
+          legs={legs}
+          setLegs={setLegs}
+          minDate={minDate}
+          maxDate={maxDate}
+          handleQuoteRequest={handleQuoteRequest}
+        />
+      );
+    }
+
+    if (transactionType === 'SWP') {
+      return (
+        <SwapTradeEntry
+          legs={legs}
+          setLegs={setLegs}
+          minDate={minDate}
+          maxDate={maxDate}
+          handleQuoteRequest={handleQuoteRequest}
+        />
+      );
+    }
+
+    return (
+      <MultiLegTradeEntry
+        legs={legs}
+        setLegs={setLegs}
+        minDate={minDate}
+        maxDate={maxDate}
+        handleQuoteRequest={handleQuoteRequest}
+      />
+    );
+  };
+
   return (
     <div className="trade-entry-container">
       <ClientIDModal show={showClientID} message={clientIDMessage} onClose={handleClientIDModalClose} />
+
       <h2>Enter Trade</h2>
       <div className="card rounded p-4">
         <div className="trade-entry-row">
-        <label>
-        Side:
-        <select value={side} onChange={e => setSide(e.target.value)}>
-            <option value="Sell">Sell</option>
-            <option value="Buy">Buy</option>
-        </select>
-        </label>
-        <label>
-            From:
-            <input type="text" value={fromCurrency} onChange={e => setFromCurrency(e.target.value)} />
-        </label>
-        <label>
-            To:
-            <input type="text" value={toCurrency} onChange={e => setToCurrency(e.target.value)} />
-        </label>
+          <label>
+            Type: <select value={transactionType} onChange={(e) => setTransactionType(e.target.value)}>
+              <option value="SPO">Spot</option>
+              <option value="FWD">Forward</option>
+              <option value="SWP">Swap</option>
+              <option value="MUL">Multileg</option>
+            </select>
+          </label>
 
-        <label>
-            Amount:
-            <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
-        </label>
-
-        <label>
-        Tenor:
-        <select value={tenor} onChange={e => setTenor(e.target.value)}>
-            <option value="SPOT">SPOT</option>
-            <option value="1W">1W</option>
-            <option value="1M">1M</option>
-            <option value="3M">3M</option>
-            <option value="6M">6M</option>
-            <option value="1Y">1Y</option>
-        </select>
-        </label>
-
-        <label>
-          Date:
-          <input
-            type="date"
-            value={selectedDate.toISOString().substring(0, 10)}
-            onChange={(e) => setSelectedDate(new Date(e.target.value))}
-            min={minDate.toISOString().substring(0, 10)}
-            max={maxDate.toISOString().substring(0, 10)}
-            isWeekday={isWeekday} 
-          />
-        </label>
-
-        <button onClick={handleQuoteRequest} disabled={!isFormValid}>
-            Request
-        </button>
+          <label>
+              Ccy: <input
+                type="text"
+                value={symbol}
+                onChange={e => setSymbol(e.target.value.toUpperCase())}
+                placeholder="EUR/USD"
+              />
+          </label>
         </div>
+  
+        {renderTradeForm()}
 
         {showQuote && (
           <>
             <div className="mt-3">
               <p>FX Rate: {quote.fxRate}</p>
-              <p>You pay: {quote.secondaryAmount} {fromCurrency}</p>
+              <p>You pay: {quote.secondaryAmount} {quote.currency}</p>
             </div>
             <div className="form-group row align-items-center">
               <label className="col-sm-8 col-form-label text-right">Execute:</label>

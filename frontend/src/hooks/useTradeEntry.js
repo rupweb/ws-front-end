@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { addBusinessDays } from '../utils/utils.js';
-import useFormValidation from './useFormValidation.js';
 import useClientIDHandling from './useClientIDHandling.js';
 import useQuoteHandling from './useQuoteHandling.js';
 import useDealHandling from './useDealHandling.js';
@@ -8,9 +7,10 @@ import useErrorHandling from './useErrorHandling.js';
 import useExecutionModal from './useExecutionModal.js';
 import useErrorModal from './useErrorModal.js';
 import { useWebSocket } from '../contexts/WebSocketContext.js';
-import prepareQuoteRequest from '../handlers/handleQuoteRequest.js';
+
+import prepareQuoteRequestV2 from '../handlers/handleQuoteRequestV2.js';
+import prepareDealRequestV2 from '../handlers/handleDealRequestV2.js';
 import prepareQuoteCancel from '../handlers/handleQuoteCancel.js';
-import prepareDealRequest from '../handlers/handleDealRequest.js';
 import prepareReset from '../handlers/handleReset.js';
 
 const useTradeEntry = (amplifyUsername) => {
@@ -30,16 +30,25 @@ const useTradeEntry = (amplifyUsername) => {
     sendMessage
   } = useWebSocket();
 
-  const [fromCurrency, setFromCurrency] = useState('EUR');
-  const [toCurrency, setToCurrency] = useState('USD');
-  const [amount, setAmount] = useState('');
-  const [selectedDate, setSelectedDate] = useState(addBusinessDays(new Date(), 2));
+  // Trade type
+  const [transactionType, setTransactionType] = useState('SPO'); // SPO, FWD, SWP, MUL
+  const [symbol, setSymbol] = useState('EURUSD');
 
-  const isFormValid = useFormValidation(fromCurrency, toCurrency, amount);
+  // Legs array
+  const [legs, setLegs] = useState([
+    {
+      side: 'BUY',
+      amount: '',
+      currency: 'USD',
+      date: addBusinessDays(new Date(), 2),
+    }
+  ]);
 
+  // ClientID
   const [clientID, setClientID] = useState(amplifyUsername || '');
   const [clientIDMessage, setClientIDMessage] = useState('');
   const [showClientID, setShowClientID] = useState(false);
+
   const [executionReportMessage, setExecutionReportMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -49,93 +58,86 @@ const useTradeEntry = (amplifyUsername) => {
     setClientIDMessage,
     setShowClientID
   );
-
   const { handleQuoteMessage } = useQuoteHandling(setQuote);
   const { handleExecutionReport } = useDealHandling(setExecutionReport, setExecutionReportMessage, setShowExecutionReport);
   const { handleErrorMessage } = useErrorHandling(setError, setErrorMessage, setShowError);
   const { handleExecutionModalClose } = useExecutionModal(setShowExecutionReport);
   const { handleErrorModalClose } = useErrorModal(setShowError);
 
-  const handleQuoteRequest = () => prepareQuoteRequest({
-    clientID,
-    amount,
-    selectedDate,
-    toCurrency,
-    fromCurrency,
-    sendMessage,
-    handleClientIDCheck
-  });
+  const handleQuoteRequest = () =>
+    prepareQuoteRequestV2({
+      transactionType,
+      symbol,
+      clientID,
+      legs,
+      sendMessage,
+      handleClientIDCheck,
+    });
 
-  const handleQuoteCancel = () => prepareQuoteCancel({
-    symbol: quote.symbol,
-    quoteRequestID: quote.quoteRequestID,
-    clientID,
-    sendMessage
-  });
+  const handleQuoteCancel = () =>
+    prepareQuoteCancel({
+      symbol: quote?.symbol,
+      quoteRequestID: quote?.quoteRequestID,
+      clientID,
+      sendMessage,
+    });
 
-  const handleDealRequest = () => prepareDealRequest({
-    amount,
-    toCurrency,
-    selectedDate,
-    fromCurrency,
-    fxRate: quote.fxRate,
-    secondaryAmount: quote.secondaryAmount,
-    symbol: quote.symbol,
-    quoteRequestID: quote.quoteRequestID,
-    quoteID: quote.quoteID,
-    clientID,
-    sendMessage
-  });
+  const handleDealRequest = () =>
+    prepareDealRequestV2({
+      transactionType,
+      symbol,
+      clientID,
+      quoteRequestID: quote?.quoteRequestID,
+      quoteID: quote?.quoteID,
+      legs,
+      sendMessage,
+    });
 
-  const handleReset = () => prepareReset({
-    setFromCurrency,
-    setToCurrency,
-    setAmount,
-    setSelectedDate,
-    setClientID,
-    setQuote,
-    setShowQuote,
-    setExecutionReport,
-    setShowExecutionReport,
-    setError,
-    setShowError
-  });
+  const handleReset = () =>
+    prepareReset({
+      setQuote,
+      setShowQuote,
+      setExecutionReport,
+      setShowExecutionReport,
+      setError,
+      setShowError,
+      setLegs,
+      setSymbol,
+      setTransactionType,
+    });
 
   return {
-    fromCurrency,
-    setFromCurrency,
-    toCurrency,
-    setToCurrency,
-    amount,
-    setAmount,
-    selectedDate,
-    setSelectedDate,
-    isFormValid,
+    transactionType,
+    setTransactionType,
+    symbol,
+    setSymbol,
+    legs,
+    setLegs,
     clientID,
     setClientID,
-    clientIDMessage,
-    showClientID,
-    handleClientIDModalClose,
     quote,
     showQuote,
     setShowQuote,
-    handleQuoteRequest,
-    handleQuoteMessage,
-    handleQuoteCancel,
-    handleDealRequest,
     executionReport,
     showExecutionReport,
     setShowExecutionReport,
-    handleExecutionReport,
-    executionReportMessage,
-    handleExecutionModalClose,
     error,
     showError,
     setShowError,
+    handleQuoteRequest,
+    handleQuoteCancel,
+    handleDealRequest,
+    handleReset,
+    clientIDMessage,
+    showClientID,
+    handleClientIDModalClose,
+    handleQuoteMessage,
+    handleExecutionReport,
+    executionReportMessage,
+    handleExecutionModalClose,
     handleErrorMessage,
     errorMessage,
-    handleErrorModalClose,
-    handleReset
+    handleErrorModalClose
   };
 };
 
