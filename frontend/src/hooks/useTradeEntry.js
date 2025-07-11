@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { addBusinessDays } from '../utils/utils.js';
 import useClientIDHandling from './useClientIDHandling.js';
 import useQuoteHandling from './useQuoteHandling.js';
-import useDealHandling from './useDealHandling.js';
+import useDealHandling from './useDealHandlingV2.js';
 import useErrorHandling from './useErrorHandling.js';
 import useExecutionModal from './useExecutionModal.js';
 import useErrorModal from './useErrorModal.js';
@@ -11,7 +11,7 @@ import { useWebSocket } from '../contexts/WebSocketContext.js';
 import prepareQuoteRequestV2 from '../handlers/handleQuoteRequestV2.js';
 import prepareDealRequestV2 from '../handlers/handleDealRequestV2.js';
 import prepareQuoteCancel from '../handlers/handleQuoteCancel.js';
-import prepareReset from '../handlers/handleReset.js';
+import prepareReset from '../handlers/handleResetV2.js';
 
 const useTradeEntry = (amplifyUsername) => {
   const {
