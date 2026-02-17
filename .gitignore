@@ -41,3 +41,11 @@ yarn-error.log*
 # amplify
 .aws
 amplifyconfiguration.json
+
+# Codex CI guardrails
+!gradle/
+!gradle/wrapper/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!src/main/java/app/
+!src/main/java/app/**
