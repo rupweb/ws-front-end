@@ -14,6 +14,8 @@ jobs:
     uses: rupweb/ws-shared/.github/workflows/common.yml@main
     secrets:
       MY_TOKEN: ${{ secrets.MY_TOKEN }}
+      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      EC2_HOST: ${{ secrets.EC2_HOST }}
     with:
       project: # Pass local build.gradle directory, if required
 
@@ -21,6 +23,9 @@ jobs:
     uses: rupweb/ws-shared/.github/workflows/artifact.yml@main
     secrets:
       MY_TOKEN: ${{ secrets.MY_TOKEN }}
+      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      EC2_HOST: ${{ secrets.EC2_HOST }}
     with:
       project: ws-front-end
-      destination_repo: rupweb/ws-deploy
+      service_name: ws-front-end
+      deploy_dir: /home/ec2-user/ws-deploy/artifacts
