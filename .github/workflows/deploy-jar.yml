@@ -17,7 +17,7 @@ jobs:
     secrets:
       MY_TOKEN: ${{ secrets.MY_TOKEN }}
     with:
-      project: # Pass local build.gradle directory, if required
+      project: ws-front-end
 
   deploy:
     uses: rupweb/ws-shared/.github/workflows/artifact.yml@main
