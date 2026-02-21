@@ -49,3 +49,6 @@ amplifyconfiguration.json
 !gradle/wrapper/gradle-wrapper.properties
 !src/main/java/app/
 !src/main/java/app/**
+
+# Codex Gradle Standard
+gradle/*
