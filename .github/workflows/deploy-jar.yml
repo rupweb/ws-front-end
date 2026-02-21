@@ -11,14 +11,6 @@ on:
         default: 'true'
   
 jobs:
-  build:
-    if: ${{ inputs.skip_build != 'true' }}
-    uses: rupweb/ws-shared/.github/workflows/common.yml@main
-    secrets:
-      MY_TOKEN: ${{ secrets.MY_TOKEN }}
-    with:
-      project: ws-front-end
-
   deploy:
     uses: rupweb/ws-shared/.github/workflows/artifact.yml@main
     secrets:
