@@ -4,20 +4,100 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-    inputs:
-      skip_build:
-        description: 'Skip the build job (true/false)'
-        required: false
-        default: 'true'
-  
+
 jobs:
-  deploy:
-    uses: rupweb/ws-shared/.github/workflows/artifact.yml@main
-    secrets:
-      MY_TOKEN: ${{ secrets.MY_TOKEN }}
-      EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-      EC2_HOST: ${{ secrets.EC2_HOST }}
-    with:
-      project: ws-front-end
-      service_name: ws-front-end
-      deploy_dir: /home/ec2-user/ws-deploy/artifacts
+  deploy-jar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Ensure gradlew is executable
+        run: chmod +x ./gradlew
+
+      - name: Build backend artifacts
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          MY_TOKEN: ${{ secrets.MY_TOKEN }}
+        run: |
+          ./gradlew clean fatJar copyJar copyConfig
+          ls -la build/libs || true
+          ls -la ../libs/fatjar || true
+
+      - name: Resolve artifact paths
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          project="ws-front-end"
+          jar=""
+          config_dir=""
+
+          if [ -f "../libs/fatjar/${project}.jar" ]; then
+            jar="../libs/fatjar/${project}.jar"
+            config_dir="../libs/fatjar/config/${project}"
+          elif [ -d "../libs/fatjar" ]; then
+            jar=$(find ../libs/fatjar -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' | head -n 1)
+            config_dir="../libs/fatjar/config/${project}"
+          fi
+
+          if [ -z "$jar" ]; then
+            if [ -f "build/libs/${project}.jar" ]; then
+              jar="build/libs/${project}.jar"
+            else
+              jar=$(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' | head -n 1)
+            fi
+            config_dir="config"
+          fi
+
+          if [ -z "$jar" ] || [ ! -f "$jar" ]; then
+            echo "No deployable jar found in ../libs/fatjar or build/libs" >&2
+            exit 1
+          fi
+
+          echo "jar_path=$jar" >> "$GITHUB_OUTPUT"
+          echo "config_dir=$config_dir" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare SSH key
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/deploy_key.pem
+          chmod 600 /tmp/deploy_key.pem
+
+      - name: Upload jar/config to EC2
+        shell: bash
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          set -euo pipefail
+          REMOTE_BASE="/home/ec2-user/ws-deploy/artifacts"
+          PROJECT="ws-front-end"
+          JAR_PATH="${{ steps.meta.outputs.jar_path }}"
+          CONFIG_DIR="${{ steps.meta.outputs.config_dir }}"
+
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key.pem ec2-user@"$EC2_HOST" "mkdir -p '$REMOTE_BASE' '$REMOTE_BASE/config/$PROJECT'"
+          scp -o StrictHostKeyChecking=no -i /tmp/deploy_key.pem "$JAR_PATH" ec2-user@"$EC2_HOST":"$REMOTE_BASE/$PROJECT.jar"
+
+          if [ -n "$CONFIG_DIR" ] && [ -d "$CONFIG_DIR" ]; then
+            scp -o StrictHostKeyChecking=no -i /tmp/deploy_key.pem -r "$CONFIG_DIR"/* ec2-user@"$EC2_HOST":"$REMOTE_BASE/config/$PROJECT/"
+          fi
+
+      - name: Restart service
+        shell: bash
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          set -euo pipefail
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key.pem ec2-user@"$EC2_HOST" "sudo systemctl restart ws-front-end && sudo systemctl is-active ws-front-end"
+
+      - name: Cleanup key
+        if: always()
+        run: rm -f /tmp/deploy_key.pem
