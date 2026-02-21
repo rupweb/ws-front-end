@@ -4,9 +4,12 @@ const useWebSocketConnection = (url, handleIncomingMessage) => {
     console.log('In useWebSocketConnection');
     const socketRef = useRef(null);
     const pingIntervalRef = useRef(null);
+    const reconnectTimeoutRef = useRef(null);
+    const intentionalCloseRef = useRef(false);
 
     useEffect(() => {
-        console.log('WebSocketProvider mounted');
+        console.log('useWebSocketConnection mounted');
+        intentionalCloseRef.current = false;
 
         const connect = () => {
             console.log('Connecting to WebSocket...');
@@ -35,8 +38,13 @@ const useWebSocketConnection = (url, handleIncomingMessage) => {
                     wasClean: event.wasClean,
                 });
                 stopPing();
-                if (event.code !== 1000) { // Only reconnect if the close was not clean
-                    setTimeout(connect, 5000); // Reconnect after 5 seconds
+                if (!intentionalCloseRef.current && event.code !== 1000) { // Only reconnect if not intentional
+                    if (!reconnectTimeoutRef.current) {
+                        reconnectTimeoutRef.current = setTimeout(() => {
+                            reconnectTimeoutRef.current = null;
+                            connect();
+                        }, 5000); // Reconnect after 5 seconds
+                    }
                 }
             };
 
@@ -63,7 +71,12 @@ const useWebSocketConnection = (url, handleIncomingMessage) => {
         connect();
 
         return () => {
-            console.log('WebSocketProvider unmounted');
+            console.log('useWebSocketConnection unmounted');
+            intentionalCloseRef.current = true;
+            if (reconnectTimeoutRef.current) {
+                clearTimeout(reconnectTimeoutRef.current);
+                reconnectTimeoutRef.current = null;
+            }
             if (socketRef.current) {
                 socketRef.current.close(1000, 'Component unmounted'); // Cleanly close the WebSocket
             }

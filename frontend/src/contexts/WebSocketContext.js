@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useCallback, useState } from 'react';
 import useWebSocketConnection from '../handlers/handleWebSocketConnection.js';
 import incomingMessage from '../handlers/handleIncomingMessage.js';
 import outgoingMessage from '../handlers/handleOutgoingMessage.js';
@@ -51,7 +51,19 @@ export const WebSocketProvider = ({ url, children }) => {
     const [showExecutionReport, setShowExecutionReport] = useState(false);
     const [showError, setShowError] = useState(false);
 
-    const socketRef = useWebSocketConnection(url, (data) => incomingMessage(data, setQuote, setShowQuote, setExecutionReport, setShowExecutionReport, setError, setShowError));
+    const handleIncoming = useCallback((data) => {
+        incomingMessage(
+            data,
+            setQuote,
+            setShowQuote,
+            setExecutionReport,
+            setShowExecutionReport,
+            setError,
+            setShowError
+        );
+    }, []);
+
+    const socketRef = useWebSocketConnection(url, handleIncoming);
     const sendMessage = outgoingMessage(socketRef);
 
     return (
