@@ -45,7 +45,7 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem $EC2_USER@$EC2_HOST "mkdir -p /home/ec2-user/ws-front-end/frontend/build /home/ec2-user/reverse-proxy"
+          ssh -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem $EC2_USER@$EC2_HOST "mkdir -p /home/ec2-user/ws-deploy/artifacts/frontends/ws-front-end/build /home/ec2-user/reverse-proxy"
 
       - name: Copy frontend build files via SSH
         env:
@@ -53,9 +53,9 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/build/
-          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/server.js $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/
-          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-front-end/frontend/
+          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/build/* $EC2_USER@$EC2_HOST:/home/ec2-user/ws-deploy/artifacts/frontends/ws-front-end/build/
+          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem -r frontend/server.js $EC2_USER@$EC2_HOST:/home/ec2-user/ws-deploy/artifacts/frontends/ws-front-end/
+          scp -o StrictHostKeyChecking=no -i /tmp/webster.systems.key.pem frontend/package.json $EC2_USER@$EC2_HOST:/home/ec2-user/ws-deploy/artifacts/frontends/ws-front-end/
 
       - name: Copy proxy server files via SSH
         env:
@@ -80,6 +80,6 @@ jobs:
           pm2 restart proxy-server || pm2 start /home/ec2-user/reverse-proxy/proxy-server.js --name proxy-server
 
           # Start/restart the frontend server with PM2
-          pm2 restart ws-frontend || pm2 start /home/ec2-user/ws-front-end/frontend/server.js --name ws-frontend
+          pm2 restart ws-frontend || pm2 start /home/ec2-user/ws-deploy/artifacts/frontends/ws-front-end/server.js --name ws-frontend
 
           EOF
