@@ -39,6 +39,7 @@ const TradeEntry = ({ amplifyUsername }) => {
   const minDate = addBusinessDays(new Date(), 2);
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
+  const quoteCurrency = symbol?.length >= 6 ? symbol.substring(3, 6) : '';
 
   const renderTradeForm = () => {
     if (transactionType === 'SPO' || transactionType === 'FWD') {
@@ -49,6 +50,7 @@ const TradeEntry = ({ amplifyUsername }) => {
           minDate={minDate}
           maxDate={maxDate}
           handleQuoteRequest={handleQuoteRequest}
+          quoteCurrency={quoteCurrency}
         />
       );
     }
@@ -61,6 +63,7 @@ const TradeEntry = ({ amplifyUsername }) => {
           minDate={minDate}
           maxDate={maxDate}
           handleQuoteRequest={handleQuoteRequest}
+          quoteCurrency={quoteCurrency}
         />
       );
     }
@@ -72,6 +75,7 @@ const TradeEntry = ({ amplifyUsername }) => {
         minDate={minDate}
         maxDate={maxDate}
         handleQuoteRequest={handleQuoteRequest}
+        quoteCurrency={quoteCurrency}
       />
     );
   };

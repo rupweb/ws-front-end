@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { addBusinessDays } from '../utils/utils.js';
 import useClientIDHandling from './useClientIDHandling.js';
 import useQuoteHandling from './useQuoteHandling.js';
@@ -33,16 +33,45 @@ const useTradeEntry = (amplifyUsername) => {
   // Trade type
   const [transactionType, setTransactionType] = useState('SPO'); // SPO, FWD, SWP, MUL
   const [symbol, setSymbol] = useState('EURUSD');
+  const getQuoteCurrency = (value) => (value?.length >= 6 ? value.substring(3, 6) : '');
 
   // Legs array
   const [legs, setLegs] = useState([
     {
       side: 'BUY',
       amount: '',
-      currency: 'USD',
+      currency: getQuoteCurrency('EURUSD'),
       date: addBusinessDays(new Date(), 2),
     }
   ]);
+
+  useEffect(() => {
+    const nearDate = addBusinessDays(new Date(), 2);
+    const farDate = addBusinessDays(new Date(), 7);
+
+    if (transactionType === 'SWP') {
+      setLegs((prevLegs) => {
+        const quoteCurrency = getQuoteCurrency(symbol);
+        const first = prevLegs[0] || {
+          side: 'BUY',
+          amount: '',
+          currency: quoteCurrency,
+          date: nearDate
+        };
+        const second = prevLegs[1] || {
+          side: first.side === 'BUY' ? 'SELL' : 'BUY',
+          amount: first.amount || '',
+          currency: first.currency || quoteCurrency,
+          date: farDate
+        };
+
+        return [
+          { ...first, currency: first.currency || quoteCurrency, date: first.date || nearDate },
+          { ...second, currency: second.currency || first.currency || quoteCurrency, date: second.date || farDate }
+        ];
+      });
+    }
+  }, [symbol, transactionType]);
 
   // ClientID
   const [clientID, setClientID] = useState(amplifyUsername || '');

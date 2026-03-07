@@ -2,6 +2,8 @@ import { generateUUID } from '../utils/utils.js';
 import encodeQuoteRequest from '../messages/encodeQuoteRequestV2.js';
 import { format } from 'date-fns';
 
+const mapTransactionType = (value) => (value === 'SWP' ? 'SWA' : value);
+
 const handleQuoteRequestV2 = async ({
   transactionType, // 'SPO', 'FWD', 'SWP', 'MUL'
   symbol,
@@ -17,19 +19,21 @@ const handleQuoteRequestV2 = async ({
   const quoteRequestID = generateUUID();
   const messageTime = BigInt(Date.now());
   const transactTime = format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS');
+  const normalizedTransactionType = mapTransactionType(transactionType);
+  const fallbackCurrency = symbol?.length >= 6 ? symbol.substring(3, 6) : '';
 
-  const formattedLegs = legs.map(leg => ({
+  const formattedLegs = legs.map((leg, index) => ({
     amount: {
-      mantissa: Math.round(parseFloat(leg.amount) * 100),
+      mantissa: Math.round(parseFloat(leg.amount || 0) * 100),
       exponent: -2
     },
-    currency: leg.currency,
-    side: leg.side,
+    currency: (leg.currency || fallbackCurrency).toUpperCase(),
+    side: leg.side || (index === 0 ? 'BUY' : 'SELL'),
     valueDate: format(new Date(leg.date), 'yyyyMMdd')
   }));
 
   const requestData = {
-    transactionType,
+    transactionType: normalizedTransactionType,
     symbol,
     transactTime,
     messageTime,

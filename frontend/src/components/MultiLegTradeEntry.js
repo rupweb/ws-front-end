@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MultiLegTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest }) => {
+const MultiLegTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, quoteCurrency }) => {
   const updateLeg = (index, field, value) => {
     const updatedLegs = [...legs];
     updatedLegs[index] = {
@@ -16,7 +16,7 @@ const MultiLegTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteReques
       {
         side: 'SELL',
         amount: '',
-        currency: legs[0]?.currency || 'USD',
+        currency: legs[0]?.currency || quoteCurrency,
         date: minDate
       }
     ]);

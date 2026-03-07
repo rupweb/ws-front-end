@@ -1,10 +1,10 @@
 import React from 'react';
 
-const SpotTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest }) => {
+const SpotTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, quoteCurrency }) => {
   const leg = legs[0] || {
     side: 'BUY',
     amount: '',
-    currency: 'USD',
+    currency: quoteCurrency,
     date: minDate
   };
 

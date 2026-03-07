@@ -1,18 +1,27 @@
 import React from 'react';
 
-const SwapTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest }) => {
-  const leg1 = legs[0] || { side: 'BUY', amount: '', currency: 'USD', date: minDate };
-  const leg2 = legs[1] || { side: 'SELL', amount: '', currency: 'USD', date: minDate };
+const SwapTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, quoteCurrency }) => {
+  const leg1 = legs[0] || { side: 'BUY', amount: '', currency: quoteCurrency, date: minDate };
+  const leg2 = legs[1] || { side: 'SELL', amount: '', currency: quoteCurrency, date: minDate };
 
   const updateLeg = (index, field, value) => {
     const updatedLegs = [...legs];
+    const defaultLeg = {
+      side: index === 0 ? 'BUY' : 'SELL',
+      amount: '',
+      currency: quoteCurrency,
+      date: minDate
+    };
     updatedLegs[index] = {
-      ...updatedLegs[index],
+      ...(updatedLegs[index] || defaultLeg),
       [field]: field === 'date' ? new Date(value) : value
     };
     // Automatically set the opposite side for the other leg
     if (field === 'side' && index === 0) {
-      updatedLegs[1].side = value === 'BUY' ? 'SELL' : 'BUY';
+      updatedLegs[1] = {
+        ...(updatedLegs[1] || { amount: '', currency: quoteCurrency, date: minDate }),
+        side: value === 'BUY' ? 'SELL' : 'BUY'
+      };
     }
     setLegs(updatedLegs);
   };
