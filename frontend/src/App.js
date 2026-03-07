@@ -62,7 +62,7 @@ function App() {
                   <div className="content-container">
                   <Routes>
                     <Route path="/" element={<CurrencyConverter amplifyUsername={amplifyUsername} kycComplete={kycComplete} />} />
-                    <Route path="/trade" element={<TradeEntry />} />
+                    <Route path="/trade" element={<TradeEntry amplifyUsername={amplifyUsername} />} />
                     <Route path="/blotter" element={<Blotter />} />
                     <Route path="/onboarding" element={<Onboarding />} />
                   </Routes>

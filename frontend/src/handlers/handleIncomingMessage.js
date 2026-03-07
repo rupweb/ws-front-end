@@ -2,6 +2,9 @@ import MessageHeaderDecoder from '../aeron/MessageHeaderDecoder.js';
 import QuoteDecoder from '../aeron/v1/QuoteDecoder.js';
 import ExecutionReportDecoder from '../aeron/v1/ExecutionReportDecoder.js';
 import ErrorDecoder from '../aeron/v1/ErrorDecoder.js';
+import TradeQuoteDecoder from '../aeron/v2/TradeQuoteDecoder.js';
+import TradeExecutionReportDecoder from '../aeron/v2/TradeExecutionReportDecoder.js';
+import TradeErrorDecoder from '../aeron/v2/TradeErrorDecoder.js';
 
 const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport, setShowExecutionReport, setError, setShowError) => {
     console.log('Incoming data: ', data);
@@ -18,8 +21,80 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
         const headerDecoder = new MessageHeaderDecoder();
         headerDecoder.wrap(data, 0);
 
-        switch (headerDecoder.templateId()) {
-            case 4: { // Quote
+        const schemaId = headerDecoder.schemaId();
+        const templateId = headerDecoder.templateId();
+
+        switch (`${schemaId}:${templateId}`) {
+            case '4:2': { // Trade Quote (schema4/template2)
+                const decoder = new TradeQuoteDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                decodedData = decoder.toString();
+
+                const firstLeg = Array.isArray(decodedData.leg) && decodedData.leg.length > 0 ? decodedData.leg[0] : null;
+                const bid = firstLeg?.bid ? formatDecimal(firstLeg.bid) : null;
+                const offer = firstLeg?.offer ? formatDecimal(firstLeg.offer) : null;
+
+                setQuote({
+                    transactionType: decodedData.transactionType,
+                    symbol: decodedData.symbol,
+                    quoteRequestID: decodedData.quoteRequestID,
+                    quoteID: decodedData.quoteID,
+                    clientID: decodedData.clientID,
+                    legs: decodedData.leg,
+                    fxRate: offer || bid,
+                    secondaryAmount: firstLeg ? formatDecimal(firstLeg.amount) : null,
+                    currency: firstLeg?.currency || ''
+                });
+
+                setShowQuote(true);
+                break;
+            }
+            case '4:4': { // Trade Execution Report (schema4/template4)
+                const decoder = new TradeExecutionReportDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                decodedData = decoder.toString();
+
+                const firstLeg = Array.isArray(decodedData.leg) && decodedData.leg.length > 0 ? decodedData.leg[0] : null;
+                setExecutionReport({
+                    dealID: decodedData.dealID,
+                    amount: firstLeg?.amount ? formatDecimal(firstLeg.amount) : null,
+                    currency: firstLeg?.currency || '',
+                    symbol: decodedData.symbol,
+                    deliveryDate: firstLeg?.valueDate || '',
+                    secondaryCurrency: firstLeg?.secondaryCurrency || '',
+                    rate: firstLeg?.price ? formatDecimal(firstLeg.price) : null,
+                    secondaryAmount: firstLeg?.secondaryAmount ? formatDecimal(firstLeg.secondaryAmount) : null
+                });
+
+                setShowExecutionReport(true);
+                break;
+            }
+            case '4:5': { // Trade Error (schema4/template5)
+                const decoder = new TradeErrorDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                decodedData = decoder.toString();
+
+                setError({
+                    amount: null,
+                    currency: '',
+                    side: '',
+                    symbol: decodedData.symbol,
+                    deliveryDate: '',
+                    transactTime: decodedData.transactTime,
+                    quoteRequestID: decodedData.quoteRequestID,
+                    quoteID: decodedData.quoteID,
+                    dealRequestID: decodedData.dealRequestID,
+                    dealID: decodedData.dealID,
+                    rate: null,
+                    secondaryAmount: null,
+                    clientID: decodedData.clientID,
+                    message: decodedData.message
+                });
+
+                setShowError(true);
+                break;
+            }
+            case '1:4': { // Quote
                 const decoder = new QuoteDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
                 logData(data);
@@ -52,7 +127,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
 
                 break;
             }
-            case 2: { // Execution Report
+            case '1:2': { // Execution Report (schema1/template2)
                 const decoder = new ExecutionReportDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
                 logData(data);
@@ -89,7 +164,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
 
                 break;
             }
-            case 6: { // Error
+            case '1:6': { // Error (schema1/template6)
                 const decoder = new ErrorDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
 
@@ -132,7 +207,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 break;
             }
             default:
-                console.error('Unknown message type:', headerDecoder.templateId());
+                console.error('Unknown message type:', templateId);
                 return;
         }
     } catch (error) {
