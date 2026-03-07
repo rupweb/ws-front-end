@@ -33,8 +33,8 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 decodedData = decoder.toString();
 
                 const firstLeg = Array.isArray(decodedData.leg) && decodedData.leg.length > 0 ? decodedData.leg[0] : null;
-                const bid = firstLeg?.bid ? formatDecimal(firstLeg.bid) : null;
-                const offer = firstLeg?.offer ? formatDecimal(firstLeg.offer) : null;
+                const bid = firstLeg?.bid ? formatDecimal(firstLeg.bid, 5) : null;
+                const offer = firstLeg?.offer ? formatDecimal(firstLeg.offer, 5) : null;
 
                 setQuote({
                     transactionType: decodedData.transactionType,
@@ -64,7 +64,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     symbol: decodedData.symbol,
                     deliveryDate: firstLeg?.valueDate || '',
                     secondaryCurrency: firstLeg?.secondaryCurrency || '',
-                    rate: firstLeg?.price ? formatDecimal(firstLeg.price) : null,
+                    rate: firstLeg?.price ? formatDecimal(firstLeg.price, 5) : null,
                     secondaryAmount: firstLeg?.secondaryAmount ? formatDecimal(firstLeg.secondaryAmount) : null
                 });
 
@@ -123,7 +123,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 };
 
                 setQuote({
-                    fxRate: formatDecimal(decodedData.fxRate),
+                    fxRate: formatDecimal(decodedData.fxRate, 5),
                     secondaryAmount: formatDecimal(decodedData.secondaryAmount),
                     symbol: decodedData.symbol,
                     quoteRequestID: decodedData.quoteRequestID,
@@ -165,7 +165,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     symbol: decodedData.symbol,
                     deliveryDate: decodedData.deliveryDate,
                     secondaryCurrency: decodedData.secondaryCurrency,
-                    rate: formatDecimal(decodedData.fxRate),
+                    rate: formatDecimal(decodedData.fxRate, 5),
                     secondaryAmount: formatDecimal(decodedData.secondaryAmount)
                 });
 
@@ -205,7 +205,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     quoteID: decodedData.quoteID,
                     dealRequestID: decodedData.dealRequestID,
                     dealID: decodedData.dealID,
-                    rate: formatDecimal(decodedData.fxRate),
+                    rate: formatDecimal(decodedData.fxRate, 5),
                     secondaryAmount: formatDecimal(decodedData.secondaryAmount),
                     clientID: decodedData.clientID,
                     message: decodedData.message
@@ -252,12 +252,14 @@ function trimNulls(value) {
     return value.replace(/\0+$/, '');
 }
 
-function formatDecimal (decimal) {
+function formatDecimal (decimal, maxPrecision = null) {
     if (decimal && typeof decimal === "object" && "mantissa" in decimal && "exponent" in decimal) {
       const mantissa = typeof decimal.mantissa === "bigint" ? Number(decimal.mantissa) : decimal.mantissa;
       const exponent = typeof decimal.exponent === "bigint" ? Number(decimal.exponent) : decimal.exponent;
   
-      const precision = Math.abs(exponent); // Use exponent as precision
+      const precision = maxPrecision === null
+        ? Math.abs(exponent)
+        : Math.min(Math.abs(exponent), maxPrecision);
       return (mantissa * Math.pow(10, exponent)).toFixed(precision);
     }
     return null;
