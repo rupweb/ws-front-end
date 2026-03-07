@@ -124,6 +124,7 @@ const useTradeEntry = (amplifyUsername) => {
       clientID,
       quoteRequestID: quote?.quoteRequestID,
       quoteID: quote?.quoteID,
+      quote,
       legs,
       sendMessage,
     });

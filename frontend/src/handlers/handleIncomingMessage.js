@@ -5,6 +5,8 @@ import ErrorDecoder from '../aeron/v1/ErrorDecoder.js';
 import TradeQuoteDecoder from '../aeron/v2/TradeQuoteDecoder.js';
 import TradeExecutionReportDecoder from '../aeron/v2/TradeExecutionReportDecoder.js';
 import TradeErrorDecoder from '../aeron/v2/TradeErrorDecoder.js';
+import TradeQuoteCancelDecoder from '../aeron/v2/TradeQuoteCancelDecoder.js';
+import QuoteCancelDecoder from '../aeron/v1/QuoteCancelDecoder.js';
 
 const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport, setShowExecutionReport, setError, setShowError) => {
     console.log('Incoming data: ', data);
@@ -92,6 +94,13 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 });
 
                 setShowError(true);
+                break;
+            }
+            case '4:6': { // Trade Quote Cancel (schema4/template6)
+                const decoder = new TradeQuoteCancelDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                decodedData = decoder.toString();
+                setShowQuote(false);
                 break;
             }
             case '1:4': { // Quote
@@ -204,6 +213,18 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
 
                 setShowError(true);
 
+                break;
+            }
+            case '1:5': { // QuoteCancel (schema1/template5)
+                const decoder = new QuoteCancelDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                decodedData = {
+                    symbol: trimNulls(decoder.symbol()),
+                    transactTime: trimNulls(decoder.transactTime()),
+                    quoteRequestID: trimNulls(decoder.quoteRequestID()),
+                    clientID: trimNulls(decoder.clientID())
+                };
+                setShowQuote(false);
                 break;
             }
             default:

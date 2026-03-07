@@ -1,5 +1,3 @@
-import DecimalDecoder from '../DecimalDecoder.js';
-
 class QuoteCancelDecoder {
     static BLOCK_LENGTH = 55;
     static LITTLE_ENDIAN = true;
