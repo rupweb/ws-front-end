@@ -78,6 +78,12 @@ const useTradeEntry = (amplifyUsername) => {
   const [clientIDMessage, setClientIDMessage] = useState('');
   const [showClientID, setShowClientID] = useState(false);
 
+  useEffect(() => {
+    if (!clientID && amplifyUsername) {
+      setClientID(amplifyUsername);
+    }
+  }, [amplifyUsername, clientID]);
+
   const [executionReportMessage, setExecutionReportMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -133,6 +139,7 @@ const useTradeEntry = (amplifyUsername) => {
       setLegs,
       setSymbol,
       setTransactionType,
+      setClientID
     });
 
   return {

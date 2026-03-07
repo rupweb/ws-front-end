@@ -3,6 +3,12 @@ const useClientIDHandling = (amplifyUsername, clientID, setClientIDModalMessageP
     console.log('Hook amplifyUsername:', amplifyUsername);
     console.log('Hook clientID:', clientID);
 
+    if (!clientID || !clientID.trim()) {
+      setClientIDModalMessageParent('Client ID is not available yet. Please wait a moment and retry.');
+      setShowClientIDModalParent(true);
+      return true;
+    }
+
     if (clientID === amplifyUsername) {
       return false;
     }
