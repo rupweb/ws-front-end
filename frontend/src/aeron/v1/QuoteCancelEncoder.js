@@ -1,4 +1,3 @@
-import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class QuoteCancelEncoder {
