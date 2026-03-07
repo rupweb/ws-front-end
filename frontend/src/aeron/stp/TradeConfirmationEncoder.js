@@ -81,7 +81,7 @@ class TradeConfirmationEncoder {
         const groupHeaderOffset = this.offset + TradeConfirmationEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeConfirmationEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, TradeConfirmationEncoder.LEG_BLOCK_LENGTH, TradeConfirmationEncoder.LITTLE_ENDIAN);
         this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeConfirmationEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;

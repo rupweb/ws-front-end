@@ -77,7 +77,7 @@ class TradeQuoteRequestEncoder {
         const groupHeaderOffset = this.offset + TradeQuoteRequestEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeQuoteRequestEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, TradeQuoteRequestEncoder.LEG_BLOCK_LENGTH, TradeQuoteRequestEncoder.LITTLE_ENDIAN);
         this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeQuoteRequestEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;

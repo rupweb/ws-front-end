@@ -103,7 +103,7 @@ class TradeErrorEncoder {
         const groupHeaderOffset = this.offset + TradeErrorEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeErrorEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, TradeErrorEncoder.LEG_BLOCK_LENGTH, TradeErrorEncoder.LITTLE_ENDIAN);
         this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeErrorEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;

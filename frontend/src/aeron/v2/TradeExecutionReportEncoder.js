@@ -105,7 +105,7 @@ class TradeExecutionReportEncoder {
         const groupHeaderOffset = this.offset + TradeExecutionReportEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeExecutionReportEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, TradeExecutionReportEncoder.LEG_BLOCK_LENGTH, TradeExecutionReportEncoder.LITTLE_ENDIAN);
         this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeExecutionReportEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;

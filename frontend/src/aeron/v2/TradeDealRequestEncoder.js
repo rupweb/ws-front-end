@@ -92,7 +92,7 @@ class TradeDealRequestEncoder {
         const groupHeaderOffset = this.offset + TradeDealRequestEncoder.BLOCK_LENGTH;
         const numInGroup = data.length;
 
-        this.buffer.setUint16(groupHeaderOffset, this.LEG_BLOCK_LENGTH, TradeDealRequestEncoder.LITTLE_ENDIAN);
+        this.buffer.setUint16(groupHeaderOffset, TradeDealRequestEncoder.LEG_BLOCK_LENGTH, TradeDealRequestEncoder.LITTLE_ENDIAN);
         this.buffer.setUint16(groupHeaderOffset + 2, numInGroup, TradeDealRequestEncoder.LITTLE_ENDIAN);
 
         let currentOffset = groupHeaderOffset + 4;
