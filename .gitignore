@@ -52,3 +52,5 @@ amplifyconfiguration.json
 
 # Codex Gradle Standard
 gradle/*
+# Added by ggshield
+.cache_ggshield

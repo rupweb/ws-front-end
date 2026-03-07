@@ -13,7 +13,8 @@ export const WebSocketProvider = ({ url, children }) => {
         secondaryAmount: 0,
         symbol: '',
         quoteRequestID: '',
-        quoteID: ''
+        quoteID: '',
+        clientID: ''
       });
 
     // local state variable for incoming deals

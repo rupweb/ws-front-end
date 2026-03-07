@@ -54,8 +54,21 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
     console.log('quote:', quote);
   }, [showQuote, quote]);  
 
+  const canExecute =
+    showQuote &&
+    Number(amount) > 0 &&
+    Number(quote?.fxRate) > 0 &&
+    Number(quote?.secondaryAmount) > 0 &&
+    Boolean(quote?.quoteRequestID) &&
+    Boolean(quote?.quoteID);
+
   const checkDealRequest = (dealData) => {
     console.log('amplifyUsername:', amplifyUsername);
+
+    if (!canExecute) {
+      console.warn('Ignoring execute request because quote is not in a valid executable state.');
+      return;
+    }
 
     if (!kycComplete) {
       console.log('kycComplete:', kycComplete);
@@ -115,6 +128,7 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
               <div className="col-sm-4">
                 <button 
                   className="btn btn-success mr-2" 
+                  disabled={!canExecute}
                   onClick={() => checkDealRequest({
                     amount,
                     toCurrency,

@@ -43,7 +43,8 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     secondaryAmount: formatDecimal(decodedData.secondaryAmount),
                     symbol: decodedData.symbol,
                     quoteRequestID: decodedData.quoteRequestID,
-                    quoteID: decodedData.quoteID
+                    quoteID: decodedData.quoteID,
+                    clientID: decodedData.clientID
                 });
 
                 console.log('setShowQuote');

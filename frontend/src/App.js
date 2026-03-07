@@ -1,7 +1,7 @@
 // App.js
 
-import React, { useState, useEffect } from 'react';
-import { Route, Routes, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
 import './css/App.css';
 import CurrencyConverter from './components/CurrencyConverter.js';
 import TradeEntry from './components/TradeEntry.js';
@@ -9,8 +9,9 @@ import Blotter from './components/Blotter.js';
 import Onboarding from './components/Onboarding.js';
 import { Authenticator } from '@aws-amplify/ui-react';
 import CookieConsent from 'react-cookie-consent';
-import { WebSocketProvider } from './contexts/WebSocketContext.js';
+import { WebSocketProvider, useWebSocket } from './contexts/WebSocketContext.js';
 import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
+import prepareQuoteCancel from './handlers/handleQuoteCancel.js';
 
 function App() {
   const websocketUrl = process.env.REACT_APP_WS_URL;
@@ -25,7 +26,8 @@ function App() {
         const session = await fetchAuthSession();
         if (!session || !session.tokens || !session.tokens.idToken) {
           console.warn('No session or ID token found');
-          return <Navigate to="/login" replace />;
+          navigate('/login');
+          return;
         }
 
         const idToken = session.tokens.idToken;
@@ -56,6 +58,7 @@ function App() {
             <WebSocketProvider url={websocketUrl}>
                 <div className="App">
                   <Header user={user} signOut={signOut} />
+                  <RouteLeaveQuoteCancelGuard amplifyUsername={amplifyUsername} />
                   <div className="content-container">
                   <Routes>
                     <Route path="/" element={<CurrencyConverter amplifyUsername={amplifyUsername} kycComplete={kycComplete} />} />
@@ -73,6 +76,43 @@ function App() {
     </>
   );
 }
+
+const EMPTY_QUOTE = {
+  fxRate: 0,
+  secondaryAmount: 0,
+  symbol: '',
+  quoteRequestID: '',
+  quoteID: '',
+  clientID: ''
+};
+
+const RouteLeaveQuoteCancelGuard = ({ amplifyUsername }) => {
+  const location = useLocation();
+  const previousPathRef = useRef(location.pathname);
+  const { quote, showQuote, setShowQuote, setQuote, sendMessage } = useWebSocket();
+
+  useEffect(() => {
+    const previousPath = previousPathRef.current;
+    const currentPath = location.pathname;
+    const leavingHome = previousPath === '/' && currentPath !== '/';
+
+    if (leavingHome && showQuote && quote?.quoteRequestID && quote?.symbol) {
+      prepareQuoteCancel({
+        symbol: quote.symbol,
+        quoteRequestID: quote.quoteRequestID,
+        clientID: quote.clientID || amplifyUsername || 'TEST',
+        sendMessage
+      });
+
+      setShowQuote(false);
+      setQuote(EMPTY_QUOTE);
+    }
+
+    previousPathRef.current = currentPath;
+  }, [amplifyUsername, location.pathname, quote, sendMessage, setQuote, setShowQuote, showQuote]);
+
+  return null;
+};
 
 const Header = ({ user, signOut }) => (
   <header className="App-header">

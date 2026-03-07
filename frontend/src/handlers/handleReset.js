@@ -18,7 +18,14 @@ const handleReset = ({
   setAmount('');
   setSelectedDate(addBusinessDays(new Date(), 2));
   setClientID('');
-  setQuote(null);
+  setQuote({
+    fxRate: 0,
+    secondaryAmount: 0,
+    symbol: '',
+    quoteRequestID: '',
+    quoteID: '',
+    clientID: ''
+  });
   setShowQuote(false);
   setExecutionReport(null);
   setShowExecutionReport(false);
