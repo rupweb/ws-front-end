@@ -22,3 +22,4 @@ task frontendBuild {
     description = "Builds the frontend and copies results"
     dependsOn copyBuildResults
 }
+
