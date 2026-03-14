@@ -101,13 +101,12 @@ public class AeronErrorClient {
             buffer.getBytes(offset, data);
             WebSocketFrameHandler.broadcast(data);
         };
-
-        listen(fragmentHandler);
-
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Shutdown hook triggered.");
             close();
         }));
+
+        listen(fragmentHandler);
 
         log.info("Out start");
     }

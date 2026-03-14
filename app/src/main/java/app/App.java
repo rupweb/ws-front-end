@@ -14,7 +14,6 @@ import messages.admin.Admin;
 import sharedJava.AppConfig;
 import sharedJava.utils.ProcessUtil;
 
-
 public class App {
     private static final Logger log = LogManager.getLogger(App.class);
 
@@ -27,29 +26,33 @@ public class App {
     private static int webSocketPort;
     public static int getWebSocketPort() { return webSocketPort; }
 
-    private AeronConfiguration aeronConfiguration = new AeronConfiguration();
-    private MeterConfiguration meterConfiguration = new MeterConfiguration();
+    private final AeronConfiguration aeronConfiguration = new AeronConfiguration();
+    private final MeterConfiguration meterConfiguration = new MeterConfiguration();
 
     private static volatile boolean running;
+    private static volatile boolean shutdownStarted;
     private void setRunning(boolean b) { running = b; }
     public static boolean getRunning() { return running; }
 
     private static String clientDbURL;
-    public static String getClientDbURL() {return clientDbURL; }
+    public static String getClientDbURL() { return clientDbURL; }
 
     public void startApp(AppConfig appConfig) {
         log.info("Application PID: {}", ProcessUtil.getProcessId());
 
-        // Check required properties
         String aeronDirectory = getRequiredProperty(appConfig, "aeron.directory");
         clientDbURL = getRequiredProperty(appConfig, "sqlite.client.url");
         webSocketPort = Integer.parseInt(appConfig.getProperty("websocket.port"));
         log.info("Websocket port: {}", webSocketPort);
 
-        // Start Aeron environment
-	    StartWebsocket(webSocketPort);
+        startWebsocket(webSocketPort);
         startAeronEnvironment(aeronDirectory, appConfig);
         setRunning(true);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("App shutdown hook triggered. Stopping application...");
+            stopApp();
+        }));
 
         log.info("Application started up");
     }
@@ -63,41 +66,37 @@ public class App {
         return value;
     }
 
-    private void StartWebsocket(int webSocketPort) {
+    private void startWebsocket(int webSocketPort) {
         WebSocketServer webSocketServer = new WebSocketServer(webSocketPort);
 
-        // Start WebSocket server in a new thread
         new Thread(() -> {
             try {
                 webSocketServer.start();
             } catch (InterruptedException e) {
                 log.error(e.getMessage());
             }
-        }).start();   
+        }).start();
     }
 
-	public void startAeronEnvironment(String dirName, AppConfig config) {
-		// Use AeronConfiguration to create dependencies
-		log.info("Start Aeron client");
+    public void startAeronEnvironment(String dirName, AppConfig config) {
+        log.info("Start Aeron client");
 
-		Aeron aeron = aeronConfiguration.createAeron(dirName);
-		MeterRegistry registry = meterConfiguration.createMeterRegistry();
+        Aeron aeron = aeronConfiguration.createAeron(dirName);
+        MeterRegistry registry = meterConfiguration.createMeterRegistry();
 
-		// Create Aeron client instances with injected dependencies
-		aeronClient = new AeronClient(config);
+        aeronClient = new AeronClient(config);
         aeronClient.start(aeron, registry);
 
-		aeronErrorClient = new AeronErrorClient(config);
+        aeronErrorClient = new AeronErrorClient(config);
         aeronErrorClient.start(aeron, registry);
 
         System.setProperty("application.name", config.getProperty("application.name"));
 
         Admin admin = ProcessUtil.getAdminMessage("START", "");
         App.getAeronClient().getAdminSender().sendAdmin(admin);
-	}
+    }
 
-	public void stopAeronEnvironment() {
-
+    public void stopAeronEnvironment() {
         Admin admin = ProcessUtil.getAdminMessage("STOP", "");
         App.getAeronClient().getAdminSender().sendAdmin(admin);
 
@@ -109,7 +108,17 @@ public class App {
             aeronErrorClient.stop();
         }
 
-		// The aeron media driver works independently of aeron pub sub
-		aeronConfiguration.closeAeron();
-	}  
+        aeronConfiguration.closeAeron();
+    }
+
+    public synchronized void stopApp() {
+        if (shutdownStarted) {
+            log.info("Shutdown already in progress.");
+            return;
+        }
+        shutdownStarted = true;
+
+        setRunning(false);
+        stopAeronEnvironment();
+    }
 }
