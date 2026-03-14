@@ -6,6 +6,8 @@ import TradeQuoteDecoder from '../aeron/v2/TradeQuoteDecoder.js';
 import TradeExecutionReportDecoder from '../aeron/v2/TradeExecutionReportDecoder.js';
 import TradeErrorDecoder from '../aeron/v2/TradeErrorDecoder.js';
 import TradeQuoteCancelDecoder from '../aeron/v2/TradeQuoteCancelDecoder.js';
+import TradeQuoteRequestDecoder from '../aeron/v2/TradeQuoteRequestDecoder.js';
+import TradeDealRequestDecoder from '../aeron/v2/TradeDealRequestDecoder.js';
 import QuoteCancelDecoder from '../aeron/v1/QuoteCancelDecoder.js';
 
 const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport, setShowExecutionReport, setError, setShowError) => {
@@ -27,6 +29,12 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
         const templateId = headerDecoder.templateId();
 
         switch (`${schemaId}:${templateId}`) {
+            case '4:1': { // Trade Quote Request echo/no-op
+                const decoder = new TradeQuoteRequestDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                decodedData = decoder.toString();
+                break;
+            }
             case '4:2': { // Trade Quote (schema4/template2)
                 const decoder = new TradeQuoteDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
@@ -49,6 +57,12 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 });
 
                 setShowQuote(true);
+                break;
+            }
+            case '4:3': { // Trade Deal Request echo/no-op
+                const decoder = new TradeDealRequestDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                decodedData = decoder.toString();
                 break;
             }
             case '4:4': { // Trade Execution Report (schema4/template4)
@@ -241,11 +255,11 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
 export default handleIncomingMessage;
 
 function logData(data) {
-    // 🧪 LOG: check alignment after header
+    // LOG: check alignment after header
     const startOffset = MessageHeaderDecoder.ENCODED_LENGTH;
     const byteSlice = new Uint8Array(data, startOffset);
     const hexDump = Array.from(byteSlice).map(b => b.toString(16).padStart(2, '0')).join(' ');
-    console.log('🧪 Bytes after header:', hexDump);
+    console.log('Bytes after header:', hexDump);
 }
 
 function trimNulls(value) {
@@ -256,7 +270,7 @@ function formatDecimal (decimal, maxPrecision = null) {
     if (decimal && typeof decimal === "object" && "mantissa" in decimal && "exponent" in decimal) {
       const mantissa = typeof decimal.mantissa === "bigint" ? Number(decimal.mantissa) : decimal.mantissa;
       const exponent = typeof decimal.exponent === "bigint" ? Number(decimal.exponent) : decimal.exponent;
-  
+
       const precision = maxPrecision === null
         ? Math.abs(exponent)
         : Math.min(Math.abs(exponent), maxPrecision);
@@ -264,4 +278,3 @@ function formatDecimal (decimal, maxPrecision = null) {
     }
     return null;
 }
-  

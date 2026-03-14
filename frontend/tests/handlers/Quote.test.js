@@ -23,6 +23,7 @@ describe('handleIncomingQuote', () => {
             quoteRequestID: 'QR123456',
             fxRate: { mantissa: 123450, exponent: -5 },
             secondaryAmount: { mantissa: 123450, exponent: -2 },
+            clientID: 'TEST'
         };
 
         const bufferLength = QuoteEncoder.BLOCK_LENGTH + MessageHeaderEncoder.ENCODED_LENGTH;
@@ -46,6 +47,7 @@ describe('handleIncomingQuote', () => {
         encoder.quoteRequestID(data.quoteRequestID);
         encoder.encodefxRate(data.fxRate);
         encoder.encodesecondaryAmount(data.secondaryAmount);
+        encoder.clientID(data.clientID);
 
         const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
@@ -69,10 +71,10 @@ describe('handleIncomingQuote', () => {
             symbol: data.symbol,
             quoteRequestID: data.quoteRequestID,
             quoteID: data.quoteID,
+            clientID: data.clientID,
         });
         expect(mockSetShowQuote).toHaveBeenCalledWith(true);
 
         consoleSpy.mockRestore();
     });
 });
-
