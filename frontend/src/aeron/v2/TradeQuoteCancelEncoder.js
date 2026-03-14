@@ -1,4 +1,3 @@
-import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class TradeQuoteCancelEncoder {
@@ -81,3 +80,4 @@ class TradeQuoteCancelEncoder {
 }
 
 export default TradeQuoteCancelEncoder;
+

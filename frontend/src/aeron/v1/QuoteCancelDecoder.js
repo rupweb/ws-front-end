@@ -57,3 +57,4 @@ class QuoteCancelDecoder {
 }
 
 export default QuoteCancelDecoder;
+

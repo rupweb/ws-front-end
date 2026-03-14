@@ -10,7 +10,7 @@ import { useWebSocket } from '../contexts/WebSocketContext.js';
 
 import prepareQuoteRequestV2 from '../handlers/handleQuoteRequestV2.js';
 import prepareDealRequestV2 from '../handlers/handleDealRequestV2.js';
-import prepareQuoteCancel from '../handlers/handleQuoteCancel.js';
+import prepareQuoteCancelV2 from '../handlers/handleQuoteCancelV2.js';
 import prepareReset from '../handlers/handleResetV2.js';
 
 const useTradeEntry = (amplifyUsername) => {
@@ -110,8 +110,9 @@ const useTradeEntry = (amplifyUsername) => {
     });
 
   const handleQuoteCancel = () =>
-    prepareQuoteCancel({
-      symbol: quote?.symbol,
+    prepareQuoteCancelV2({
+      transactionType: quote?.transactionType || transactionType,
+      symbol: quote?.symbol || symbol,
       quoteRequestID: quote?.quoteRequestID,
       clientID,
       sendMessage,
@@ -179,3 +180,4 @@ const useTradeEntry = (amplifyUsername) => {
 };
 
 export default useTradeEntry;
+

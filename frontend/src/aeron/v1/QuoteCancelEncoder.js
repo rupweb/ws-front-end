@@ -68,3 +68,4 @@ class QuoteCancelEncoder {
 }
 
 export default QuoteCancelEncoder;
+

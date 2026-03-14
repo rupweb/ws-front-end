@@ -69,3 +69,4 @@ class TradeQuoteCancelDecoder {
 }
 
 export default TradeQuoteCancelDecoder;
+
