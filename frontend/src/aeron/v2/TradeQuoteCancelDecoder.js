@@ -1,4 +1,3 @@
-import DecimalDecoder from '../DecimalDecoder.js';
 
 class TradeQuoteCancelDecoder {
     static BLOCK_LENGTH = 66;

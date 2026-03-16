@@ -1,4 +1,3 @@
-import DecimalDecoder from '../DecimalDecoder.js';
 
 class PostTradeErrorDecoder {
     static BLOCK_LENGTH = 284;

@@ -1,4 +1,3 @@
-import DecimalDecoder from '../DecimalDecoder.js';
 
 class AdminDecoder {
     static BLOCK_LENGTH = 272;
