@@ -11,6 +11,7 @@ const handleQuoteRequest = async ({
   sendMessage,
   handleClientIDCheck
 }) => {
+  const resolvedClientID = (clientID || '').trim();
   const clientIDCheckResult = handleClientIDCheck(clientID, amount);
   if (clientIDCheckResult) return;
 
@@ -27,7 +28,7 @@ const handleQuoteRequest = async ({
     transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
     quoteRequestID: generateUUID(),
     currencyOwned: fromCurrency,
-    clientID: 'TEST'
+    clientID: resolvedClientID
   };
 
   // Encode the data using the JavaScript encoder

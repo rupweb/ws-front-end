@@ -14,7 +14,8 @@ const handleDealRequest = async ({
   clientID,
   sendMessage
 }) => {
-  console.log('Received clientID in handleDealRequest:', clientID);
+  const resolvedClientID = (clientID || '').trim();
+  console.log('Received clientID in handleDealRequest:', resolvedClientID);
 
   const dealRequest = {
     amount: {
@@ -37,7 +38,7 @@ const handleDealRequest = async ({
       mantissa: Math.round(secondaryAmount * Math.pow(10, 2)),
       exponent: -2
     },
-    clientID: 'test'
+    clientID: resolvedClientID
   };
 
   console.log('dealRequest:', dealRequest);

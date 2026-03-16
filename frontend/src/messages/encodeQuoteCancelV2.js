@@ -7,7 +7,6 @@ const encodeQuoteCancelV2 = (data) => {
   const encoder = new TradeQuoteCancelEncoder();
 
   encoder.wrapAndApplyHeader(buffer, 0, headerEncoder);
-  encoder.header('');
   encoder.transactionType(data.transactionType);
   encoder.symbol(data.symbol);
   encoder.transactTime(data.transactTime);
