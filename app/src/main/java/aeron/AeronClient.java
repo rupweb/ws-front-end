@@ -28,8 +28,11 @@ public class AeronClient {
 
     private final int fragmentLimit;
     private final IdleStrategy idleStrategy;
+    private final AppConfig config;
 
     public AeronClient(AppConfig config) {
+        this.config = config;
+
         if (config.getProperty("aeron.backendToFix.channel") != null) {
             this.BACKEND_TO_FIX_CHANNEL = config.getProperty("aeron.backendToFix.channel");
         }
@@ -93,10 +96,10 @@ public class AeronClient {
         this.registry = registry;
 
         // Create Publications
-        Publication backendToFixPublication = aeron.addPublication(BACKEND_TO_FIX_CHANNEL, BACKEND_TO_FIX_STREAM_ID);
+        Publication backendToFixPublication = createPublication(aeron, BACKEND_TO_FIX_CHANNEL, BACKEND_TO_FIX_STREAM_ID, "backendToFix");
         log.info("Backend to Fix Publication setup: channel={}, port={}, streamId={}", BACKEND_TO_FIX_CHANNEL, getPort(BACKEND_TO_FIX_CHANNEL), BACKEND_TO_FIX_STREAM_ID);
 
-        Publication adminPublication = aeron.addPublication(ADMIN_CHANNEL, ADMIN_STREAM_ID);
+        Publication adminPublication = createPublication(aeron, ADMIN_CHANNEL, ADMIN_STREAM_ID, "admin");
         log.info("Admin Publication setup: channel={}, port={}, streamId={}", ADMIN_CHANNEL, getPort(ADMIN_CHANNEL), ADMIN_STREAM_ID);
 
         // Create admin instance
@@ -116,6 +119,24 @@ public class AeronClient {
 
     private String getPort(String channel) {
         return channel.substring(channel.lastIndexOf(':') + 1);
+    }
+
+    private Publication createPublication(Aeron aeron, String channel, int streamId, String publicationKey) {
+        boolean exclusive = isExclusivePublicationEnabled(publicationKey);
+        Publication publication = exclusive
+            ? aeron.addExclusivePublication(channel, streamId)
+            : aeron.addPublication(channel, streamId);
+        log.info("Publication mode: key={}, mode={}", publicationKey, exclusive ? "exclusive" : "shared");
+        return publication;
+    }
+
+    private boolean isExclusivePublicationEnabled(String publicationKey) {
+        String specific = config.getProperty("aeron.publication." + publicationKey + ".exclusive");
+        if (specific != null) {
+            return Boolean.parseBoolean(specific);
+        }
+        String global = config.getProperty("aeron.publication.exclusive");
+        return global != null && Boolean.parseBoolean(global);
     }
 
     public boolean isRunning() {

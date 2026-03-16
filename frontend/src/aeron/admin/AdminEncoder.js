@@ -28,12 +28,6 @@ class AdminEncoder {
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
     }
 
-    // Encode header
-    header(value) {
-        this.putString(this.offset + 0, value, 8);
-        return this;
-    }
-
     // Encode applicationName
     applicationName(value) {
         this.putString(this.offset + 8, value, 32);

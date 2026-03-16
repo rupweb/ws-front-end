@@ -21,11 +21,6 @@ class TradeConfirmationDecoder {
         return this;
     }
 
-    // Decode header
-    header() {
-        return this.getString(this.offset + 0, 8);
-    }
-
     // Decode confirmID
     confirmID() {
         return this.buffer.getUint32(this.offset + 8, true);
@@ -136,7 +131,6 @@ class TradeConfirmationDecoder {
 
     toString() {
         return {
-                header: this.header().replace(/\0/g, ''),
                 confirmID: this.confirmID(),
                 client: this.client().replace(/\0/g, ''),
                 clientID: this.clientID().replace(/\0/g, ''),

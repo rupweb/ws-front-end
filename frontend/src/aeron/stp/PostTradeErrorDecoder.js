@@ -15,11 +15,6 @@ class PostTradeErrorDecoder {
         return this;
     }
 
-    // Decode header
-    header() {
-        return this.getString(this.offset + 0, 8);
-    }
-
     // Decode transactionReferenceNumber
     transactionReferenceNumber() {
         return this.getString(this.offset + 8, 20);
@@ -32,7 +27,6 @@ class PostTradeErrorDecoder {
 
     toString() {
         return {
-                header: this.header().replace(/\0/g, ''),
                 transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
                 message: this.message().replace(/\0/g, ''),
         };

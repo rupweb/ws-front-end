@@ -1,3 +1,4 @@
+import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class QuoteCancelEncoder {
@@ -25,12 +26,6 @@ class QuoteCancelEncoder {
             .schemaId(QuoteCancelEncoder.SCHEMA_ID)
             .version(QuoteCancelEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
-    }
-
-    // Encode header
-    header(value) {
-        this.putString(this.offset + 0, value, 8);
-        return this;
     }
 
     // Encode symbol
@@ -68,4 +63,3 @@ class QuoteCancelEncoder {
 }
 
 export default QuoteCancelEncoder;
-

@@ -18,11 +18,6 @@ class QuoteDecoder {
         return this;
     }
 
-    // Decode header
-    header() {
-        return this.getString(this.offset + 0, 8);
-    }
-
     decodeamount() {
         this.amountDecoder.wrap(this.buffer.buffer, this.offset + 8);
         const mantissa = Number(this.amountDecoder.mantissa());
@@ -81,7 +76,6 @@ class QuoteDecoder {
 
     toString() {
         return {
-                header: this.header().replace(/\0/g, ''),
                 amount: this.decodeamount(),
                 currency: this.currency().replace(/\0/g, ''),
                 side: this.side().replace(/\0/g, ''),

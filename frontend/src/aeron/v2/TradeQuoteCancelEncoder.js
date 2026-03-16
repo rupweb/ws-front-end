@@ -1,3 +1,4 @@
+import DecimalEncoder from '../DecimalEncoder.js';
 import MessageHeaderEncoder from '../MessageHeaderEncoder.js';
 
 class TradeQuoteCancelEncoder {
@@ -25,12 +26,6 @@ class TradeQuoteCancelEncoder {
             .schemaId(TradeQuoteCancelEncoder.SCHEMA_ID)
             .version(TradeQuoteCancelEncoder.SCHEMA_VERSION);
         return this.wrap(buffer, offset + MessageHeaderEncoder.ENCODED_LENGTH);
-    }
-
-    // Encode header
-    header(value) {
-        this.putString(this.offset + 0, value, 8);
-        return this;
     }
 
     // Encode transactionType
@@ -80,4 +75,3 @@ class TradeQuoteCancelEncoder {
 }
 
 export default TradeQuoteCancelEncoder;
-

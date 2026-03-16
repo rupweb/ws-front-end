@@ -17,11 +17,6 @@ class PostTradeCreditTransferDecoder {
         return this;
     }
 
-    // Decode header
-    header() {
-        return this.getString(this.offset + 0, 8);
-    }
-
     // Decode transactionReferenceNumber
     transactionReferenceNumber() {
         return this.getString(this.offset + 8, 20);
@@ -128,7 +123,6 @@ class PostTradeCreditTransferDecoder {
 
     toString() {
         return {
-                header: this.header().replace(/\0/g, ''),
                 transactionReferenceNumber: this.transactionReferenceNumber().replace(/\0/g, ''),
                 bankOperationCode: this.bankOperationCode().replace(/\0/g, ''),
                 valueDate: this.valueDate().replace(/\0/g, ''),

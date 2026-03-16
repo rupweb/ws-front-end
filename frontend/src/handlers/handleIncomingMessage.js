@@ -9,6 +9,7 @@ import TradeQuoteCancelDecoder from '../aeron/v2/TradeQuoteCancelDecoder.js';
 import TradeQuoteRequestDecoder from '../aeron/v2/TradeQuoteRequestDecoder.js';
 import TradeDealRequestDecoder from '../aeron/v2/TradeDealRequestDecoder.js';
 import QuoteCancelDecoder from '../aeron/v1/QuoteCancelDecoder.js';
+import AdminDecoder from '../aeron/admin/AdminDecoder.js';
 
 const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport, setShowExecutionReport, setError, setShowError) => {
     console.log('Incoming data: ', data);
@@ -239,6 +240,13 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     clientID: trimNulls(decoder.clientID())
                 };
                 setShowQuote(false);
+                break;
+            }
+            case '3:1': { // Admin message (schema3/template1)
+                const decoder = new AdminDecoder();
+                decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
+                decodedData = decoder.toString();
+                console.log('Admin message received:', decodedData);
                 break;
             }
             default:

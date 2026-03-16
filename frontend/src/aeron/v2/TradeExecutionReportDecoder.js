@@ -21,11 +21,6 @@ class TradeExecutionReportDecoder {
         return this;
     }
 
-    // Decode header
-    header() {
-        return this.getString(this.offset + 0, 8);
-    }
-
     // Decode transactionType
     transactionType() {
         return this.getString(this.offset + 8, 3);
@@ -140,7 +135,6 @@ class TradeExecutionReportDecoder {
 
     toString() {
         return {
-                header: this.header().replace(/\0/g, ''),
                 transactionType: this.transactionType().replace(/\0/g, ''),
                 symbol: this.symbol().replace(/\0/g, ''),
                 transactTime: this.transactTime().replace(/\0/g, ''),
