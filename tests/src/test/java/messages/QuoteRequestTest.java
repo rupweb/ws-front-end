@@ -48,7 +48,7 @@ public class QuoteRequestTest {
 
         // Load and prepare scripts
         String textEncoderScript = Utils.loadScript("tests/src/test/java/aeron/TextEncoder.js");
-        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/v1/DecimalEncoder.js"));
+        String decimalEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/DecimalEncoder.js"));
         String messageHeaderEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/MessageHeaderEncoder.js"));
         String quoteRequestEncoderScript = Utils.convertES6ToCommonJS(Utils.loadScript("frontend/src/aeron/v1/QuoteRequestEncoder.js"));
         String encodeQuoteRequestScript = Utils.removeJSImportExport(Utils.loadScript("frontend/src/messages/encodeQuoteRequest.js"));

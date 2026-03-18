@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import useCurrencyConversion from '../hooks/useCurrencyConversion.js';
 import ClientIDModal from './ClientIDModal.js';
 import ExecutionReportModal from './ExecutionReportModal.js';
@@ -13,8 +13,6 @@ import '../css/CurrencyConverter.css';
 // import { useNavigate } from 'react-router-dom';
 
 const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
-  const [clientID, setClientID] = useState(amplifyUsername || '');
-
   const {
     fromCurrency,
     setFromCurrency,
@@ -25,6 +23,8 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
     selectedDate,
     setSelectedDate,
     isFormValid,
+    clientID,
+    setClientID,
     clientIDMessage,
     showClientID,
     handleClientIDModalClose,

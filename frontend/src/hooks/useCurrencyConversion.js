@@ -44,6 +44,7 @@ const useCurrencyConversion = (amplifyUsername) => {
   const [clientID, setClientID] = useState(amplifyUsername || '');
   const [clientIDMessage, setClientIDMessage] = useState('');
   const [showClientID, setShowClientID] = useState(false);
+  const resolvedClientID = (clientID || amplifyUsername || '').trim();
 
   // Execution message
   const [executionReportMessage, setExecutionReportMessage] = useState('');
@@ -53,7 +54,7 @@ const useCurrencyConversion = (amplifyUsername) => {
 
   const { handleClientIDCheck, handleClientIDModalClose } = useClientIDHandling(
     amplifyUsername,
-    setClientID,
+    clientID,
     setClientIDMessage,
     setShowClientID
   );
@@ -65,7 +66,7 @@ const useCurrencyConversion = (amplifyUsername) => {
   const { handleErrorModalClose } = useErrorModal(setShowError);
 
   const handleQuoteRequest = () => prepareQuoteRequest({
-    clientID,
+    clientID: resolvedClientID,
     amount,
     selectedDate,
     toCurrency,
@@ -77,7 +78,7 @@ const useCurrencyConversion = (amplifyUsername) => {
   const handleQuoteCancel = () => prepareQuoteCancel({
     symbol: quote.symbol,
     quoteRequestID: quote.quoteRequestID,
-    clientID,
+    clientID: resolvedClientID,
     sendMessage
   });
 
@@ -91,7 +92,7 @@ const useCurrencyConversion = (amplifyUsername) => {
     symbol: quote.symbol,
     quoteRequestID: quote.quoteRequestID,
     quoteID: quote.quoteID,
-    clientID,
+    clientID: resolvedClientID,
     sendMessage
   });
 

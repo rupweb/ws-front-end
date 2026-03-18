@@ -1,25 +1,26 @@
 const useClientIDHandling = (amplifyUsername, clientID, setClientIDModalMessageParent, setShowClientIDModalParent) => {
   const handleClientIDCheck = (clientID, amount) => {
+    const resolvedClientID = (clientID || '').trim();
     console.log('Hook amplifyUsername:', amplifyUsername);
-    console.log('Hook clientID:', clientID);
+    console.log('Hook clientID:', resolvedClientID);
 
-    if (!clientID || !clientID.trim()) {
+    if (!resolvedClientID) {
       setClientIDModalMessageParent('Client ID is not available yet. Please wait a moment and retry.');
       setShowClientIDModalParent(true);
       return true;
     }
 
-    if (clientID === amplifyUsername) {
+    if (resolvedClientID === amplifyUsername) {
       return false;
     }
 
-    if (clientID === 'Other') {
+    if (resolvedClientID === 'Other') {
       setClientIDModalMessageParent('Please complete the Client Onboarding form.');
       setShowClientIDModalParent(true);
       return true;
     }
 
-    if (clientID === 'TEST') {
+    if (resolvedClientID === 'TEST') {
       setClientIDModalMessageParent('ClientID check in process');
       setShowClientIDModalParent(true);
 

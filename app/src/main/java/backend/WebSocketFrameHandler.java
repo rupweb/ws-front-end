@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import app.App;
+import messages.admin.Admin;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -16,6 +17,7 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import sharedJava.utils.ProcessUtil;
 
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     private static final Logger logger = LogManager.getLogger(WebSocketFrameHandler.class);
@@ -66,9 +68,33 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete handshake) {
             String requestUri = handshake.requestUri();
             logger.info("WebSocket handshake complete. Full path: {}", requestUri);
+            sendLoginAdminEvent(requestUri);
         } else {
             super.userEventTriggered(ctx, evt);
         }
+    }
+
+    private void sendLoginAdminEvent(String requestUri) {
+        Thread.startVirtualThread(() -> {
+            long deadline = System.currentTimeMillis() + 10_000;
+            while (App.getAeronClient() == null && System.currentTimeMillis() < deadline) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.warn("Interrupted while waiting to publish LOGIN admin event for {}", requestUri);
+                    return;
+                }
+            }
+
+            if (App.getAeronClient() == null) {
+                logger.warn("Aeron client not ready; skipping LOGIN admin event for {}", requestUri);
+                return;
+            }
+
+            Admin admin = ProcessUtil.getAdminMessage("LOGIN", requestUri);
+            App.getAeronClient().getAdminSender().sendAdmin(admin);
+        });
     }
 
     @Override

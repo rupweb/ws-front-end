@@ -77,6 +77,7 @@ const useTradeEntry = (amplifyUsername) => {
   const [clientID, setClientID] = useState(amplifyUsername || '');
   const [clientIDMessage, setClientIDMessage] = useState('');
   const [showClientID, setShowClientID] = useState(false);
+  const resolvedClientID = (clientID || amplifyUsername || '').trim();
 
   useEffect(() => {
     if (!clientID && amplifyUsername) {
@@ -89,7 +90,7 @@ const useTradeEntry = (amplifyUsername) => {
 
   const { handleClientIDCheck, handleClientIDModalClose } = useClientIDHandling(
     amplifyUsername,
-    setClientID,
+    clientID,
     setClientIDMessage,
     setShowClientID
   );
@@ -103,7 +104,7 @@ const useTradeEntry = (amplifyUsername) => {
     prepareQuoteRequestV2({
       transactionType,
       symbol,
-      clientID,
+      clientID: resolvedClientID,
       legs,
       sendMessage,
       handleClientIDCheck,
@@ -114,7 +115,7 @@ const useTradeEntry = (amplifyUsername) => {
       transactionType: quote?.transactionType || transactionType,
       symbol: quote?.symbol || symbol,
       quoteRequestID: quote?.quoteRequestID,
-      clientID,
+      clientID: resolvedClientID,
       sendMessage,
     });
 
@@ -122,7 +123,7 @@ const useTradeEntry = (amplifyUsername) => {
     prepareDealRequestV2({
       transactionType,
       symbol,
-      clientID,
+      clientID: resolvedClientID,
       quoteRequestID: quote?.quoteRequestID,
       quoteID: quote?.quoteID,
       quote,
