@@ -1,5 +1,5 @@
 import encodeQuoteCancel from '../messages/encodeQuoteCancel.js';
-import { format } from 'date-fns';
+import { formatUtcTransactTime } from '../utils/transactTime.js';
 
 const handleQuoteCancel = async ({
   symbol,
@@ -10,7 +10,7 @@ const handleQuoteCancel = async ({
   // Prepare the data to encode
   const cancelData = {
     symbol: symbol,
-    transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
+    transactTime: formatUtcTransactTime(),
     quoteRequestID: quoteRequestID,
     clientID: clientID
   };

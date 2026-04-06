@@ -1,6 +1,5 @@
-import { format } from 'date-fns';
-
 import encodeQuoteCancelV2 from '../messages/encodeQuoteCancelV2.js';
+import { formatUtcTransactTime } from '../utils/transactTime.js';
 
 const mapTransactionType = (value) => (value === 'SWP' ? 'SWA' : value);
 
@@ -14,7 +13,7 @@ const handleQuoteCancelV2 = async ({
   const cancelData = {
     transactionType: mapTransactionType(transactionType || ''),
     symbol: symbol || '',
-    transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
+    transactTime: formatUtcTransactTime(),
     messageTime: BigInt(Date.now()),
     quoteRequestID: quoteRequestID || '',
     clientID: clientID || ''

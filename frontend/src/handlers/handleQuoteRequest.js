@@ -1,6 +1,7 @@
 import { generateUUID } from '../utils/utils.js';
 import encodeQuoteRequest from '../messages/encodeQuoteRequest.js';
 import { format } from 'date-fns';
+import { formatUtcTransactTime } from '../utils/transactTime.js';
 
 const handleQuoteRequest = async ({
   clientID,
@@ -25,7 +26,7 @@ const handleQuoteRequest = async ({
     side: 'BUY',
     symbol: `${fromCurrency}${toCurrency}`,
     deliveryDate: format(selectedDate, 'yyyyMMdd'),
-    transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
+    transactTime: formatUtcTransactTime(),
     quoteRequestID: generateUUID(),
     currencyOwned: fromCurrency,
     clientID: resolvedClientID

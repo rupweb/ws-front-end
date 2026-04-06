@@ -1,6 +1,7 @@
 import { generateUUID } from '../utils/utils.js';
 import encodeDealRequest from '../messages/encodeDealRequest.js'
 import { format } from 'date-fns';
+import { formatUtcTransactTime } from '../utils/transactTime.js';
 
 const handleDealRequest = async ({
   amount,
@@ -26,7 +27,7 @@ const handleDealRequest = async ({
     side: 'BUY',
     symbol: symbol,
     deliveryDate: format(selectedDate, 'yyyyMMdd'),
-    transactTime: format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS'),
+    transactTime: formatUtcTransactTime(),
     quoteRequestID: quoteRequestID,
     quoteID: quoteID,
     dealRequestID: generateUUID(),

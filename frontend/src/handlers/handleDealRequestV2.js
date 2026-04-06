@@ -1,6 +1,7 @@
 import { generateUUID } from '../utils/utils.js';
 import encodeDealRequest from '../messages/encodeDealRequestV2.js'
 import { format } from 'date-fns';
+import { formatUtcTransactTime } from '../utils/transactTime.js';
 
 const mapTransactionType = (value) => (value === 'SWP' ? 'SWA' : value);
 
@@ -21,7 +22,7 @@ const handleDealRequestV2 = async ({
 
   const dealRequestID = generateUUID();
   const messageTime = BigInt(Date.now());
-  const transactTime = format(new Date(), 'yyyyMMdd-HH:mm:ss.SSS');
+  const transactTime = formatUtcTransactTime();
   const normalizedTransactionType = mapTransactionType(transactionType);
   const fallbackCurrency = symbol?.length >= 6 ? symbol.substring(3, 6) : '';
 
