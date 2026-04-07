@@ -12,6 +12,32 @@
   margin: 40px auto; /* Ensures some margin at the top to separate from other elements */
 }
 
+.blotter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.blotter-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.blotter-nav-link {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #9fd7ea;
+  border-radius: 999px;
+  color: #155a73;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.blotter-nav-link.active {
+  background-color: #d7f3ff;
+}
+
 .blotter-container table {
   width: 100%;
   border-collapse: collapse; /* Ensure no gaps between cells */
@@ -70,4 +96,20 @@
 
 .blotter-footer .small-link:hover {
   text-decoration: underline;
+}
+
+.blotter-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #4b5563;
+}
+
+.blotter-legs-cell {
+  white-space: normal;
+  min-width: 420px;
+}
+
+.blotter-leg-line {
+  display: block;
+  line-height: 1.5;
 }

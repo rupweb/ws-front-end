@@ -19,14 +19,18 @@ export const WebSocketProvider = ({ url, children }) => {
 
     // local state variable for incoming deals
     const [executionReport, setExecutionReport] = useState({
+        kind: '',
+        executedAt: '',
         dealID: '',
+        transactionType: '',
         amount: 0,
         currency: '',
         symbol: '',
         deliveryDate: '',
         secondaryCurrency: '',
         rate: 0,
-        secondaryAmount: 0
+        secondaryAmount: 0,
+        legs: []
       });
 
     // local state variable for incoming errors

@@ -14,6 +14,11 @@ class AdminDecoder {
         return this;
     }
 
+    // Decode header
+    header() {
+        return this.getString(this.offset + 0, 8);
+    }
+
     // Decode applicationName
     applicationName() {
         return this.getString(this.offset + 8, 32);
@@ -51,6 +56,7 @@ class AdminDecoder {
 
     toString() {
         return {
+                header: this.header().replace(/\0/g, ''),
                 applicationName: this.applicationName().replace(/\0/g, ''),
                 instanceId: this.instanceId().replace(/\0/g, ''),
                 environment: this.environment().replace(/\0/g, ''),

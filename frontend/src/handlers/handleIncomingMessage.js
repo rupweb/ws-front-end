@@ -71,16 +71,33 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
                 decodedData = decoder.toString();
 
-                const firstLeg = Array.isArray(decodedData.leg) && decodedData.leg.length > 0 ? decodedData.leg[0] : null;
+                const tradingLegs = Array.isArray(decodedData.leg)
+                    ? decodedData.leg.map((leg) => ({
+                        amount: leg?.amount ? formatDecimal(leg.amount) : null,
+                        currency: trimNulls(leg?.currency || ''),
+                        secondaryAmount: leg?.secondaryAmount ? formatDecimal(leg.secondaryAmount) : null,
+                        secondaryCurrency: trimNulls(leg?.secondaryCurrency || ''),
+                        valueDate: trimNulls(leg?.valueDate || ''),
+                        side: trimNulls(leg?.side || ''),
+                        spot: leg?.spot ? formatDecimal(leg.spot, 5) : null,
+                        fwd: leg?.fwd ? formatDecimal(leg.fwd, 5) : null,
+                        price: leg?.price ? formatDecimal(leg.price, 5) : null
+                    }))
+                    : [];
+                const firstLeg = tradingLegs.length > 0 ? tradingLegs[0] : null;
                 setExecutionReport({
+                    kind: 'trading',
+                    executedAt: new Date().toISOString(),
                     dealID: decodedData.dealID,
-                    amount: firstLeg?.amount ? formatDecimal(firstLeg.amount) : null,
+                    transactionType: normalizeTradeTransactionType(decodedData.transactionType),
+                    amount: firstLeg?.amount || null,
                     currency: firstLeg?.currency || '',
                     symbol: decodedData.symbol,
                     deliveryDate: firstLeg?.valueDate || '',
                     secondaryCurrency: firstLeg?.secondaryCurrency || '',
-                    rate: firstLeg?.price ? formatDecimal(firstLeg.price, 5) : null,
-                    secondaryAmount: firstLeg?.secondaryAmount ? formatDecimal(firstLeg.secondaryAmount) : null
+                    rate: firstLeg?.price || null,
+                    secondaryAmount: firstLeg?.secondaryAmount || null,
+                    legs: tradingLegs
                 });
 
                 setShowExecutionReport(true);
@@ -174,6 +191,8 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 };
 
                 setExecutionReport({
+                    kind: 'sales',
+                    executedAt: new Date().toISOString(),
                     dealID: decodedData.dealID,
                     amount: formatDecimal(decodedData.amount),
                     currency: decodedData.currency,
@@ -181,7 +200,9 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     deliveryDate: decodedData.deliveryDate,
                     secondaryCurrency: decodedData.secondaryCurrency,
                     rate: formatDecimal(decodedData.fxRate, 5),
-                    secondaryAmount: formatDecimal(decodedData.secondaryAmount)
+                    secondaryAmount: formatDecimal(decodedData.secondaryAmount),
+                    transactionType: '',
+                    legs: []
                 });
 
                 setShowExecutionReport(true);
@@ -272,6 +293,10 @@ function logData(data) {
 
 function trimNulls(value) {
     return value.replace(/\0+$/, '');
+}
+
+function normalizeTradeTransactionType(value) {
+    return value === 'SWA' ? 'SWP' : value;
 }
 
 function formatDecimal (decimal, maxPrecision = null) {

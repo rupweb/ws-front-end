@@ -3,7 +3,7 @@ import { render, act, fireEvent } from '@testing-library/react';
 import WebSocketServer from 'jest-websocket-mock';
 import { WebSocketProvider, useWebSocket } from 'src/contexts/WebSocketContext.js';
 import encodeDealRequest from 'src/messages/encodeDealRequestV2.js';
-import DealRequestDecoder from 'src/aeron/v2/DealRequestDecoder.js';
+import TradeDealRequestDecoder from 'src/aeron/v2/TradeDealRequestDecoder.js';
 import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 import MessageHeaderDecoder from 'src/aeron/MessageHeaderDecoder.js';
 
@@ -92,7 +92,7 @@ describe('WebSocket integration test', () => {
 
         // Decode the received message
         const headerDecoder = new MessageHeaderDecoder();
-        const decoder = new DealRequestDecoder();
+        const decoder = new TradeDealRequestDecoder();
         const buffer = new Uint8Array(receivedMessage).buffer;
 
         // Decode header & body
@@ -100,8 +100,7 @@ describe('WebSocket integration test', () => {
         decoder.wrap(buffer, MessageHeaderEncoder.ENCODED_LENGTH);
 
         // Decode legs
-        const groupHeaderOffset = DealRequestDecoder.BLOCK_LENGTH + 8;
-        const legs = decoder.decodeLeg(decoder.buffer, groupHeaderOffset);
+        const legs = decoder.decodeLeg();
 
         console.log('Decoding received message...');
 

@@ -2,13 +2,30 @@ import DealRequestEncoder from '../aeron/v2/TradeDealRequestEncoder.js';
 import MessageHeaderEncoder from '../aeron/MessageHeaderEncoder.js'
 
 const encodeDealRequest = (data) => {
+    const asDecimal = (value) => {
+        if (value && value.mantissa !== undefined && value.exponent !== undefined) {
+            return value;
+        }
+
+        return {
+            mantissa: 0,
+            exponent: 0
+        };
+    };
+
+    const normalizedLegs = data.legs.map((leg) => ({
+        ...leg,
+        spot: asDecimal(leg.spot),
+        fwd: asDecimal(leg.fwd),
+        price: asDecimal(leg.price)
+    }));
 
     const groupHeaderLength = 4; // Adjust for legs header
 
     const bufferLength = DealRequestEncoder.BLOCK_LENGTH +
                          MessageHeaderEncoder.ENCODED_LENGTH + 
                          groupHeaderLength +
-                         data.legs.length * DealRequestEncoder.LEG_BLOCK_LENGTH; // Adjust for legs data
+                         normalizedLegs.length * DealRequestEncoder.LEG_BLOCK_LENGTH; // Adjust for legs data
 
     const buffer = new ArrayBuffer(bufferLength);
     const headerEncoder = new MessageHeaderEncoder();
@@ -28,7 +45,7 @@ const encodeDealRequest = (data) => {
             .clientID(data.clientID);
 
     // Encode legs
-    encoder.encodeLeg(data.legs); 
+    encoder.encodeLeg(normalizedLegs); 
 
     return buffer;
 };
