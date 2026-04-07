@@ -123,8 +123,8 @@ const Header = ({ user, signOut }) => (
         className="nav-logo"
       />
       <nav className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/trade">Trade</Link>
+        <Link to="/">Sales</Link>
+        <Link to="/trade">Trading</Link>
         <Link to="/blotter">Blotter</Link>
         {user && <Link to="/onboarding">Account</Link>}
         {user && <button className="sign-out-button" onClick={signOut}>Sign Out</button>}

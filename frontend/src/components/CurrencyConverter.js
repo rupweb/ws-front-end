@@ -89,8 +89,9 @@ const CurrencyConverter = ({ amplifyUsername, kycComplete }) => {
   };
 
   return (
-    <div className="converter-container">
+    <div className="converter-container trade-entry-container">
       <ClientIDModal show={showClientID} message={clientIDMessage} onClose={handleClientIDModalClose} />
+      <h2>Enter Sale</h2>
       <div className="card rounded p-4">
         <SalePriceField amount={amount} setAmount={setAmount} />
         <SaleCurrencyField toCurrency={toCurrency} setToCurrency={setToCurrency} />

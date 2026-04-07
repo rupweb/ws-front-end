@@ -44,9 +44,13 @@ test('renders the app with header and footer', async () => {
   const logo = screen.getByAltText('FX Logo');
   expect(logo).toBeInTheDocument();
 
-  // Check if the Home link is present
-  const homeLink = screen.getByText(/Home/i);
-  expect(homeLink).toBeInTheDocument();
+  // Check if the Sales link is present
+  const salesLink = screen.getByText(/Sales/i);
+  expect(salesLink).toBeInTheDocument();
+
+  // Check if the Trading link is present
+  const tradingLink = screen.getByText(/Trading/i);
+  expect(tradingLink).toBeInTheDocument();
 
   // Check if the Blotter link is present
   const blotterLink = screen.getByText(/Blotter/i);
