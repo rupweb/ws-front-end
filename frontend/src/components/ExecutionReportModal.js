@@ -1,47 +1,73 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import '../css/ExecutionReportModal.css';
+import { appendExecutionReportToBlotter } from '../utils/blotterStorage.js';
 
 const ExecutionReportModal = ({ show, message, onClose, executionReport, handleReset }) => {
-  const labels = [
-    'Deal ID:',
-    'Sale Price:',
-    'Sale Currency:',
-    'Symbol:',
-    'Delivery Date:',
-    'FX Rate:',
-    'Currency to Pay:',
-    'Amount to Pay:'
-  ];
+  const persistedKeysRef = useRef(new Set());
 
-  const values = executionReport
-    ? [
-        executionReport.dealID,
-        executionReport.amount,
-        executionReport.currency,
-        executionReport.symbol,
-        executionReport.deliveryDate,
-        executionReport.rate,
-        executionReport.secondaryCurrency,
-        executionReport.secondaryAmount
-      ]
-    : [];
+  useEffect(() => {
+    if (!show || !executionReport?.dealID || !executionReport?.kind) {
+      return;
+    }
 
-    const trade = {
-      date: new Date().toLocaleDateString(),
-      dealID: executionReport.dealID,
-      salePrice: executionReport.amount,
-      saleCurrency: executionReport.currency,
-      symbol: executionReport.symbol,
-      deliveryDate: executionReport.deliveryDate,
-      currencyIHave: executionReport.secondaryCurrency,
-      fxRate: executionReport.rate,
-      amountToPay: executionReport.secondaryAmount
-    };
-  
-    const executions = JSON.parse(localStorage.getItem('executions')) || [];
-    executions.push(trade);
-    localStorage.setItem('executions', JSON.stringify(executions));
+    const persistenceKey = `${executionReport.kind}:${executionReport.dealID}`;
+    if (persistedKeysRef.current.has(persistenceKey)) {
+      return;
+    }
+
+    appendExecutionReportToBlotter(executionReport);
+    persistedKeysRef.current.add(persistenceKey);
+  }, [executionReport, show]);
+
+  const fields = useMemo(() => {
+    if (!executionReport) {
+      return [];
+    }
+
+    if (executionReport.kind === 'trading') {
+      return [
+        { label: 'Deal ID:', value: executionReport.dealID },
+        { label: 'Type:', value: executionReport.transactionType },
+        { label: 'Ccy:', value: executionReport.symbol },
+        {
+          label: 'Legs:',
+          value: (
+            <div className="execution-report-legs">
+              {executionReport.legs?.map((leg, index) => (
+                <div key={`${executionReport.dealID}-leg-${index}`}>
+                  {[
+                    `L${index + 1}`,
+                    leg.side,
+                    leg.amount,
+                    leg.currency,
+                    leg.valueDate,
+                    leg.price ? `@ ${leg.price}` : '',
+                    leg.spot ? `spot ${leg.spot}` : '',
+                    leg.fwd ? `fwd ${leg.fwd}` : '',
+                    leg.secondaryAmount || leg.secondaryCurrency
+                      ? `${leg.secondaryAmount || ''} ${leg.secondaryCurrency || ''}`.trim()
+                      : ''
+                  ].filter(Boolean).join(' ')}
+                </div>
+              ))}
+            </div>
+          )
+        }
+      ];
+    }
+
+    return [
+      { label: 'Deal ID:', value: executionReport.dealID },
+      { label: 'Sale Price:', value: executionReport.amount },
+      { label: 'Sale Currency:', value: executionReport.currency },
+      { label: 'Symbol:', value: executionReport.symbol },
+      { label: 'Delivery Date:', value: executionReport.deliveryDate },
+      { label: 'FX Rate:', value: executionReport.rate },
+      { label: 'Currency to Pay:', value: executionReport.secondaryCurrency },
+      { label: 'Amount to Pay:', value: executionReport.secondaryAmount }
+    ];
+  }, [executionReport]);
 
   const handleClose = () => {
     handleReset(); // Call the reset handler
@@ -56,10 +82,10 @@ const ExecutionReportModal = ({ show, message, onClose, executionReport, handleR
       <Modal.Body>
         {executionReport ? (
           <div className="execution-report-container">
-            {labels.map((label, index) => (
-              <React.Fragment key={index}>
-                <div className="label">{label}</div>
-                <div className="value">{values[index]}</div>
+            {fields.map((field) => (
+              <React.Fragment key={field.label}>
+                <div className="label">{field.label}</div>
+                <div className="value">{field.value}</div>
               </React.Fragment>
             ))}
           </div>

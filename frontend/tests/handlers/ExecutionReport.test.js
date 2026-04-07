@@ -86,7 +86,9 @@ describe('handleIncomingExecutionReport', () => {
         );
 
         expect(consoleSpy).toHaveBeenCalledWith('Decoded Message:', expect.any(Object));
-        expect(mockSetExecutionReport).toHaveBeenCalledWith({
+        expect(mockSetExecutionReport).toHaveBeenCalledWith(expect.objectContaining({
+            kind: 'sales',
+            executedAt: expect.any(String),
             dealID: data.dealID,
             amount: formatDecimal(data.amount),
             currency: data.currency,
@@ -95,7 +97,9 @@ describe('handleIncomingExecutionReport', () => {
             secondaryCurrency: data.secondaryCurrency,
             rate: formatDecimal(data.fxRate),
             secondaryAmount: formatDecimal(data.secondaryAmount),
-        });
+            transactionType: '',
+            legs: []
+        }));
 
         expect(mockSetShowExecutionReport).toHaveBeenCalledWith(true);
 

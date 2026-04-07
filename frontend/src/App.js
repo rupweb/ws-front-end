@@ -1,7 +1,7 @@
 // App.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Route, Routes, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import './css/App.css';
 import CurrencyConverter from './components/CurrencyConverter.js';
 import TradeEntry from './components/TradeEntry.js';
@@ -63,7 +63,9 @@ function App() {
                   <Routes>
                     <Route path="/" element={<CurrencyConverter amplifyUsername={amplifyUsername} kycComplete={kycComplete} />} />
                     <Route path="/trade" element={<TradeEntry amplifyUsername={amplifyUsername} />} />
-                    <Route path="/blotter" element={<Blotter />} />
+                    <Route path="/blotter" element={<Navigate to="/blotter/sales" replace />} />
+                    <Route path="/blotter/sales" element={<Blotter view="sales" />} />
+                    <Route path="/blotter/trading" element={<Blotter view="trading" />} />
                     <Route path="/onboarding" element={<Onboarding />} />
                   </Routes>
                   </div>
@@ -125,7 +127,7 @@ const Header = ({ user, signOut }) => (
       <nav className="nav-links">
         <Link to="/">Sales</Link>
         <Link to="/trade">Trading</Link>
-        <Link to="/blotter">Blotter</Link>
+        <Link to="/blotter/sales">Blotter</Link>
         {user && <Link to="/onboarding">Account</Link>}
         {user && <button className="sign-out-button" onClick={signOut}>Sign Out</button>}
       </nav>

@@ -1,5 +1,5 @@
 import encodeDealRequest from 'src/messages/encodeDealRequestV2.js';
-import DealRequestDecoder from 'src/aeron/v2/DealRequestDecoder.js';
+import TradeDealRequestDecoder from 'src/aeron/v2/TradeDealRequestDecoder.js';
 import MessageHeaderEncoder from 'src/aeron/MessageHeaderEncoder.js';
 import MessageHeaderDecoder from 'src/aeron/MessageHeaderDecoder.js';
 
@@ -61,15 +61,14 @@ describe('DealRequest binary encoding and decoding', () => {
 
         // Decode the received message
         const headerDecoder = new MessageHeaderDecoder();
-        const decoder = new DealRequestDecoder();
+        const decoder = new TradeDealRequestDecoder();
 
         // Decode header & body
         headerDecoder.wrap(buffer, 0);
         decoder.wrap(buffer, MessageHeaderEncoder.ENCODED_LENGTH);
 
         // Decode legs
-        const groupHeaderOffset = DealRequestDecoder.BLOCK_LENGTH + 8;
-        const legs = decoder.decodeLeg(decoder.buffer, groupHeaderOffset);
+        const legs = decoder.decodeLeg();
 
         // Extract decoded data
         const decodedData = {

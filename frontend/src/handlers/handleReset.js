@@ -27,7 +27,20 @@ const handleReset = ({
     clientID: ''
   });
   setShowQuote(false);
-  setExecutionReport(null);
+  setExecutionReport({
+    kind: '',
+    executedAt: '',
+    dealID: '',
+    transactionType: '',
+    amount: null,
+    currency: '',
+    symbol: '',
+    deliveryDate: '',
+    secondaryCurrency: '',
+    rate: null,
+    secondaryAmount: null,
+    legs: []
+  });
   setShowExecutionReport(false);
   setError(null);
   setShowError(false);
