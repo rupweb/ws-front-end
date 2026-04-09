@@ -1,6 +1,8 @@
 import React from 'react';
 
-const MultiLegTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, quoteCurrency }) => {
+const MultiLegTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, currencyOptions, onCurrencyChange }) => {
+  const defaultCurrency = currencyOptions[0] || '';
+
   const updateLeg = (index, field, value) => {
     const updatedLegs = [...legs];
     updatedLegs[index] = {
@@ -16,7 +18,7 @@ const MultiLegTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteReques
       {
         side: 'SELL',
         amount: '',
-        currency: legs[0]?.currency || quoteCurrency,
+        currency: legs[0]?.currency || defaultCurrency,
         date: minDate
       }
     ]);
@@ -47,7 +49,13 @@ const MultiLegTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteReques
           </label>
 
           <label>
-            Currency: <input type="text" value={leg.currency} onChange={(e) => updateLeg(index, 'currency', e.target.value.toUpperCase())} />
+            Currency: <select value={leg.currency} onChange={(e) => onCurrencyChange(e.target.value)}>
+              {currencyOptions.map((currency) => (
+                <option key={currency} value={currency}>
+                  {currency}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label>
@@ -60,7 +68,7 @@ const MultiLegTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteReques
             />
           </label>
 
-          <button onClick={() => removeLeg(index)}>−</button>
+          <button onClick={() => removeLeg(index)}>-</button>
         </div>
       ))}
 

@@ -1,15 +1,16 @@
 import React from 'react';
 
-const SwapTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, quoteCurrency }) => {
-  const leg1 = legs[0] || { side: 'BUY', amount: '', currency: quoteCurrency, date: minDate };
-  const leg2 = legs[1] || { side: 'SELL', amount: '', currency: quoteCurrency, date: minDate };
+const SwapTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, currencyOptions, onCurrencyChange }) => {
+  const defaultCurrency = currencyOptions[0] || '';
+  const leg1 = legs[0] || { side: 'BUY', amount: '', currency: defaultCurrency, date: minDate };
+  const leg2 = legs[1] || { side: 'SELL', amount: '', currency: defaultCurrency, date: minDate };
 
   const updateLeg = (index, field, value) => {
     const updatedLegs = [...legs];
     const defaultLeg = {
       side: index === 0 ? 'BUY' : 'SELL',
       amount: '',
-      currency: quoteCurrency,
+      currency: defaultCurrency,
       date: minDate
     };
     updatedLegs[index] = {
@@ -19,7 +20,7 @@ const SwapTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, q
     // Automatically set the opposite side for the other leg
     if (field === 'side' && index === 0) {
       updatedLegs[1] = {
-        ...(updatedLegs[1] || { amount: '', currency: quoteCurrency, date: minDate }),
+        ...(updatedLegs[1] || { amount: '', currency: defaultCurrency, date: minDate }),
         side: value === 'BUY' ? 'SELL' : 'BUY'
       };
     }
@@ -47,7 +48,13 @@ const SwapTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, q
           </label>
 
           <label>
-            Currency: <input type="text" value={leg.currency} onChange={(e) => updateLeg(index, 'currency', e.target.value.toUpperCase())} />
+            Currency: <select value={leg.currency} onChange={(e) => onCurrencyChange(e.target.value)}>
+              {currencyOptions.map((currency) => (
+                <option key={currency} value={currency}>
+                  {currency}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label>

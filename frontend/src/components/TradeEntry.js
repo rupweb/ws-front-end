@@ -8,6 +8,7 @@ import SpotTradeEntry from './SpotTradeEntry.js';
 import SwapTradeEntry from './SwapTradeEntry.js';
 import MultiLegTradeEntry from './MultiLegTradeEntry.js';
 import { addBusinessDays } from '../utils/utils.js';
+import { buildTradeQuoteRows } from '../utils/trading.js';
 
 const TradeEntry = ({ amplifyUsername }) => {
   const {
@@ -15,8 +16,11 @@ const TradeEntry = ({ amplifyUsername }) => {
     setTransactionType,
     symbol,
     setSymbol,
+    symbolOptions,
+    currencyOptions,
     legs,
     setLegs,
+    handleTradeCurrencyChange,
     clientIDMessage,
     showClientID,
     handleClientIDModalClose,
@@ -39,7 +43,7 @@ const TradeEntry = ({ amplifyUsername }) => {
   const minDate = addBusinessDays(new Date(), 2);
   const maxDate = new Date();
   maxDate.setFullYear(maxDate.getFullYear() + 1);
-  const quoteCurrency = symbol?.length >= 6 ? symbol.substring(3, 6) : '';
+  const quoteRows = buildTradeQuoteRows(quote);
 
   const renderTradeForm = () => {
     if (transactionType === 'SPO' || transactionType === 'FWD') {
@@ -50,7 +54,8 @@ const TradeEntry = ({ amplifyUsername }) => {
           minDate={minDate}
           maxDate={maxDate}
           handleQuoteRequest={handleQuoteRequest}
-          quoteCurrency={quoteCurrency}
+          currencyOptions={currencyOptions}
+          onCurrencyChange={handleTradeCurrencyChange}
         />
       );
     }
@@ -63,7 +68,8 @@ const TradeEntry = ({ amplifyUsername }) => {
           minDate={minDate}
           maxDate={maxDate}
           handleQuoteRequest={handleQuoteRequest}
-          quoteCurrency={quoteCurrency}
+          currencyOptions={currencyOptions}
+          onCurrencyChange={handleTradeCurrencyChange}
         />
       );
     }
@@ -75,7 +81,8 @@ const TradeEntry = ({ amplifyUsername }) => {
         minDate={minDate}
         maxDate={maxDate}
         handleQuoteRequest={handleQuoteRequest}
-        quoteCurrency={quoteCurrency}
+        currencyOptions={currencyOptions}
+        onCurrencyChange={handleTradeCurrencyChange}
       />
     );
   };
@@ -97,12 +104,13 @@ const TradeEntry = ({ amplifyUsername }) => {
           </label>
 
           <label>
-              Ccy: <input
-                type="text"
-                value={symbol}
-                onChange={e => setSymbol(e.target.value.toUpperCase())}
-                placeholder="EUR/USD"
-              />
+              Symbol: <select value={symbol} onChange={(e) => setSymbol(e.target.value)}>
+                {symbolOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
           </label>
         </div>
   
@@ -111,8 +119,11 @@ const TradeEntry = ({ amplifyUsername }) => {
         {showQuote && (
           <>
             <div className="mt-3">
-              <p>FX Rate: {quote.fxRate}</p>
-              <p>You pay: {quote.secondaryAmount} {quote.currency}</p>
+              {quoteRows.map((row) => (
+                <p key={row.key}>
+                  Leg {row.index}: {row.side} {row.amount} {row.currency} {row.valueDate} @ {row.rate} = {row.counterAmount} {row.counterCurrency}
+                </p>
+              ))}
             </div>
             <div className="form-group row align-items-center">
               <label className="col-sm-8 col-form-label text-right">Execute:</label>

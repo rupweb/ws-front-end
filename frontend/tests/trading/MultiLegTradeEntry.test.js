@@ -7,6 +7,7 @@ describe('MultiLegTradeEntry', () => {
   it('renders 4 legs and handles updates correctly', () => {
     const mockHandleQuoteRequest = jest.fn();
     const mockSetLegs = jest.fn();
+    const mockOnCurrencyChange = jest.fn();
 
     const today = new Date();
     const minDate = addBusinessDays(today, 2);
@@ -26,6 +27,8 @@ describe('MultiLegTradeEntry', () => {
         minDate={minDate}
         maxDate={maxDate}
         handleQuoteRequest={mockHandleQuoteRequest}
+        currencyOptions={['EUR', 'USD']}
+        onCurrencyChange={mockOnCurrencyChange}
       />
     );
 
@@ -40,9 +43,9 @@ describe('MultiLegTradeEntry', () => {
     expect(sideSelects[2].value).toBe('BUY');
     expect(sideSelects[3].value).toBe('SELL');
 
-    // Confirm currency inputs are fixed to USD
+    // Confirm currency dropdowns are fixed to USD until changed together
     const currencyInputs = screen.getAllByLabelText(/currency/i);
-    currencyInputs.forEach(input => {
+    currencyInputs.forEach((input) => {
       expect(input.value).toBe('USD');
     });
 
@@ -55,6 +58,9 @@ describe('MultiLegTradeEntry', () => {
     // Change amount on leg 1
     fireEvent.change(amountInputs[0], { target: { value: '15000' } });
     expect(mockSetLegs).toHaveBeenCalledWith(expect.any(Array));
+
+    fireEvent.change(currencyInputs[0], { target: { value: 'EUR' } });
+    expect(mockOnCurrencyChange).toHaveBeenCalledWith('EUR');
 
     // Trigger quote request
     const requestButton = screen.getByText(/request/i);

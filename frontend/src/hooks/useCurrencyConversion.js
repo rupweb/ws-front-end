@@ -16,18 +16,18 @@ import prepareReset from '../handlers/handleReset.js';
 const useCurrencyConversion = (amplifyUsername) => {
   // Align with websocket
   const { 
-    quote, 
-    setQuote, 
-    showQuote,
-    setShowQuote,
-    executionReport, 
-    setExecutionReport,
-    showExecutionReport,
-    setShowExecutionReport, 
-    error, 
-    setError, 
-    showError,
-    setShowError,
+    salesQuote, 
+    setSalesQuote, 
+    showSalesQuote,
+    setShowSalesQuote,
+    salesExecutionReport, 
+    setSalesExecutionReport,
+    showSalesExecutionReport,
+    setShowSalesExecutionReport, 
+    salesError, 
+    setSalesError, 
+    showSalesError,
+    setShowSalesError,
     sendMessage 
   } = useWebSocket();
 
@@ -59,11 +59,11 @@ const useCurrencyConversion = (amplifyUsername) => {
     setShowClientID
   );
 
-  const { handleQuoteMessage } = useQuoteHandling(setQuote);
-  const { handleExecutionReport } = useDealHandling(setExecutionReport, setExecutionReportMessage, setShowExecutionReport);
-  const { handleErrorMessage } = useErrorHandling(setError, setErrorMessage, setShowError);
-  const { handleExecutionModalClose } = useExecutionModal(setShowExecutionReport);
-  const { handleErrorModalClose } = useErrorModal(setShowError);
+  const { handleQuoteMessage } = useQuoteHandling(setSalesQuote);
+  const { handleExecutionReport } = useDealHandling(setSalesExecutionReport, setExecutionReportMessage, setShowSalesExecutionReport);
+  const { handleErrorMessage } = useErrorHandling(setSalesError, setErrorMessage, setShowSalesError);
+  const { handleExecutionModalClose } = useExecutionModal(setShowSalesExecutionReport);
+  const { handleErrorModalClose } = useErrorModal(setShowSalesError);
 
   const handleQuoteRequest = () => prepareQuoteRequest({
     clientID: resolvedClientID,
@@ -76,8 +76,8 @@ const useCurrencyConversion = (amplifyUsername) => {
   });
 
   const handleQuoteCancel = () => prepareQuoteCancel({
-    symbol: quote.symbol,
-    quoteRequestID: quote.quoteRequestID,
+    symbol: salesQuote.symbol,
+    quoteRequestID: salesQuote.quoteRequestID,
     clientID: resolvedClientID,
     sendMessage
   });
@@ -87,11 +87,11 @@ const useCurrencyConversion = (amplifyUsername) => {
     toCurrency,
     selectedDate,
     fromCurrency,
-    fxRate: quote.fxRate,
-    secondaryAmount: quote.secondaryAmount,
-    symbol: quote.symbol,
-    quoteRequestID: quote.quoteRequestID,
-    quoteID: quote.quoteID,
+    fxRate: salesQuote.fxRate,
+    secondaryAmount: salesQuote.secondaryAmount,
+    symbol: salesQuote.symbol,
+    quoteRequestID: salesQuote.quoteRequestID,
+    quoteID: salesQuote.quoteID,
     clientID: resolvedClientID,
     sendMessage
   });
@@ -102,12 +102,12 @@ const useCurrencyConversion = (amplifyUsername) => {
     setAmount,
     setSelectedDate,
     setClientID,
-    setQuote,
-    setShowQuote,
-    setExecutionReport,
-    setShowExecutionReport,
-    setError,
-    setShowError
+    setQuote: setSalesQuote,
+    setShowQuote: setShowSalesQuote,
+    setExecutionReport: setSalesExecutionReport,
+    setShowExecutionReport: setShowSalesExecutionReport,
+    setError: setSalesError,
+    setShowError: setShowSalesError
   });
 
   return {
@@ -125,22 +125,22 @@ const useCurrencyConversion = (amplifyUsername) => {
     clientIDMessage,
     showClientID,
     handleClientIDModalClose,
-    quote, 
-    showQuote,
-    setShowQuote,
+    quote: salesQuote, 
+    showQuote: showSalesQuote,
+    setShowQuote: setShowSalesQuote,
     handleQuoteRequest,
     handleQuoteMessage,
     handleQuoteCancel,
     handleDealRequest,
-    executionReport,
-    showExecutionReport,
-    setShowExecutionReport,
+    executionReport: salesExecutionReport,
+    showExecutionReport: showSalesExecutionReport,
+    setShowExecutionReport: setShowSalesExecutionReport,
     handleExecutionReport,
     executionReportMessage,
     handleExecutionModalClose,
-    error,
-    showError,
-    setShowError,
+    error: salesError,
+    showError: showSalesError,
+    setShowError: setShowSalesError,
     handleErrorMessage,
     errorMessage,
     handleErrorModalClose,

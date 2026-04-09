@@ -7,6 +7,7 @@ describe('SwapTradeEntry', () => {
   it('renders two legs and handles updates correctly', () => {
     const mockHandleQuoteRequest = jest.fn();
     const mockSetLegs = jest.fn();
+    const mockOnCurrencyChange = jest.fn();
 
     const today = new Date();
     const minDate = addBusinessDays(today, 2);
@@ -27,11 +28,14 @@ describe('SwapTradeEntry', () => {
         minDate={minDate}
         maxDate={maxDate}
         handleQuoteRequest={mockHandleQuoteRequest}
+        currencyOptions={['EUR', 'USD']}
+        onCurrencyChange={mockOnCurrencyChange}
       />
     );
 
     const sideSelects = screen.getAllByLabelText(/side/i);
     const amountInputs = screen.getAllByLabelText(/amount/i);
+    const currencySelects = screen.getAllByLabelText(/currency/i);
     const dateInputs = screen.getAllByLabelText(/date/i);
 
     expect(sideSelects).toHaveLength(2);
@@ -39,6 +43,8 @@ describe('SwapTradeEntry', () => {
     expect(sideSelects[1].value).toBe('SELL');
     expect(amountInputs[0].value).toBe('100000');
     expect(amountInputs[1].value).toBe('100000');
+    expect(currencySelects[0].value).toBe('USD');
+    expect(currencySelects[1].value).toBe('USD');
     expect(dateInputs[0].value).toBe(leg1Date.toISOString().substring(0, 10));
     expect(dateInputs[1].value).toBe(leg2Date.toISOString().substring(0, 10));
 
@@ -50,6 +56,9 @@ describe('SwapTradeEntry', () => {
         expect.objectContaining({ side: 'BUY' })
       ])
     );
+
+    fireEvent.change(currencySelects[0], { target: { value: 'EUR' } });
+    expect(mockOnCurrencyChange).toHaveBeenCalledWith('EUR');
 
     fireEvent.click(screen.getByText(/request/i));
     expect(mockHandleQuoteRequest).toHaveBeenCalled();

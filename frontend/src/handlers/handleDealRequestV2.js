@@ -2,6 +2,11 @@ import { generateUUID } from '../utils/utils.js';
 import encodeDealRequest from '../messages/encodeDealRequestV2.js'
 import { format } from 'date-fns';
 import { formatUtcTransactTime } from '../utils/transactTime.js';
+import {
+  getExecutableTradeFwd,
+  getExecutableTradePrice,
+  getExecutableTradeSpot
+} from '../utils/trading.js';
 
 const mapTransactionType = (value) => (value === 'SWP' ? 'SWA' : value);
 
@@ -33,27 +38,23 @@ const handleDealRequestV2 = async ({
     return { mantissa: 0, exponent: -1 };
   };
 
-  const pickQuotedDecimal = (quotedLeg, buyField, sellField, side) => {
-    const preferred = side === 'SELL' ? quotedLeg?.[sellField] : quotedLeg?.[buyField];
-    return asDecimal(preferred);
-  };
-
   const formattedLegs = legs.map((leg, index) => {
     const side = leg.side || (index === 0 ? 'BUY' : 'SELL');
     const quotedLeg = Array.isArray(quote?.legs) ? quote.legs[index] : null;
+    const legCurrency = (leg.currency || quotedLeg?.currency || fallbackCurrency).toUpperCase();
 
     return {
       amount: {
         mantissa: Math.round(parseFloat(leg.amount || 0) * 100),
         exponent: -2
       },
-      currency: (leg.currency || quotedLeg?.currency || fallbackCurrency).toUpperCase(),
+      currency: legCurrency,
       side,
       valueDate: format(new Date(leg.date), 'yyyyMMdd'),
-      // Use quoted leg prices for execution to avoid sending zero spot/fwd/price.
-      spot: pickQuotedDecimal(quotedLeg, 'spotOffer', 'spotBid', side),
-      fwd: pickQuotedDecimal(quotedLeg, 'fwdOffer', 'fwdBid', side),
-      price: pickQuotedDecimal(quotedLeg, 'offer', 'bid', side)
+      // Use the executable leg values implied by side + quoted currency.
+      spot: asDecimal(getExecutableTradeSpot({ quotedLeg, symbol, side, currency: legCurrency })),
+      fwd: asDecimal(getExecutableTradeFwd({ quotedLeg, symbol, side, currency: legCurrency })),
+      price: asDecimal(getExecutableTradePrice({ quotedLeg, symbol, side, currency: legCurrency }))
     };
   });
 
