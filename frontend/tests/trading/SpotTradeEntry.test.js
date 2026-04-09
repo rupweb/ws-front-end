@@ -7,6 +7,7 @@ describe('SpotTradeEntry', () => {
   it('renders single leg and handles updates correctly', () => {
     const mockHandleQuoteRequest = jest.fn();
     const mockSetLegs = jest.fn();
+    const mockOnCurrencyChange = jest.fn();
 
     const today = new Date();
     const minDate = addBusinessDays(today, 2);
@@ -26,6 +27,8 @@ describe('SpotTradeEntry', () => {
         minDate={minDate}
         maxDate={maxDate}
         handleQuoteRequest={mockHandleQuoteRequest}
+        currencyOptions={['EUR', 'USD']}
+        onCurrencyChange={mockOnCurrencyChange}
       />
     );
 
@@ -42,6 +45,9 @@ describe('SpotTradeEntry', () => {
     // Change amount
     fireEvent.change(amountInput, { target: { value: '60000' } });
     expect(mockSetLegs).toHaveBeenCalled();
+
+    fireEvent.change(currencyInput, { target: { value: 'EUR' } });
+    expect(mockOnCurrencyChange).toHaveBeenCalledWith('EUR');
 
     // Click request
     fireEvent.click(screen.getByText(/request/i));

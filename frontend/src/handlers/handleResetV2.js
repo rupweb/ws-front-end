@@ -1,4 +1,10 @@
 import { addBusinessDays } from '../utils/utils.js';
+import {
+  EMPTY_ERROR,
+  EMPTY_EXECUTION_REPORT,
+  EMPTY_TRADING_QUOTE,
+  getDefaultTradeCurrency
+} from '../utils/trading.js';
 
 const handleReset = ({
   setQuote,
@@ -13,7 +19,7 @@ const handleReset = ({
   setClientID
 }) => {
   const defaultSymbol = 'EURUSD';
-  const defaultQuoteCurrency = defaultSymbol.substring(3, 6);
+  const defaultQuoteCurrency = getDefaultTradeCurrency(defaultSymbol);
   const nearDate = addBusinessDays(new Date(), 2);
   setTransactionType('SPO');
   setSymbol(defaultSymbol);
@@ -28,48 +34,11 @@ const handleReset = ({
   if (setClientID) {
     setClientID('');
   }
-  setQuote({
-    quoteRequestID: '',
-    quoteID: '',
-    clientID: '',
-    symbol: '',
-    legs: [],
-    fxRate: null,
-    secondaryAmount: null,
-    currency: ''
-  });
+  setQuote(EMPTY_TRADING_QUOTE);
   setShowQuote(false);
-  setExecutionReport({
-    kind: '',
-    executedAt: '',
-    dealID: '',
-    transactionType: '',
-    amount: null,
-    currency: '',
-    symbol: '',
-    deliveryDate: '',
-    secondaryCurrency: '',
-    rate: null,
-    secondaryAmount: null,
-    legs: []
-  });
+  setExecutionReport(EMPTY_EXECUTION_REPORT);
   setShowExecutionReport(false);
-  setError({
-    amount: null,
-    currency: '',
-    side: '',
-    symbol: '',
-    deliveryDate: '',
-    transactTime: '',
-    quoteRequestID: '',
-    quoteID: '',
-    dealRequestID: '',
-    dealID: '',
-    rate: null,
-    secondaryAmount: null,
-    clientID: '',
-    message: ''
-  });
+  setError(EMPTY_ERROR);
   setShowError(false);
 };
 

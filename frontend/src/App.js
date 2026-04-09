@@ -12,6 +12,8 @@ import CookieConsent from 'react-cookie-consent';
 import { WebSocketProvider, useWebSocket } from './contexts/WebSocketContext.js';
 import { fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
 import prepareQuoteCancel from './handlers/handleQuoteCancel.js';
+import prepareQuoteCancelV2 from './handlers/handleQuoteCancelV2.js';
+import { EMPTY_SALES_QUOTE, EMPTY_TRADING_QUOTE } from './utils/trading.js';
 
 function App() {
   const websocketUrl = process.env.REACT_APP_WS_URL;
@@ -79,39 +81,66 @@ function App() {
   );
 }
 
-const EMPTY_QUOTE = {
-  fxRate: 0,
-  secondaryAmount: 0,
-  symbol: '',
-  quoteRequestID: '',
-  quoteID: '',
-  clientID: ''
-};
-
 const RouteLeaveQuoteCancelGuard = ({ amplifyUsername }) => {
   const location = useLocation();
   const previousPathRef = useRef(location.pathname);
-  const { quote, showQuote, setShowQuote, setQuote, sendMessage } = useWebSocket();
+  const {
+    salesQuote,
+    showSalesQuote,
+    setShowSalesQuote,
+    setSalesQuote,
+    tradingQuote,
+    showTradingQuote,
+    setShowTradingQuote,
+    setTradingQuote,
+    sendMessage
+  } = useWebSocket();
 
   useEffect(() => {
     const previousPath = previousPathRef.current;
     const currentPath = location.pathname;
     const leavingHome = previousPath === '/' && currentPath !== '/';
+    const leavingTrading = previousPath === '/trade' && currentPath !== '/trade';
 
-    if (leavingHome && showQuote && quote?.quoteRequestID && quote?.symbol) {
+    if (leavingHome && showSalesQuote && salesQuote?.quoteRequestID && salesQuote?.symbol) {
       prepareQuoteCancel({
-        symbol: quote.symbol,
-        quoteRequestID: quote.quoteRequestID,
-        clientID: quote.clientID || amplifyUsername || 'TEST',
+        symbol: salesQuote.symbol,
+        quoteRequestID: salesQuote.quoteRequestID,
+        clientID: salesQuote.clientID || amplifyUsername || 'TEST',
         sendMessage
       });
 
-      setShowQuote(false);
-      setQuote(EMPTY_QUOTE);
+      setShowSalesQuote(false);
+      setSalesQuote(EMPTY_SALES_QUOTE);
+    }
+
+    if (leavingTrading && showTradingQuote && tradingQuote?.quoteRequestID && tradingQuote?.symbol) {
+      prepareQuoteCancelV2({
+        transactionType: tradingQuote.transactionType,
+        symbol: tradingQuote.symbol,
+        quoteRequestID: tradingQuote.quoteRequestID,
+        clientID: tradingQuote.clientID || amplifyUsername || 'TEST',
+        sendMessage
+      });
+
+      setShowTradingQuote(false);
+      setTradingQuote(EMPTY_TRADING_QUOTE);
     }
 
     previousPathRef.current = currentPath;
-  }, [amplifyUsername, location.pathname, quote, sendMessage, setQuote, setShowQuote, showQuote]);
+  }, [
+    amplifyUsername,
+    location.pathname,
+    salesQuote,
+    sendMessage,
+    setSalesQuote,
+    setShowSalesQuote,
+    setShowTradingQuote,
+    setTradingQuote,
+    showSalesQuote,
+    showTradingQuote,
+    tradingQuote
+  ]);
 
   return null;
 };

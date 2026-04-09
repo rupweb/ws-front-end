@@ -10,8 +10,26 @@ import TradeQuoteRequestDecoder from '../aeron/v2/TradeQuoteRequestDecoder.js';
 import TradeDealRequestDecoder from '../aeron/v2/TradeDealRequestDecoder.js';
 import QuoteCancelDecoder from '../aeron/v1/QuoteCancelDecoder.js';
 import AdminDecoder from '../aeron/admin/AdminDecoder.js';
+import {
+    calculateTradeCounterAmount,
+    getExecutableTradePrice
+} from '../utils/trading.js';
 
-const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport, setShowExecutionReport, setError, setShowError) => {
+const handleIncomingMessage = (
+    data,
+    setSalesQuote,
+    setShowSalesQuote,
+    setSalesExecutionReport,
+    setShowSalesExecutionReport,
+    setSalesError,
+    setShowSalesError,
+    setTradingQuote = setSalesQuote,
+    setShowTradingQuote = setShowSalesQuote,
+    setTradingExecutionReport = setSalesExecutionReport,
+    setShowTradingExecutionReport = setShowSalesExecutionReport,
+    setTradingError = setSalesError,
+    setShowTradingError = setShowSalesError
+) => {
     console.log('Incoming data: ', data);
 
     // Check if data is an ArrayBuffer
@@ -42,22 +60,20 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 decodedData = decoder.toString();
 
                 const firstLeg = Array.isArray(decodedData.leg) && decodedData.leg.length > 0 ? decodedData.leg[0] : null;
-                const bid = firstLeg?.bid ? formatDecimal(firstLeg.bid, 5) : null;
-                const offer = firstLeg?.offer ? formatDecimal(firstLeg.offer, 5) : null;
 
-                setQuote({
+                setTradingQuote({
                     transactionType: decodedData.transactionType,
                     symbol: decodedData.symbol,
                     quoteRequestID: decodedData.quoteRequestID,
                     quoteID: decodedData.quoteID,
                     clientID: decodedData.clientID,
                     legs: decodedData.leg,
-                    fxRate: offer || bid,
-                    secondaryAmount: firstLeg ? formatDecimal(firstLeg.amount) : null,
+                    fxRate: firstLeg ? formatTradeRate(decodedData.symbol, firstLeg) : null,
+                    secondaryAmount: firstLeg ? formatTradeSecondaryAmount(decodedData.symbol, firstLeg) : null,
                     currency: firstLeg?.currency || ''
                 });
 
-                setShowQuote(true);
+                setShowTradingQuote(true);
                 break;
             }
             case '4:3': { // Trade Deal Request echo/no-op
@@ -85,7 +101,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     }))
                     : [];
                 const firstLeg = tradingLegs.length > 0 ? tradingLegs[0] : null;
-                setExecutionReport({
+                setTradingExecutionReport({
                     kind: 'trading',
                     executedAt: new Date().toISOString(),
                     dealID: decodedData.dealID,
@@ -100,7 +116,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     legs: tradingLegs
                 });
 
-                setShowExecutionReport(true);
+                setShowTradingExecutionReport(true);
                 break;
             }
             case '4:5': { // Trade Error (schema4/template5)
@@ -108,7 +124,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
                 decodedData = decoder.toString();
 
-                setError({
+                setTradingError({
                     amount: null,
                     currency: '',
                     side: '',
@@ -125,14 +141,14 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     message: decodedData.message
                 });
 
-                setShowError(true);
+                setShowTradingError(true);
                 break;
             }
             case '4:6': { // Trade Quote Cancel (schema4/template6)
                 const decoder = new TradeQuoteCancelDecoder();
                 decoder.wrap(data, MessageHeaderDecoder.ENCODED_LENGTH);
                 decodedData = decoder.toString();
-                setShowQuote(false);
+                setShowTradingQuote(false);
                 break;
             }
             case '1:4': { // Quote
@@ -154,7 +170,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     clientID: trimNulls(decoder.clientID())
                 };
 
-                setQuote({
+                setSalesQuote({
                     fxRate: formatDecimal(decodedData.fxRate, 5),
                     secondaryAmount: formatDecimal(decodedData.secondaryAmount),
                     symbol: decodedData.symbol,
@@ -164,7 +180,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                 });
 
                 console.log('setShowQuote');
-                setShowQuote(true);
+                setShowSalesQuote(true);
 
                 break;
             }
@@ -190,7 +206,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     clientID: trimNulls(decoder.clientID())
                 };
 
-                setExecutionReport({
+                setSalesExecutionReport({
                     kind: 'sales',
                     executedAt: new Date().toISOString(),
                     dealID: decodedData.dealID,
@@ -205,7 +221,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     legs: []
                 });
 
-                setShowExecutionReport(true);
+                setShowSalesExecutionReport(true);
 
                 break;
             }
@@ -230,7 +246,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     message: trimNulls(decoder.message())
                 };
 
-                setError({
+                setSalesError({
                     amount: formatDecimal(decodedData.amount),
                     currency: decodedData.currency,
                     side: decodedData.side,
@@ -247,7 +263,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     message: decodedData.message
                 });
 
-                setShowError(true);
+                setShowSalesError(true);
 
                 break;
             }
@@ -260,7 +276,7 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
                     quoteRequestID: trimNulls(decoder.quoteRequestID()),
                     clientID: trimNulls(decoder.clientID())
                 };
-                setShowQuote(false);
+                setShowSalesQuote(false);
                 break;
             }
             case '3:1': { // Admin message (schema3/template1)
@@ -282,6 +298,34 @@ const handleIncomingMessage = (data, setQuote, setShowQuote, setExecutionReport,
 };
 
 export default handleIncomingMessage;
+
+function formatTradeRate(symbol, leg) {
+    const executablePrice = getExecutableTradePrice({
+        quotedLeg: leg,
+        symbol,
+        side: trimNulls(leg?.side || ''),
+        currency: trimNulls(leg?.currency || '')
+    });
+
+    return executablePrice ? formatDecimal(executablePrice, 5) : null;
+}
+
+function formatTradeSecondaryAmount(symbol, leg) {
+    const executablePrice = getExecutableTradePrice({
+        quotedLeg: leg,
+        symbol,
+        side: trimNulls(leg?.side || ''),
+        currency: trimNulls(leg?.currency || '')
+    });
+    const counterAmount = calculateTradeCounterAmount({
+        symbol,
+        currency: trimNulls(leg?.currency || ''),
+        amount: leg?.amount,
+        price: executablePrice
+    });
+
+    return counterAmount === null ? null : counterAmount.toFixed(2);
+}
 
 function logData(data) {
     // LOG: check alignment after header

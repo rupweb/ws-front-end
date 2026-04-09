@@ -1,10 +1,10 @@
 import React from 'react';
 
-const SpotTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, quoteCurrency }) => {
+const SpotTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, currencyOptions, onCurrencyChange }) => {
   const leg = legs[0] || {
     side: 'BUY',
     amount: '',
-    currency: quoteCurrency,
+    currency: currencyOptions[0] || '',
     date: minDate
   };
 
@@ -30,7 +30,13 @@ const SpotTradeEntry = ({ legs, setLegs, minDate, maxDate, handleQuoteRequest, q
       </label>
 
       <label>
-        Currency: <input type="text" value={leg.currency} onChange={(e) => updateLeg('currency', e.target.value.toUpperCase())} />
+        Currency: <select value={leg.currency} onChange={(e) => onCurrencyChange(e.target.value)}>
+          {currencyOptions.map((currency) => (
+            <option key={currency} value={currency}>
+              {currency}
+            </option>
+          ))}
+        </select>
       </label>
 
       <label>
