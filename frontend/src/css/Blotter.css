@@ -55,6 +55,21 @@
   font-weight: bold;
 }
 
+.blotter-sort-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+}
+
+.blotter-sort-button:hover,
+.blotter-sort-button:focus-visible {
+  text-decoration: underline;
+}
+
 .blotter-container tbody tr:nth-child(odd) {
   background-color: #ffffff;
 }
