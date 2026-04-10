@@ -26,7 +26,20 @@ const SALES_COLUMNS = [
   { key: 'amountToPay', label: 'Amount to Pay', type: 'number' }
 ];
 
+const TRADING_COLUMNS = [
+  { key: 'date', label: 'Date', type: 'date' },
+  { key: 'dealID', label: 'Deal ID', type: 'text' },
+  { key: 'transactionType', label: 'Type', type: 'text' },
+  { key: 'symbol', label: 'Ccy', type: 'text' },
+  { key: 'legs', label: 'Legs', type: 'legs' }
+];
+
 const DEFAULT_SALES_SORT = {
+  key: 'date',
+  direction: 'desc'
+};
+
+const DEFAULT_TRADING_SORT = {
   key: 'date',
   direction: 'desc'
 };
@@ -34,6 +47,7 @@ const DEFAULT_SALES_SORT = {
 const Blotter = ({ view = 'sales' }) => {
   const [executions, setExecutions] = useState([]);
   const [salesSort, setSalesSort] = useState(DEFAULT_SALES_SORT);
+  const [tradingSort, setTradingSort] = useState(DEFAULT_TRADING_SORT);
 
   useEffect(() => {
     setExecutions(getStoredBlotterExecutions());
@@ -49,7 +63,7 @@ const Blotter = ({ view = 'sales' }) => {
     [executions, view]
   );
 
-  const getSalesComparableValue = (trade, column) => {
+  const getComparableValue = (trade, column) => {
     if (column.key === 'date') {
       return getBlotterExecutionTimestamp(trade);
     }
@@ -59,20 +73,22 @@ const Blotter = ({ view = 'sales' }) => {
       return Number.isNaN(numericValue) ? null : numericValue;
     }
 
+    if (column.type === 'legs') {
+      return Array.isArray(trade.legs)
+        ? trade.legs.map((leg, index) => formatLegLine(leg, index)).join(' ')
+        : '';
+    }
+
     return `${trade[column.key] || ''}`.toLowerCase();
   };
 
-  const sortedSalesExecutions = useMemo(() => {
-    if (view !== 'sales') {
-      return filteredExecutions;
-    }
+  const sortExecutions = (items, columns, sortState) => {
+    const activeColumn = columns.find((column) => column.key === sortState.key) || columns[0];
+    const directionMultiplier = sortState.direction === 'asc' ? 1 : -1;
 
-    const activeColumn = SALES_COLUMNS.find((column) => column.key === salesSort.key) || SALES_COLUMNS[0];
-    const directionMultiplier = salesSort.direction === 'asc' ? 1 : -1;
-
-    return [...filteredExecutions].sort((left, right) => {
-      const leftValue = getSalesComparableValue(left, activeColumn);
-      const rightValue = getSalesComparableValue(right, activeColumn);
+    return [...items].sort((left, right) => {
+      const leftValue = getComparableValue(left, activeColumn);
+      const rightValue = getComparableValue(right, activeColumn);
 
       if (leftValue == null && rightValue == null) {
         return 0;
@@ -96,7 +112,12 @@ const Blotter = ({ view = 'sales' }) => {
 
       return (leftValue < rightValue ? -1 : 1) * directionMultiplier;
     });
-  }, [filteredExecutions, salesSort, view]);
+  };
+
+  const sortedSalesExecutions = useMemo(
+    () => sortExecutions(filteredExecutions, SALES_COLUMNS, salesSort),
+    [filteredExecutions, salesSort]
+  );
 
   const formatTransactionType = (transactionType) => TRANSACTION_TYPE_LABELS[transactionType] || transactionType || '';
 
@@ -128,50 +149,69 @@ const Blotter = ({ view = 'sales' }) => {
     return parts.join(' ');
   };
 
+  const sortedTradingExecutions = useMemo(
+    () => sortExecutions(filteredExecutions, TRADING_COLUMNS, tradingSort),
+    [filteredExecutions, tradingSort]
+  );
+
+  const toggleSort = (currentSort, columnKey) => (
+    currentSort.key === columnKey
+      ? {
+          key: columnKey,
+          direction: currentSort.direction === 'asc' ? 'desc' : 'asc'
+        }
+      : {
+          key: columnKey,
+          direction: 'asc'
+        }
+  );
+
   const handleSalesSort = (columnKey) => {
     setSalesSort((currentSort) => (
-      currentSort.key === columnKey
-        ? {
-            key: columnKey,
-            direction: currentSort.direction === 'asc' ? 'desc' : 'asc'
-          }
-        : {
-            key: columnKey,
-            direction: 'asc'
-          }
+      toggleSort(currentSort, columnKey)
     ));
   };
 
-  const getSalesHeaderSortState = (columnKey) => {
-    if (salesSort.key !== columnKey) {
+  const handleTradingSort = (columnKey) => {
+    setTradingSort((currentSort) => (
+      toggleSort(currentSort, columnKey)
+    ));
+  };
+
+  const getHeaderSortState = (sortState, columnKey) => {
+    if (sortState.key !== columnKey) {
       return 'none';
     }
 
-    return salesSort.direction === 'asc' ? 'ascending' : 'descending';
+    return sortState.direction === 'asc' ? 'ascending' : 'descending';
+  };
+
+  const renderSortableHeader = (column, sortState, onSort) => {
+    const ariaSort = getHeaderSortState(sortState, column.key);
+    const isActive = ariaSort !== 'none';
+
+    return (
+      <th key={column.key} aria-sort={ariaSort}>
+        <button
+          type="button"
+          className={[
+            'blotter-sort-button',
+            isActive ? 'is-sorted' : '',
+            ariaSort === 'ascending' ? 'is-ascending' : ''
+          ].filter(Boolean).join(' ')}
+          onClick={() => onSort(column.key)}
+        >
+          {column.label}
+        </button>
+      </th>
+    );
   };
 
   const renderSalesTable = () => (
     <table className="table table-striped">
       <thead>
         <tr>
-          {SALES_COLUMNS.map((column) => {
-            const ariaSort = getSalesHeaderSortState(column.key);
-            const isActive = ariaSort !== 'none';
-            const sortIndicator = isActive ? (salesSort.direction === 'asc' ? ' ^' : ' v') : '';
-
-            return (
-              <th key={column.key} aria-sort={ariaSort}>
-                <button
-                  type="button"
-                  className="blotter-sort-button"
-                  onClick={() => handleSalesSort(column.key)}
-                >
-                  {column.label}
-                  <span aria-hidden="true">{sortIndicator}</span>
-                </button>
-              </th>
-            );
-          })}
+          {SALES_COLUMNS.map((column) => renderSortableHeader(column, salesSort, handleSalesSort))}
         </tr>
       </thead>
       <tbody>
@@ -195,15 +235,11 @@ const Blotter = ({ view = 'sales' }) => {
     <table className="table table-striped">
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Deal ID</th>
-          <th>Type</th>
-          <th>Ccy</th>
-          <th>Legs</th>
+          {TRADING_COLUMNS.map((column) => renderSortableHeader(column, tradingSort, handleTradingSort))}
         </tr>
       </thead>
       <tbody>
-        {filteredExecutions.map((trade) => (
+        {sortedTradingExecutions.map((trade) => (
           <tr key={`${trade.kind}-${trade.dealID}`}>
             <td>{formatBlotterExecutionDate(trade)}</td>
             <td>{trade.dealID}</td>

@@ -182,6 +182,87 @@ describe('Blotter', () => {
     expect(within(tableBodyRows[0]).getByText('TRD-2')).toBeInTheDocument();
   });
 
+  it('sorts the trading blotter when a column header is clicked', async () => {
+    const user = userEvent.setup();
+
+    localStorage.setItem(BLOTTER_STORAGE_KEY, JSON.stringify([
+      {
+        schemaVersion: 1,
+        kind: 'trading',
+        executedAt: '2026-04-07T11:00:00.000Z',
+        dealID: 'TRD-200',
+        transactionType: 'SWP',
+        symbol: 'EURUSD',
+        legs: [
+          {
+            side: 'BUY',
+            amount: '1000000.00',
+            currency: 'USD',
+            valueDate: '20260409',
+            price: '1.08234'
+          }
+        ]
+      },
+      {
+        schemaVersion: 1,
+        kind: 'trading',
+        executedAt: '2026-04-09T11:00:00.000Z',
+        dealID: 'TRD-300',
+        transactionType: 'MUL',
+        symbol: 'GBPUSD',
+        legs: [
+          {
+            side: 'SELL',
+            amount: '500000.00',
+            currency: 'USD',
+            valueDate: '20260410',
+            price: '1.25100'
+          }
+        ]
+      },
+      {
+        schemaVersion: 1,
+        kind: 'trading',
+        executedAt: '2026-04-08T11:00:00.000Z',
+        dealID: 'TRD-100',
+        transactionType: 'SPO',
+        symbol: 'AUDUSD',
+        legs: [
+          {
+            side: 'BUY',
+            amount: '250000.00',
+            currency: 'USD',
+            valueDate: '20260411',
+            price: '0.65210'
+          }
+        ]
+      }
+    ]));
+
+    render(
+      <MemoryRouter initialEntries={['/blotter/trading']}>
+        <Blotter view="trading" />
+      </MemoryRouter>
+    );
+
+    const getRenderedDealIds = () => within(screen.getAllByRole('rowgroup')[1])
+      .getAllByRole('row')
+      .map((row) => within(row).getAllByRole('cell')[1].textContent);
+
+    expect(getRenderedDealIds()).toEqual(['TRD-300', 'TRD-100', 'TRD-200']);
+    expect(screen.getByRole('columnheader', { name: 'Date' })).toHaveAttribute('aria-sort', 'descending');
+
+    await user.click(screen.getByRole('button', { name: 'Deal ID' }));
+
+    expect(getRenderedDealIds()).toEqual(['TRD-100', 'TRD-200', 'TRD-300']);
+    expect(screen.getByRole('columnheader', { name: 'Deal ID' })).toHaveAttribute('aria-sort', 'ascending');
+
+    await user.click(screen.getByRole('button', { name: 'Deal ID' }));
+
+    expect(getRenderedDealIds()).toEqual(['TRD-300', 'TRD-200', 'TRD-100']);
+    expect(screen.getByRole('columnheader', { name: 'Deal ID' })).toHaveAttribute('aria-sort', 'descending');
+  });
+
   it('shows an empty state when a blotter has no executions', () => {
     render(
       <MemoryRouter initialEntries={['/blotter/trading']}>
