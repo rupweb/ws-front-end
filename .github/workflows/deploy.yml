@@ -76,10 +76,13 @@ jobs:
           cd /home/ec2-user/reverse-proxy
           npm install
 
-          # Start/restart the proxy server with PM2
-          pm2 restart proxy-server || pm2 start /home/ec2-user/reverse-proxy/proxy-server.js --name proxy-server
+          # The reverse proxy is a host-level systemd service in front of the frontend/backend.
+          # Keep it out of PM2 so deploys cannot create duplicate port-8080 proxy processes.
+          pm2 delete proxy-server || true
+          sudo systemctl restart ws-proxy-server.service
 
           # Start/restart the frontend server with PM2
           pm2 restart ws-frontend || pm2 start /home/ec2-user/ws-deploy/artifacts/frontends/ws-front-end/server.js --name ws-frontend
+          pm2 save
 
           EOF
