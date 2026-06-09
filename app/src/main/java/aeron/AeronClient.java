@@ -70,8 +70,8 @@ public class AeronClient {
         this.idleStrategy = new BackoffIdleStrategy(
             config.getIntProperty("aeron.idleStrategy.maxSpins") != null ? config.getIntProperty("aeron.idleStrategy.maxSpins") : 100,
             config.getIntProperty("aeron.idleStrategy.maxYields") != null ? config.getIntProperty("aeron.idleStrategy.maxYields") : 1000,
-            config.getIntProperty("aeron.idleStrategy.minParkNanos") != null ? config.getIntProperty("aeron.idleStrategy.minParkNanos") : 100000,
-            config.getIntProperty("aeron.idleStrategy.maxParkNanos") != null ? config.getIntProperty("aeron.idleStrategy.maxParkNanos") : 1000000
+            config.getProperty("aeron.idleStrategy.minParkNanos") != null ? Long.parseLong(config.getProperty("aeron.idleStrategy.minParkNanos")) : 100000L,
+            config.getProperty("aeron.idleStrategy.maxParkNanos") != null ? Long.parseLong(config.getProperty("aeron.idleStrategy.maxParkNanos")) : 1000000L
         );
     }
 
@@ -198,3 +198,4 @@ public class AeronClient {
         log.info("Out close");
     }
 }
+
